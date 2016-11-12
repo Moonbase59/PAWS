@@ -80,6 +80,13 @@ If you were to start such a massive approach, I’d suggest to follow a route li
 * [Roger Firth’s »Cloak of Darkness«](http://www.firthworks.com/roger/). A well-defined mini adventure, coded in many different languages (playable PAWS version included here).
 
 
+## Collaboration
+
+* If you find any bugs, use the **Issues** tracker on this page to let me know.
+* Should you wish to add to the code, or have some better ideas, by all means **fork this repo and make pull requests!**
+
+Whenever I have some spare time, I’ll go over these and maybe even fix or implement them. 😆
+
 ## How to play Adventures
 
 Git clone (or download) this repo, change directory to where `LoadTerminal.pyy` lives, and start it, i.e.
