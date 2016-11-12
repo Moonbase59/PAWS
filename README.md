@@ -82,10 +82,10 @@ If you were to start such a massive approach, I’d suggest to follow a route li
 
 ## Collaboration
 
-* If you find any bugs, use the **Issues** tracker on this page to let me know.
+* If you find any bugs, use the [Issues tracker](https://github.com/Moonbase59/PAWS/issues) on this page to let me know.
 * Should you wish to add to the code, or have some better ideas, by all means **fork this repo and make pull requests!**
 
-Whenever I have some spare time, I’ll go over these and maybe even fix or implement them. 😆
+Whenever I have some spare time, I’ll go over these and maybe even fix or implement them. 😉
 
 ## How to play Adventures
 
