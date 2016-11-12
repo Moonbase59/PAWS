@@ -14,3 +14,6 @@ __pycache__/
 
 # saved games
 *.PSG
+
+# special private files
+docs/Inform\ Designer\'s\ Manual\,\ 4th\ Ed.\ 2001.pdf
