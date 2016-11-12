@@ -5,7 +5,7 @@ PAWS stands for **Python Adventure Writing System**. It was originally written b
 
 The project seems abandonend since about 2008, the web page doesn’t exist anymore and Roger Plowman unreachable. I strongly feel this interesting and well-working system to write and run Interactive Fiction should be kept from vanishing in the dark realms of Nowhereland and it could also benefit from a little polishing and a few extensions, especially for foreign languages like German.
 
-So I went about keeping and improving an already very sophisticated and well-written system and create what I blatantly call PAWS 2.1, while trying to keep it compatible with the olden but golden version 1.5 and 2.03 games out there, like the included "Thief’s Quest" (also written by Roger Plowman).
+So I went about keeping and improving an already very sophisticated and well-written system and create what I blatantly call PAWS 2.1, while trying to keep it compatible with the olden but golden version 1.5 and 2.0.3 games out there, like the included "Thief’s Quest" (also written by Roger Plowman).
 
 It still requires **Python 2.7** to run, and **wxWidgets** being installed (either the older "unicode"-versions or the newer unicode-only version). [WxPython.org](https://wxpython.org/) even have [installers for Windows & MacOS](https://wxpython.org/download.php#msw).
 
@@ -98,10 +98,10 @@ To avoid complaints from the desktop environment, you _might_ need to make the n
 
 Once started, from PAWS’ terminal window select **File/Pick Game …**, pick a game and play it. Games are all the `*.py` files in the starting directory. This is also why we used the extension `*.pyy` for `LoadTerminal` – it won’t show up in the game file browser.
 
-![Linux](linux.jpg "Linux Screenshot")
-_Linux Screenshot_
+![Linux](linux.png "Linux Screenshot")
+    _Linux Screenshot_
 
-![Windows](windows.jpg "Windows Screenshot")
-_Windows Screenshot_
+![Windows](windows.png "Windows Screenshot")
+    _Windows Screenshot_
 
 **Have fun!**
