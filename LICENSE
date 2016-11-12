@@ -1,0 +1,72 @@
+THE LICENSE
+(as originally written down by Roger Plowman, last known change 2015-02-19):
+
+
+Licensing For Commercial Use
+
+Someone asked me about licensing PAWS for commercial usage. In other words
+they wanted to know if they could use PAWS to create a game or other program
+and then sell it, and what my licensing terms would be.
+
+Basically my licensing terms are the same for any usage of PAWS/Universe,
+commercial or not. They boil down to these points:
+
+    Anyone can use PAWS for any purpose they deem fit, without paying me any
+    royalties or other financial considerations. In other words, do what you
+    like--using PAWS won't cost you a dime. HOWEVER, there are a few (minor)
+    restrictions for commercial usage.
+
+    You can't claim you wrote PAWS or the documentation that comes with them.
+    For the privilege of using PAWS all I ask is that you credit me as the
+    creator of PAWS and its documentation somewhere in your own documentation.
+    A mention in your introduction would be sufficient.
+
+    You must include a copy of the unmodified PAWS Developer Edition with your
+    commercial product. A copy of the  ZIP file you downloaded is acceptable.
+    If you want to modify PAWS for your game/program/product feel free.
+    Likewise if you want to distribute only the compiled PYC versions of your
+    modified copy of PAWS, go right ahead. However you must also include a
+    complete unmodified copy of the Developer Edition as well.
+
+    You may not sell PAWS by itself, nor charge a fee for media, although you
+    are free to sell any software you develop yourself that runs under PAWS.
+    In other words, you can't charge for a CD containing PAWS alone, but you
+    can sell a CD containing PAWS and your own program(s). You may also place
+    PAWS on a CD containing a compilation of different programs and charge for
+    that. Again, it must be an unmodified copy of the PAWS Developer Edition,
+    containing everything that came in the original ZIP file.
+
+    Game authors who have no intention of selling their games (placing them in
+    the IF-Fiction archive for example) do NOT have to include a copy of the
+    PAWS Developer Edition with their game, that would be silly.
+
+My intent is not to profit from PAWS nor even to prevent others from profiting
+from it. I merely want to receive credit for having created PAWS and to keep
+PAWS itself completely free to anyone who wants to use it--for whatever purpose
+they want to use it for!
+
+So if you want to develop and sell a commercial product with PAWS be my guest.
+Use of PAWS for ANY purpose is royalty free and, except for the conditions
+noted above, otherwise unrestricted.
+
+---
+
+My additions to above license:
+
+Portions Copyright (c) 2016 Matthias C. Hormann <mhormann@gmx.de>
+
+The above license text and copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software. The original
+copyright and permission notices in the PAWS modules by Roger Plowman and me
+shall be included unmodified in all copies or substantial portions of the
+Software.
+
+"We stand on the shoulders of giants and should respect their work."
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

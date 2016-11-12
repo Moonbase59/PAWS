@@ -1,0 +1,16 @@
+# .gitignore file
+
+# Python byte-compiled/optimized/DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# editor backups
+*~
+
+# Logs and debug files
+*.log
+*.dbg
+
+# saved games
+*.PSG
