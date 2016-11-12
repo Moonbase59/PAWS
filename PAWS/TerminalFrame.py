@@ -37,7 +37,7 @@ C="""
 
 import wx
 from wx.lib.anchors import LayoutAnchors
-import AboutDialog
+from wx.lib.wordwrap import wordwrap
 
 from Core import *
 from Universe import *
@@ -331,32 +331,27 @@ class TFrame(wx.Frame):
     def OnMenuHelpAboutMenu(self, event):
         """
         This function is run when About is clicked on the menu. It calls
-        the About dialog window.
+        a standard About dialog window.
         """
 
-        #--------------
-        # Create Dialog
-        #--------------
+        info = wx.AboutDialogInfo()
+        info.Name = "PAWS"
+        info.Version = "2.1.0"
+        info.Copyright = "© 1998–2016 Roger Plowman & Matthias C. Hormann"
+        info.Description = wordwrap(
+            "PAWS is the Python Adventure Writing System, "
+            "a software to play and develop Interactive Fiction with. "
+            "It was originally developed by Roger Plowman and continued "
+            "in 2016 by Matthias C. Hormann, just for the fun of it.",
+            350, wx.ClientDC(self))
+        info.WebSite = ("https://github.com/Moonbase59/PAWS", "PAWS GitHub page")
+        info.Developers = ["Roger Plowman", "Kevin Russell", "Matthias C. Hormann"]
+        info.License = wordwrap(
+            "See LICENSE file.",
+            350, wx.ClientDC(self))
 
-        # Creating the window doesn't do anything visible to the player, it only
-        # readies the window (invisibly).
-
-        dlg = AboutDialog.AboutDialog(self)
-
-        #--------------------
-        # Show Window To User
-        #--------------------
-
-        # Display the window to the user. Note that by using ShowModal the
-        # program pauses here until the user clicks the Ok button in the About
-        # window. Regardless of whether the window opens or not, once the
-        # code moves on, the window will be destroyed.
-
-        try:
-            dlg.ShowModal()
-        finally:
-            dlg.Destroy()
-
+        # show it
+        wx.AboutBox(info)
         # event.Skip()
 
     def OnTInputTextEnter(self, event):
