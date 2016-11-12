@@ -129,7 +129,7 @@ Foyer.SetDesc(u"L", u"""
                   You are standing in a spacious hall, splendidly decorated in
                   red and gold, with glittering chandeliers overhead. The
                   entrance from the street is to the north, and there are
-                  doorways south and west. German — ÄÖÜäöüß.
+                  doorways south and west.
                   """)
 
 #-----------
