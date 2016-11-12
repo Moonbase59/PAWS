@@ -335,19 +335,19 @@ class TFrame(wx.Frame):
         """
 
         info = wx.AboutDialogInfo()
-        info.Name = "PAWS"
-        info.Version = "2.1.0"
-        info.Copyright = "© 1998–2016 Roger Plowman & Matthias C. Hormann"
+        info.Name = u"PAWS"
+        info.Version = u"2.1.0"
+        info.Copyright = u"© 1998–2016 Roger Plowman, Matthias C. Hormann"
         info.Description = wordwrap(
-            "PAWS is the Python Adventure Writing System, "
-            "a software to play and develop Interactive Fiction with. "
-            "It was originally developed by Roger Plowman and continued "
-            "in 2016 by Matthias C. Hormann, just for the fun of it.",
+            u"PAWS is the Python Adventure Writing System, "
+            u"a software to play and develop Interactive Fiction with. "
+            u"It was originally developed by Roger Plowman and continued "
+            u"in 2016 by Matthias C. Hormann, just for the fun of it.",
             350, wx.ClientDC(self))
-        info.WebSite = ("https://github.com/Moonbase59/PAWS", "PAWS GitHub page")
-        info.Developers = ["Roger Plowman", "Kevin Russell", "Matthias C. Hormann"]
+        info.WebSite = (u"https://github.com/Moonbase59/PAWS", u"PAWS GitHub page")
+        info.Developers = [u"Roger Plowman", u"Kevin Russell", u"Matthias C. Hormann"]
         info.License = wordwrap(
-            "See LICENSE file.",
+            u"Please see the LICENSE file that came with the software.",
             350, wx.ClientDC(self))
 
         # show it
