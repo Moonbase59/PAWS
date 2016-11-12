@@ -98,10 +98,10 @@ To avoid complaints from the desktop environment, you _might_ need to make the n
 
 Once started, from PAWS’ terminal window select **File/Pick Game …**, pick a game and play it. Games are all the `*.py` files in the starting directory. This is also why we used the extension `*.pyy` for `LoadTerminal` – it won’t show up in the game file browser.
 
-![Linux](linux.png "Linux Screenshot")
-    _Linux Screenshot_
+![Linux](linux.png "Linux Screenshot")   
+_Linux Screenshot_
 
-![Windows](windows.png "Windows Screenshot")
-    _Windows Screenshot_
+![Windows](windows.png "Windows Screenshot")   
+_Windows Screenshot_
 
 **Have fun!**
