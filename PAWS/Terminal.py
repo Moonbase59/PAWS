@@ -28,8 +28,7 @@ C="""
 import wx
 import TerminalFrame
 
-modules ={u'AboutDialog': [0, '', u'AboutDialog.py'],
- u'TerminalFrame': [1, 'Main frame of Application', u'TerminalFrame.py']}
+modules ={u'TerminalFrame': [1, 'Main frame of Application', u'TerminalFrame.py']}
 
 class BoaApp(wx.App):
     def OnInit(self):

@@ -336,9 +336,11 @@ class TFrame(wx.Frame):
 
         info = wx.AboutDialogInfo()
         info.Name = u"PAWS"
-        info.Version = u"2.1.0"
+        info.Version = Engine.Version
         info.Copyright = u"© 1998–2016 Roger Plowman, Matthias C. Hormann"
         info.Description = wordwrap(
+            u"Core Engine: v" + Engine.Version + u", "
+            u"Universe: v" + UniverseVersion + u"\n\n"
             u"PAWS is the Python Adventure Writing System, "
             u"a software to play and develop Interactive Fiction with. "
             u"It was originally developed by Roger Plowman and continued "

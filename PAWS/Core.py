@@ -4132,7 +4132,7 @@ class ClassEngine(ClassFundamental):
         self.SetUpGame = default_SetUpGame
         self.TurnHandler = default_TurnHandler
         self.UserSetUpGame = default_UserSetUpGame
-        self.Version = u"2.10"
+        self.Version = u"2.1.0"
         self.XlateCBEFunction = None
 
 class ClassBaseObject(ClassFundamental):

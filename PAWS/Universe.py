@@ -6292,14 +6292,14 @@ C="""
 #--- Universe Copyright - Don't change this!
 
 UniverseCopyright = u"""
-                    Copyright (c) 1998–2016 by Roger Plowman, Kevin Russell
+                    Copyright © 1998–2016 by Roger Plowman, Kevin Russell
                     and Matthias C. Hormann
                     """
 
 
 #--- Universe Version - Don't change this!
 
-UniverseVersion = u"2.10"
+UniverseVersion = u"2.1.0"
 
 #--- Replace Build Status Line And Set Up Game Methods
 
