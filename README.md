@@ -7,7 +7,7 @@ The project seems abandonend since about 2008, the web page doesn’t exist anym
 
 So I went about keeping and improving an already very sophisticated and well-written system and create what I blatantly call PAWS 2.1, while trying to keep it compatible with the olden but golden version 1.5 and 2.0.3 games out there, like the included "Thief’s Quest" (also written by Roger Plowman).
 
-It still requires **Python 2.7** to run, and **wxWidgets** being installed (either the older "unicode"-versions or the newer unicode-only version). [WxPython.org](https://wxpython.org/) even have [installers for Windows & MacOS](https://wxpython.org/download.php#msw).
+It still requires **Python 2.7** to run, and **wxPython** being installed (either the older "unicode"-versions or the newer unicode-only version). [WxPython.org](https://wxpython.org/) even have [installers for Windows & MacOS](https://wxpython.org/download.php#msw).
 
 **May PAWS never die and the Creative Force be with you!**
 
