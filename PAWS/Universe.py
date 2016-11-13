@@ -5634,7 +5634,9 @@ class ClassGoVerb(ClassBasicVerb):
 
     def SetMyProperties(self):
         """Sets default instance properties"""
-        self.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_NO_IOBJS
+        self.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + \
+            ALLOW_NO_IOBJS + \
+            ALLOW_OPTIONAL_DOBJS
         self.OkInDark = TRUE
 
     def Action(self):
