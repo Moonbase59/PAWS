@@ -2,6 +2,7 @@
 
 # COD version 1.3 modified slightly by Wolf to take advantage of new features
 # available in PAWS version 1.3.
+# Modified again by Matthias C. Hormann to be compatible with PAWS 2.1 (Unicode).
 
 #=================
 # Import Libraries
