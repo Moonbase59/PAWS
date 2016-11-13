@@ -2771,15 +2771,15 @@ class ClassParser(ClassFundamental):
         # Parser Errors
         #--------------
 
-        self.NoVerb = u"There's no verb in that sentence."
+        self.NoVerb = u"There’s no verb in that sentence."
         self.NoPreposition = u"'%s' needs a preposition."
-        self.NoPreviousCommand = u"You haven't done anything yet!"
-        self.NoSuchVerbPreposition = u"I don't recognize that verb/preposition(s) combination"
+        self.NoPreviousCommand = u"You haven’t done anything yet!"
+        self.NoSuchVerbPreposition = u"I don’t recognize that verb/preposition(s) combination"
         self.MultipleVerbPrepositions = u"PROGRAMMING ERROR: Two or more verbs share this verb and preposition combination."
         self.MultipleActors = u"You can only tell one thing at a time to do something."
-        self.DObjsNotAllowed = u"'%s' can't have any direct objects."
-        self.IObjsNotAllowed = u"'%s' can't have any indirect objects."
-        self.NotInVocabulary = u"I don't know the word '%s'."
+        self.DObjsNotAllowed = u"'%s' can’t have any direct objects."
+        self.IObjsNotAllowed = u"'%s' can’t have any indirect objects."
+        self.NotInVocabulary = u"I don’t know the word '%s'."
 
         #---------------------------
         # Parts Of Speech Dictionary
