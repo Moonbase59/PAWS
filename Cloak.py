@@ -291,8 +291,8 @@ Hook.SetDesc(u"Take", u"The hook is screwed to the wall.")
 Hook.SetDesc(u"L", u"""
                   It's just a small brass hook,
                   {Choose (Cloak in Self().Contents,
-                           " with a cloak hanging on it.",
-                           " screwed to the wall.")}
+                           u" with a cloak hanging on it.",
+                           u" screwed to the wall.")}
                   """)
 
 #--------------------------
