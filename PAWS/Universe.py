@@ -327,7 +327,8 @@ def Universe_BuildStatusLine(LeftSideText=None):
 
     if not LeftSideText: LeftSideText = Game.Name
 
-    RightSide = u" Score: " + repr(Global.CurrentScore) + \
+    RightSide = u" Health: " + Global.Player.HealthPercent(FALSE) + \
+                u" Score: " + repr(Global.CurrentScore) + \
                 u" Turn: " + repr(Global.CurrentTurn) + u"  "
 
     SLL = 80 # Terminal.MaxScreenColumns
@@ -505,6 +506,58 @@ def Universe_SetUpGame():
 
     for Object in Global.Player.Contents:
         Global.Player.Memorize(Object)
+
+def Universe_AfterTurnHandler():
+    """
+    The Pre-Turn Handler is called just before the user is allowed to enter
+    his command. It is called whether or not the last turn was successful
+    or even understood.
+    It is used here to heal the players, by adding the Healing points for
+    rooms stayed in and items carried.
+    If you want the healing features in your own game, override the class
+    "Engine.AfterTurnHandler" with your own and call Universe's at the end:
+
+        def MyGame_AfterTurnHandler():
+            …
+            Universe_AfterTurnHandler
+
+        Engine.AfterTurnHandler = MyGame_AfterTurnHandler
+    """
+
+    for Actor in Global.ActorList:
+        # There might be an actor that has no Where()
+        if Actor.Where():
+            # add points for being in healing rooms
+            # A room can also be "toxic" by having a negative Healing value!
+            if hasattr(Actor.Where(), u"Healing") and Actor.Where().Healing != 0:
+                # update silently
+                Actor.IncrementHealth(Actor.Where().Healing, TRUE)
+            # add points for carrying healing objects
+            # an object can also be poisonous/radioactive
+            # by having a negative Healing value!
+            for Object in Actor.Contents:
+                if hasattr(Object, u"Healing") and Object.Healing != 0:
+                    # update silently
+                    Actor.IncrementHealth(Object.Healing, TRUE)
+
+Engine.AfterTurnHandler = Universe_AfterTurnHandler
+
+def Universe_PostGameWrapUp():
+    """
+    Post-Game Warp-Up
+    The player has lost, i.e. died.
+    """
+
+    if Global.Player.Health <= 0:
+        Say(u"""
+            ~p
+            ~b Surprise! You have DIED because you didn’t care about your health! ~l
+            ~p
+            I wish you more luck next time …
+            ~p
+            """)
+
+Engine.PostGameWrapUp = Universe_PostGameWrapUp
 
 
 def You():
@@ -2240,6 +2293,16 @@ class ClassBasicThing(ClassBaseObject):
         # explosives!
 
         self.Weight = 0
+
+        #--------
+        # Healing
+        #--------
+
+        # The magic healing value of a room is the number of points it adds
+        # to a player's Health for each turn he stays in this room.
+        # It is usually handled in the PreTurnHandler.
+
+        self.Healing = 0
 
     def AllowedByVerbAsDObj(self):
         """
@@ -3985,6 +4048,12 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         self.IsOpen     = TRUE  # actors must be open (inventory)
         self.IsOpenable = TRUE  # must be both Openable & Open to receive gifts
         self.Weight     = 1750  # 175 pounds (g.p. = 1/10 pound)
+        # MaxHealth depends on weight of an actor, because a small rock
+        # will more easily kill a rabbit than a 1-ton dragon.
+        # It is multiplied by a "shielding factor 10%", i.e. a player
+        # in heavy armor has more health than a naked one.
+        self.MaxHealth  = self.Weight * 1 # light clothing
+        self.Health     = self.MaxHealth   # initially 100% = MaxHealth
 
         #--------------------
         # Format Descriptions
@@ -4006,13 +4075,23 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         return u"yourself"
 
     def Attack(self, Weapon):
+        """
+        The "Being under attack" method.
+        This should check if an attack is possible, and if so,
+        decrease Actor’s health points up to stating a premature
+        game ending (by actor’s death) by setting
+        Global.GameState = FINISHED
+        """
+
         # For the moment, just don’t allow us being attacked.
         # You'll need to override this in your came if so desired.
         # Weapon can be "None"
         if not Weapon:
             ADesc = 'a weapon'
+            Damage = 0
         else:
             ADesc = Weapon.ADesc()
+            Damage = Weapon.Damage
 
         # don't let anyone attack themselves
         if id(self) == id(P.CA()):
@@ -4029,9 +4108,92 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         else:
             Complaint += u"!« ~l"
 
-        Complaint += u" ~n Oh well, seems the world is quite at peace here …"
+        # Here would be the health & damage logic
+        self.IncrementHealth(-Damage)
+        Complain(Complaint)
+        return TURN_ENDS
 
-        return Complain(Complaint)
+    # Health Percent as String for display.
+    # We need an uncolored version for the status line, too.
+
+    def HealthPercent(self, colored=TRUE):
+        Percent = float(self.Health) / float(self.MaxHealth) * 100.0
+        Text = u"%.0f%%" % Percent
+        if colored:
+            # show with yellow background if < 50%
+            if Percent < 25.0:
+                Text = u" ~blrd " + Text + u" ~l "
+            # show with red background if < 25%
+            elif Percent < 50.0:
+                Text = u" ~blbr " + Text + u" ~l "
+        return Text
+
+    def IncrementHealth(self, Amount, Silent=FALSE):
+        """
+        This function decrements the player's health, and lets the player know
+        when it happens. Use this function with a negative Amount to increment the
+        player's health.
+        Player's health can be 0-x points, it's being decreased by attacks
+        (by the weapon's damage value). If the health of the global player
+        goes to zero, the game will be finished.
+        Health can also increase, i.e. by taking magical potions or staying
+        at healing places.
+        """
+
+        #-----------------------
+        # Adjust Score By Amount
+        #-----------------------
+
+        # force it silent if at or above MaxHealth: there's no point to tell
+        if self.Health >= self.MaxHealth and \
+                self.Health + Amount >= self.MaxHealth:
+            Silent = TRUE
+
+        self.Health += Amount
+
+        # not below 0%
+        if self.Health <= 0:
+            self.Health = 0
+            # if Global Player's Health at zero, the game is finished!
+            if self == Global.Player:
+                Global.GameState = FINISHED
+
+        # and not above 100%
+        if self.Health > self.MaxHealth:
+            self.Health = self.MaxHealth
+
+        #---------------------------------
+        # Determine proper word for Change
+        #---------------------------------
+
+        # We want to say decreased for a negative amount, increased for a positive
+        # one, and nothing at all for a 0 amount.
+
+        ChangeWord = u"not changed"
+        if Amount < 0: ChangeWord = u"decreased"
+        if Amount > 0: ChangeWord = u"increased"
+
+        #--------------
+        # Build Comment
+        #--------------
+
+        Comment = u"[Your health just %s by %d points. It is now at %s.] ~n" % \
+                  (ChangeWord, abs(Amount), self.HealthPercent())
+
+        #------------------------
+        # Say it if health changed
+        #------------------------
+
+        # If the health changed and Silent is false (not TRUE is FALSE) then
+        # say comment, otherwise don't. Silent health changes can be handy
+        # if you don't want the player to know when their health changes.
+        if self != Global.Player:
+            Silent = TRUE
+
+        if Amount != 0 and not Silent:
+            Say(Comment)
+            Engine.BuildStatusLine(Global.Player.Where().SDesc())
+            Terminal.DisplayStatusLine(Global.StatusLine)
 
     def Enter(self,Object):
         """
@@ -5120,8 +5282,8 @@ class ClassWeapon(ClassItem):
         """Sets default instance properties"""
 
         self.IsWeapon = TRUE
-        self.Weight = 5 # used to compare weapons in combat
-        self.Damage = 5 # default
+        self.Weight = 10 # 1 pound (rock)
+        self.Damage = self.Weight * 10 # weight x "damage factor %"
         self.Location = None
         #self.NamePhrase = u"weapon"
 
@@ -6224,6 +6386,29 @@ class ClassScoreVerb(ClassSystemVerb):
 
         return TURN_CONTINUES
 
+class ClassHealthVerb(ClassSystemVerb):
+    """Health verb"""
+
+    def Action(self):
+        """Action performed for Health"""
+
+        #------------------------
+        # Display Health To Player
+        #------------------------
+
+        # Notice we use the str() function to convert the numeric score into a
+        # string that the % function can handle properly.
+
+        Say(u"Your health is currently at %s (%s of %s points)." % \
+            (Global.Player.HealthPercent(),
+            str(Global.Player.Health), str(Global.Player.MaxHealth)))
+
+        #----------------------
+        # Return TURN_CONTINUES
+        #----------------------
+
+        return TURN_CONTINUES
+
 class ClassSmellVerb(ClassBasicVerb):
     """Sniff Verb"""
 
@@ -6694,6 +6879,7 @@ GoTowardVerb = ClassGoVerb(u"go,walk,run,move", u"toward")
 GreetVerb = ClassHelloVerb(u"greet,salute")
 HangOnVerb = ClassInsertVerb(u"hang", u"on")
 HangOnVerb.ExpectedPreposition = u"on"
+HealthVerb = ClassHealthVerb(u"health")
 HelloVerb = ClassHelloVerb(u"hello,hi")
 HelloThereVerb = ClassHelloVerb(u"hello,hi", u"there")
 HelpVerb = ClassHelpVerb(u"help,assist")

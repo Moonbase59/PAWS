@@ -249,6 +249,9 @@ Game.HelpText = u"""
     Thief’s Quest involves use of all 5 senses, sight, hearing,
     taste, touch, and smell. To win the game you must use ~i all ~l
     your senses, not just your eyes. ~p
+    You should also keep an eye on your Health indicator on the status line,
+    there just ~i might ~l be some magical rooms or devices that are good or
+    not so good for you. And of course you might be attacked … ~p
     The player’s character has been forced into a situation not
     of their own choosing where nothing is as it seems and
     paranoia is just common sense. Trust nothing, examine
@@ -852,6 +855,29 @@ class MakeDruid(MakeTQActor):
     we put them on a single line. This is legal Python syntax.
     """
 
+    def SetMyProperties(self):
+        """
+        Sets default instance properties.
+
+        Notice we're extending ClassActor's init behavior. This is
+        necessary because we're adding (and changing) default valued
+        instance properties.
+        """
+
+        self.Bulk       = 24    # 24 cubic feet (6' x 2' x 2')
+        self.IsActor    = TRUE
+        self.MaxBulk    = 10    # can carry 10 cubic feet
+        self.MaxWeight  = 500   # can carry 50 pounds (gold piece = 1/10 pound)
+        self.IsOpen     = TRUE  # actors must be open (inventory)
+        self.IsOpenable = TRUE  # must be both Openable & Open to receive gifts
+        self.Weight     = 1750  # 175 pounds (g.p. = 1/10 pound)
+        # MaxHealth depends on weight of an actor, because a small rock
+        # will more easily kill a rabbit than a 1-ton dragon.
+        # It is multiplied by a "shielding factor %", i.e. a player
+        # in heavy armor has more health than a naked one.
+        self.MaxHealth  = self.Weight * 1 # light clothing
+        self.Health     = self.MaxHealth   # initially 100% = MaxHealth
+
     def Take(self,Multiple=FALSE):
         """What happens when the player tries to take the druid."""
 
@@ -978,8 +1004,31 @@ class MakeJackalope(MakeTQActor):
     #FIXME: Following around not yet implemented.
 
     def SetMyProperties(self):
+        """
+        Sets default instance properties.
+
+        Notice we're extending ClassActor's init behavior. This is
+        necessary because we're adding (and changing) default valued
+        instance properties.
+        """
+
         """Talking to the jackalope gives player five points."""
         self.Value = 5
+
+        self.Bulk       = 3     # 3 cubic feet (1' x 3' x 1')
+        self.IsActor    = TRUE
+        self.MaxBulk    = 1     # can carry 1 cubic feet
+        self.MaxWeight  = 20    # can carry 2 pounds (gold piece = 1/10 pound)
+        self.IsOpen     = TRUE  # actors must be open (inventory)
+        self.IsOpenable = TRUE  # must be both Openable & Open to receive gifts
+        self.Weight     = 200   # 20 pounds (g.p. = 1/10 pound)
+        # MaxHealth depends on weight of an actor, because a small rock
+        # will more easily kill a rabbit than a 1-ton dragon.
+        # It is multiplied by a "shielding factor 10%", i.e. a player
+        # in heavy armor has more health than a naked one.
+        # small animal but with antlers and sharp teeth
+        self.MaxHealth  = self.Weight * 3
+        self.Health     = self.MaxHealth   # initially 100% = MaxHealth
 
     def Take(self,Multiple=FALSE):
         """What happens when the player tries to take the Jackalope."""
@@ -1126,8 +1175,31 @@ class MakeDryad(MakeTQActor):
     """
 
     def SetMyProperties(self):
+        """
+        Sets default instance properties.
+
+        Notice we're extending ClassActor's init behavior. This is
+        necessary because we're adding (and changing) default valued
+        instance properties.
+        """
+
         """Talking to the dryad gives player two points."""
         self.Value = 2
+
+        self.Bulk       = 14    # 14 cubic feet (4.5' x 1.5' x 2')
+        self.IsActor    = TRUE
+        self.MaxBulk    = 8     # can carry 8 cubic feet
+        self.MaxWeight  = 400   # can carry 40 pounds (gold piece = 1/10 pound)
+        self.IsOpen     = TRUE  # actors must be open (inventory)
+        self.IsOpenable = TRUE  # must be both Openable & Open to receive gifts
+        self.Weight     = 1000  # 100 pounds (g.p. = 1/10 pound)
+        # MaxHealth depends on weight of an actor, because a small rock
+        # will more easily kill a rabbit than a 1-ton dragon.
+        # It is multiplied by a "shielding factor 10%", i.e. a player
+        # in heavy armor has more health than a naked one.
+        # small fragile woman
+        self.MaxHealth  = self.Weight * 1
+        self.Health     = self.MaxHealth   # initially 100% = MaxHealth
 
     def Take(self, Multiple=FALSE):
         self.MoveInto(None)
@@ -1417,6 +1489,7 @@ C="""
 
 BirchGrove = MakeOutside()
 BirchGrove.NamePhrase = u"Birch Grove"
+BirchGrove.Healing = 200 # it’s magic healing value
 BirchGrove.SetDesc(u"L", u"""
     You are in a grove of silvery birch trees. The air here is filled with
     birdsong, and the grove is bright with afternoon sunlight. This grove
@@ -2248,7 +2321,8 @@ C="""
 Mandala = ClassItem(u"mandala,circle", u"crystal,quartered")
 Mandala.Bulk = 1
 Mandala.Value = 60
-Mandala.Weight = 1
+Mandala.Weight = 5
+Mandala.Healing = 10 # magical healing property
 Mandala.SetDesc(u"Feel", u"""
     The mandala is cool and smooth to the touch,it weighs a few ounces
     but has a curiously solid feel to it.
@@ -2659,8 +2733,9 @@ C="""
   happens when the default values are used.
   """
 Rock = ClassWeapon(u"rock,stone,words", u"small,gray,grey,illegible,tiny,scratched")
-Rock.Bulk = 5
-Rock.Weight = 10
+Rock.Bulk = 1 # cubic feet (it's actually smaller but 1 is minimum)
+Rock.Weight = 10 # 1 pound
+Rock.Damage = Rock.Weight * 10 # weight x "damage factor %"
 Rock.SetDesc(u"Feel", u"""
     It weighs about a pound, and is smooth like a rock from a stream,
     but not polished. It’s a typical rock.
