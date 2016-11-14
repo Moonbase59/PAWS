@@ -3983,6 +3983,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         self.MaxBulk    = 10    # can carry 10 cubic feet
         self.MaxWeight  = 500   # can carry 50 pounds (gold piece = 1/10 pound)
         self.IsOpen     = TRUE  # actors must be open (inventory)
+        self.IsOpenable = TRUE  # must be both Openable & Open to receive gifts
         self.Weight     = 1750  # 175 pounds (g.p. = 1/10 pound)
 
         #--------------------
@@ -4003,6 +4004,34 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         """
 
         return u"yourself"
+
+    def Attack(self, Weapon):
+        # For the moment, just don’t allow us being attacked.
+        # You'll need to override this in your came if so desired.
+        # Weapon can be "None"
+        if not Weapon:
+            ADesc = 'a weapon'
+        else:
+            ADesc = Weapon.ADesc()
+
+        # don't let anyone attack themselves
+        if id(self) == id(P.CA()):
+            return Complain(u"Huh? Attacking yourself?")
+
+        # You find him unimpressed, stating »You can’t attack me with a rock.«
+        Complaint = u"You find %s unimpressed, stating ~i »%s can’t attack %s with %s" % \
+            (self.TheDesc(), SCase(self.FormatYou), self.FormatMe, ADesc)
+
+        # append "... mortal!" only if the player attacks someone else.
+        # If the player gets attacked, he wont call the other one "mortal" :-)
+        if id(P.CA()) == id(Global.Player):
+            Complaint += u", mere mortal!« ~l"
+        else:
+            Complaint += u"!« ~l"
+
+        Complaint += u" ~n Oh well, seems the world is quite at peace here …"
+
+        return Complain(Complaint)
 
     def Enter(self,Object):
         """
@@ -5081,6 +5110,23 @@ class ClassContainer(ServiceContainIn,ClassItem):
         """Sets default instance properties"""
         pass
 
+class ClassWeapon(ClassItem):
+    """
+    Weapons are items that can be used in combat.
+    They have a damaging factor and the "IsWeapon" attribute.
+    """
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+
+        self.IsWeapon = TRUE
+        self.Weight = 5 # used to compare weapons in combat
+        self.Damage = 5 # default
+        self.Location = None
+        #self.NamePhrase = u"weapon"
+
+
+
 #********************************************************************************
 #                U N I V E R S E   V E R B   C L A S S E S
 #
@@ -5437,6 +5483,68 @@ class ClassActivateVerb(ClassBasicVerb):
 
         return TURN_CONTINUES
 
+class ClassAttackVerb(ClassBasicVerb):
+    """Defines a verb to attack an object"""
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_ONE_DOBJ + ALLOW_NO_IOBJS
+        self.OkInDark = TRUE    # TODO: Check if feasible
+
+    def Action(self):
+        # Check if current player has any weapons
+        HasWeapon = FALSE
+        SelectedWeapon = None
+        SelectedDamage = 0
+        for i in P.CA().Contents:
+            if hasattr(i, u"IsWeapon") and i.IsWeapon == TRUE:
+                HasWeapon = TRUE
+                if i.Damage >= SelectedDamage:
+                    SelectedWeapon = i
+                    SelectedDamage = i.Damage
+        if not HasWeapon:
+            return Complain(u"{SCase(You())} {Agree('do')} not have any weapons!")
+
+        DirectObject = P.DOL()[0]
+        DirectObject.MakeCurrent()
+        DirectObject.MarkPronoun()
+
+        if not hasattr(DirectObject, u"Attack"):
+            return Complain(u"I don’t know how to attack %s." % DirectObject.ADesc())
+
+
+        # Say what's happening
+        Say(u"%s try to attack %s with %s. ~n" % \
+            (SCase(You()), DirectObject.TheDesc(), SelectedWeapon.TheDesc()))
+
+        # Let Attack know who's attacking -- P.CA() in this case
+        return DirectObject.Attack(SelectedWeapon)
+
+class ClassAttackWithVerb(ClassBasicVerb):
+    """Defines a verb to attack an object (that requires a weapon)."""
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_ONE_DOBJ + ALLOW_ONE_IOBJ
+        self.OkInDark = TRUE # TODO: Check if feasible
+
+    def Action(self):
+        DirectObject = P.DOL()[0]
+        IndirectObject = P.IOL()[0]
+        DirectObject.MakeCurrent()
+        DirectObject.MarkPronoun()
+
+        Complaint = SCase(IndirectObject.TheDesc()) + " is not a weapon!"
+        if not hasattr(IndirectObject, u"IsWeapon"):
+            return Complain(Complaint)
+        elif IndirectObject.IsWeapon == FALSE:
+            return Complain(Complaint)
+
+        if not hasattr(DirectObject, u"Attack"):
+            return Complain(u"I can’t attack %s using %s." %(DirectObject.ADesc(), IndirectObject.ADesc()))
+
+        return DirectObject.Attack(IndirectObject)
+
 class ClassCloseVerb (ClassBasicVerb):
     """Defines a verb to close an object."""
 
@@ -5711,6 +5819,24 @@ class ClassInsertVerb (ClassBasicVerb):
 
     def Action(self):
         Multiple = len(P.DOL()) > 1
+
+        # Should not insert things into an actor!
+        if P.IOL()[0].CheckActor():
+            # build list of things he wanted to insert
+            Result = P.DOL()[0].ADesc()
+            TempList = []
+            if Multiple:
+                for i in range (0, len(P.DOL())):
+                    TempList.append(P.DOL()[i].ADesc())
+                    print TempList
+                Result = string.join(TempList[:-1], u", ") + \
+                    u" and " + TempList[-1]
+                print Result
+            return Complain(u"""
+                Stuffing things like %s into living beings
+                is considered very rude, even here!
+                """ % Result)
+
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
@@ -6463,8 +6589,9 @@ Global.VerbAgreementDict = {u"be":             [u"are", u"is"],
                             u"do":             [u"do", u"does"],
                             u"go":             [u"go", u"goes"],
                             u"have":           [u"have", u"has"],
-                            u"contractedbe":   [u"’re,'re", u"’s"],
-                            u"contractedhave": [u"’ve,'ve", u"’s"]}
+                            u"try":            [u"try", u"tries"],
+                            u"contractedbe":   [u"’re", u"’s"],
+                            u"contractedhave": [u"’ve", u"’s"]}
 
 #--- Compass Direction List
 
@@ -6540,6 +6667,8 @@ C="""
 
 AgainVerb = ClassSystemVerb(u"g,again")
 P.AP().Again = AgainVerb
+AttackVerb = ClassAttackVerb(u"attack,assault,combat,fight")
+AttackWithVerb = ClassAttackWithVerb(u"attack,assault,combat,fight", u"with,using")
 ClimbVerb = ClassGoVerb(u"climb")
 CloseVerb = ClassCloseVerb(u"close,shut")
 CommunicateWithVerb = ClassHelloVerb(u"communicate,speak,talk", u"with")
@@ -6555,7 +6684,7 @@ EastVerb = ClassTravelVerb(u"east,e")
 EastVerb.TravelDirection = East
 ExamineVerb = ClassLookAtVerb(u"examine,inspect,x")
 ExtinguishVerb = ClassDeactivateVerb(u"deactivate,extinguish,douse")
-ExtinguishWithVerb = ClassDeactivateVerb(u"extinguish,douse", u"with")
+ExtinguishWithVerb = ClassDeactivateVerb(u"extinguish,douse", u"with,using")
 ExtinguishWithVerb.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_ONE_IOBJ
 FeelVerb = ClassFeelVerb(u"feel,touch")
 FeelAroundVerb = ClassFeelVerb(u"feel", u"around")
@@ -6573,13 +6702,13 @@ InVerb = ClassTravelVerb(u"in,enter,ingress")
 InVerb.TravelDirection = In
 LightVerb = ClassActivateVerb(u"light,activate")
 LightVerb.ActivationProperty = u"IsLit"
-LightWithVerb = ClassActivateVerb(u"light", u"with")
+LightWithVerb = ClassActivateVerb(u"light", u"with,using")
 LightWithVerb.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_ONE_IOBJ
 LightWithVerb.ActivationProperty = u"IsLit"
 ListenVerb = ClassListenVerb(u"listen")
 ListenToVerb = ClassListenToVerb(u"listen", u"to")
 LockVerb = ClassLockVerb(u"lock,latch,hook")
-LockWithVerb = ClassLockWithVerb(u"lock", u"with")
+LockWithVerb = ClassLockWithVerb(u"lock", u"with,using")
 LookVerb = ClassLookVerb(u"look,gaze,l")
 LookAroundVerb = ClassLookVerb(u"look,l", u"around")
 LookAtVerb = ClassLookAtVerb(u"look,l", u"at")
@@ -6600,13 +6729,13 @@ OpenVerb = ClassOpenVerb(u"open")
 OutVerb = ClassTravelVerb(u"out,outside,exit")
 OutVerb.TravelDirection = Out
 PickUpVerb = ClassTakeVerb(u"pick", u"up")
-PutBehindVerb = ClassInsertVerb(u"put,place,hide,set", u"behind")
+PutBehindVerb = ClassInsertVerb(u"put,place,hide,set,stuff", u"behind")
 PutBehindVerb.ExpectedPreposition = u"behind"
-PutInVerb = ClassInsertVerb(u"put,place,insert,set", u"in,into,inside")
+PutInVerb = ClassInsertVerb(u"put,place,insert,set,stuff", u"in,into,inside")
 PutOntoVerb = ClassInsertVerb(u"put,place,pile,stack,set,use", u"on,onto,with")
 PutOntoVerb.ExpectedPreposition = u"on"
 PutOutVerb = ClassDeactivateVerb(u"put", u"out")
-PutUnderVerb = ClassInsertVerb(u"put,place,hide,set", u"under,underneath,beneath")
+PutUnderVerb = ClassInsertVerb(u"put,place,hide,set,stuff", u"under,underneath,beneath")
 PutUnderVerb.ExpectedPreposition = u"under"
 QuitVerb = ClassQuitVerb(u"quit")
 ReadVerb = ClassReadVerb(u"read")
@@ -6633,14 +6762,14 @@ TurnOffVerb = ClassDeactivateVerb(u"turn", u"off")
 TurnOnVerb = ClassActivateVerb(u"turn", u"on")
 TurnOnVerb.ActivationProperty = u"IsActivated"
 UnlockVerb = ClassUnlockVerb(u"unlock,unhook,unlatch")
-UnlockWithVerb = ClassUnlockWithVerb(u"unlock", u"with")
+UnlockWithVerb = ClassUnlockWithVerb(u"unlock", u"with,using")
 UpVerb = ClassTravelVerb(u"up,u,ascend")
 UpVerb.TravelDirection = Up
 UpstreamVerb = ClassTravelVerb(u"upstream,us")
 UpstreamVerb.TravelDirection = Upstream
 VerboseVerb = ClassVerboseVerb(u"verbose")
 WaitVerb = ClassWaitVerb(u"wait,z,rest,stay,sleep,idle,procrastinate")
-WasteTime = ClassWaitVerb(u"waste", u"time")
+WasteTimeVerb = ClassWaitVerb(u"waste", u"time")
 WestVerb = ClassTravelVerb(u"west,w")
 WestVerb.TravelDirection = West
 

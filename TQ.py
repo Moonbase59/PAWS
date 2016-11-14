@@ -2477,6 +2477,7 @@ MoundClearing.StartingLocation = Clearing
 
 #-------- Oak Tree
 OakTree = MakeOakTree(u"tree", u"oak")
+OakTree.Article = u"an"
 OakTree.Value = 10
 OakTree.SetDesc(u"Feel", u"""
     The tree seems to tingle under your fingertips, you can sense the life of
@@ -2657,7 +2658,7 @@ C="""
   haven't defined any of the major descriptions. This is to show you what
   happens when the default values are used.
   """
-Rock = ClassItem(u"rock,stone,words", u"small,gray,grey,illegible,tiny,scratched")
+Rock = ClassWeapon(u"rock,stone,words", u"small,gray,grey,illegible,tiny,scratched")
 Rock.Bulk = 5
 Rock.Weight = 10
 Rock.SetDesc(u"Feel", u"""
