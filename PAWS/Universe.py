@@ -4192,8 +4192,10 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
 
         if Amount != 0 and not Silent:
             Say(Comment)
-            Engine.BuildStatusLine(Global.Player.Where().SDesc())
-            Terminal.DisplayStatusLine(Global.StatusLine)
+
+        # we need to update the status line in any case (SOME feedback needed!)
+        Engine.BuildStatusLine(Global.Player.Where().SDesc())
+        Terminal.DisplayStatusLine(Global.StatusLine)
 
     def Enter(self,Object):
         """
