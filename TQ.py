@@ -243,15 +243,22 @@ Game.HelpText = u"""
     or ›x rock‹. To really inspect an item with a fine tooth
     comb you might type ›x rock closely‹ or ›inspect rock
     carefully‹. ~p
+
     Likewise, if you want to be more precise in other commands
     you might say things like ›take rock carefully‹, ›move east
     slowly‹, etc. ~p
-    Thief’s Quest involves use of all 5 senses, sight, hearing,
-    taste, touch, and smell. To win the game you must use ~i all ~l
-    your senses, not just your eyes. ~p
+
     You should also keep an eye on your Health indicator on the status line,
     there just ~i might ~l be some magical rooms or devices that are good or
     not so good for you. And of course you might be attacked … ~p
+
+    Sometimes you’ll need your brain—there is a faint possibility that
+    Magic Words like ›RDBQDS‹ might need to be decoded before use. ~p
+
+    Thief’s Quest involves use of all 5 senses: sight, hearing,
+    taste, touch, and smell. To win the game you must use ~i all ~l
+    your senses, not just your eyes. ~p
+
     The player’s character has been forced into a situation not
     of their own choosing where nothing is as it seems and
     paranoia is just common sense. Trust nothing, examine

@@ -586,6 +586,30 @@ def Random(percent):
     else:
         return FALSE
 
+# A simple Caesar Cipher (offset letters in Alphabet) to be used in the game
+# for (quite) easy to decode "magic" messages.
+class CaesarCipher:
+
+    def __init__(self):
+        self.Alphabet = u'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ' + \
+            u'abcdefghijklmnopqrstuvwxyzäöüß'
+
+    # shift backwards so "decoding" will be easier by just looking at it ;-)
+    def encode(self, text, shift = -1):
+        Cipher = u''
+        for c in text:
+            if c in self.Alphabet:
+                Cipher += self.Alphabet[(self.Alphabet.index(c)+shift) % \
+                    len(self.Alphabet)]
+            else:
+                Cipher += c
+        return Cipher
+
+    def decode(self, text, shift = -1):
+        return self.encode(text, -shift)
+
+# Create an instance to be used in the game.
+CaesarCipher = CaesarCipher()
 
 #********************************************************************************
 #                    U N I V E R S E     S E R V I C E S
