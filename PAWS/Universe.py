@@ -5746,6 +5746,41 @@ class ClassConfigureTerminalVerb(ClassSystemVerb):
 
         return TURN_CONTINUES
 
+class ClassDanceWithVerb(ClassBasicVerb):
+    """Defines a verb to dance with an actor."""
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_OPTIONAL_DOBJS + ALLOW_NO_IOBJS
+        self.OkInDark = FALSE # TODO: Check if feasible
+
+    def Action(self):
+        if len(P.DOL()) < 1:
+            Complain(u"""
+                ~i »They dance alone …« ~l Some sadness in your eyes and
+                maybe even tears, you dance for a while … until all this
+                completely overwhelms you and you simply MUST stop.
+                """)
+            return TURN_ENDS
+
+        if len(P.DOL()) > 1:
+            return Complain(u"Decide! You can only have one partner for a dance.")
+
+        DirectObject = P.DOL()[0]
+
+        # only dance with actors, not things
+        if DirectObject.CheckActor():
+            Complain(u"""
+                Dancing with %s might be appalling
+                but you can’t persuade %s.
+                """ % (DirectObject.TheDesc(), DirectObject.PronounDesc()))
+        else:
+            Complain(u"""
+                Dance with %s? You have strange fantasies!
+                """ % DirectObject.ADesc())
+
+        return TURN_CONTINUES
+
 class ClassDeactivateVerb (ClassBasicVerb):
     """
     This verb allows the player to deactivate an object (usually a light
@@ -5929,6 +5964,26 @@ class ClassGoVerb(ClassBasicVerb):
         #--------------------
 
         return P.CA().Travel(Global.CurrentDObjList[0])
+
+class ClassJumpVerb(ClassBasicVerb):
+    """Jumping up and down"""
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + \
+            ALLOW_NO_IOBJS + \
+            ALLOW_OPTIONAL_DOBJS
+        self.OkInDark = TRUE
+
+    def Action(self):
+        """
+        Go action. This verb can respond appropriately to "go" or "go east
+        west" or "go east" (complaining in the first two instances).
+        """
+
+        Complain(u"You jump up and down angrily but nothing special happens.")
+        return TURN_ENDS
+
 
 class ClassHelloVerb(ClassBasicVerb):
     """Creates verb to handle Hello."""
@@ -6595,6 +6650,65 @@ class ClassWaitVerb(ClassSystemVerb):
         Say(u"Time passes.")
         return TURN_ENDS
 
+class ClassWishForVerb(ClassBasicVerb):
+    """Wish for things."""
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_OPTIONAL_DOBJS + ALLOW_NO_IOBJS
+        self.OkInDark = TRUE
+
+    def Action(self):
+
+        if len(P.DOL()) < 1:
+            return Complain(u"What are you wishing for?")
+
+        ObjectsWished = []
+        ObjectsCarried = []
+        for Object in P.DOL():
+            if Object in P.CA().Contents:
+                ObjectsCarried.append(Object.TheDesc())
+            else:
+                ObjectsWished.append(Object.ADesc())
+
+        StringCarried = u""
+        if ObjectsCarried:
+            if len(ObjectsCarried) > 1:
+                StringCarried = string.join(ObjectsCarried[:-1], u", ") + \
+                    u" and " + ObjectsCarried[-1]
+                Article = u"are"
+            else:
+                StringCarried = ObjectsCarried[0]
+                Article = "is"
+
+        if StringCarried:
+            Text1 = u"%s %s already here." % (SCase(StringCarried), Article)
+        else:
+            Text1 = u"Well, well …"
+
+        StringWished = u""
+        if ObjectsWished:
+            if len(ObjectsWished) > 1:
+                StringWished = string.join(ObjectsWished[:-1], u", ") + \
+                    u" and " + ObjectsWished[-1]
+                Article = u"are"
+            else:
+                StringCarried = ObjectsWished[0]
+                Article = u"is"
+
+        if StringWished:
+            Text2 = u"""
+                You’re wishing for %s …
+                But wishes are only granted in fairy tales!
+                """ % StringCarried
+        else:
+            Text2 = u"Open your eyes—all you wish for is already here!"
+
+
+        Complain(Text1 + u" ~n " + Text2)
+        return TURN_CONTINUES
+
+
 #********************************************************************************
 #                        U N I V E R S E   D A T A
 #
@@ -6860,6 +6974,8 @@ ClimbVerb = ClassGoVerb(u"climb")
 CloseVerb = ClassCloseVerb(u"close,shut")
 CommunicateWithVerb = ClassHelloVerb(u"communicate,speak,talk", u"with")
 ConfigureTerminalVerb = ClassConfigureTerminalVerb(u"configure", u"terminal")
+DanceVerb = ClassDanceWithVerb(u"dance")
+DanceWithVerb = ClassDanceWithVerb(u"dance", u"with,alone")
 DebugVerb = ClassDebugVerb(u"debug")
 DownVerb = ClassTravelVerb(u"down,d,descend")
 DownVerb.TravelDirection = Down
@@ -6873,7 +6989,7 @@ ExamineVerb = ClassLookAtVerb(u"examine,inspect,x")
 ExtinguishVerb = ClassDeactivateVerb(u"deactivate,extinguish,douse")
 ExtinguishWithVerb = ClassDeactivateVerb(u"extinguish,douse", u"with,using")
 ExtinguishWithVerb.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_ONE_IOBJ
-FeelVerb = ClassFeelVerb(u"feel,touch")
+FeelVerb = ClassFeelVerb(u"feel,touch,stroke")
 FeelAroundVerb = ClassFeelVerb(u"feel", u"around")
 GoVerb = ClassGoVerb(u"go,walk,run,move")
 GoToVerb = ClassGoVerb(u"go,walk,run,move", u"to")
@@ -6888,6 +7004,8 @@ HelpVerb = ClassHelpVerb(u"help,assist")
 InventoryVerb = ClassInventoryVerb(u"inventory,inven,i")
 InVerb = ClassTravelVerb(u"in,enter,ingress")
 InVerb.TravelDirection = In
+JumpVerb = ClassJumpVerb(u"jump")
+JumpUpDownVerb = ClassJumpVerb(u"jump", u"up,down")
 LightVerb = ClassActivateVerb(u"light,activate")
 LightVerb.ActivationProperty = u"IsLit"
 LightWithVerb = ClassActivateVerb(u"light", u"with,using")
@@ -6939,7 +7057,7 @@ SoutheastVerb = ClassTravelVerb(u"southeast,se")
 SoutheastVerb.TravelDirection = Southeast
 SouthwestVerb = ClassTravelVerb(u"southwest,sw")
 SouthwestVerb.TravelDirection = Southwest
-SpeakToVerb = ClassHelloVerb(u"speak,talk,mumble,murmur", u"to")
+SpeakToVerb = ClassHelloVerb(u"speak,talk,mumble,murmur,sing", u"to")
 TakeVerb = ClassTakeVerb(u"take,get,remove,steal")
 TakeInventoryVerb = ClassInventoryVerb(u"take", u"inventory")
 TakeStockVerb = ClassInventoryVerb(u"take", u"stock")
@@ -6960,6 +7078,8 @@ WaitVerb = ClassWaitVerb(u"wait,z,rest,stay,sleep,idle,procrastinate")
 WasteTimeVerb = ClassWaitVerb(u"waste", u"time")
 WestVerb = ClassTravelVerb(u"west,w")
 WestVerb.TravelDirection = West
+WishVerb = ClassWishForVerb(u"wish")
+WishForVerb = ClassWishForVerb(u"wish", u"for")
 
 #********************************************************************************
 #                     U N I V E R S E     O B J E C T S

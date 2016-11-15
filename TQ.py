@@ -1086,7 +1086,7 @@ class MakeJackalope(MakeTQActor):
                 unexpected—starts talking: ~p
 
                 ~i »I’m Jørge, the Jaunty Jackalope.
-                People call me a fabled and ancious creature, but as you can see
+                People call me a fabled and ancient creature, but as you can see
                 I’m still pretty much alive. Actually, I’m seeking for a mate,
                 but since we can only breed during heavy thunderstorms, you can
                 imagine how lonely I am. So if you keep me entertained with a
@@ -1507,7 +1507,7 @@ BirchGrove.SetDesc(u"Sound", u"""
 BirchGrove.SetDesc(u"Sky", u"""
     This is the only part of the forest that lets you catch even a glimpse of
     the sky. You can see bits of blue and white through the tree tops. It isn’t
-    much, but it lifts your spirts enormously.
+    much, but it lifts your spirits enormously.
     """)
 BirchGrove.SetDesc(u"Ground", u"""
     Unlike other parts of the forest, the leaves here are quite dry, in fact,
@@ -1547,9 +1547,9 @@ Brenin.NoExit = u"The valley wall bars further progress in that direction."
 Brenin.SetDesc(u"L", u"""
     You are standing under an incredible tree. It rears above you, at least
     five hundred feet tall. Its branches start fifty feet from the ground
-    and stretch a hundred feet from trunk to tip. Laying around the base of
+    and stretch a hundred feet from trunk to tip. Lying around the base of
     the tree are acorns the size of apples. Mistletoe hangs in great bunches
-    from the tree’s masssive trunk. The valley wall rises to the west.
+    from the tree’s massive trunk. The valley wall rises to the west.
     The only trail exits to the south.
     """)
 Brenin.SetDesc(u"Odor", u"""
@@ -1580,7 +1580,7 @@ Clearing.SetDesc(u"L", u"""
     the top, although it would be a hard climb. ~p
 
     In the face of the mound is a large opening, it appears to be a cavern.
-    Somehow, although it sounds, silly, you feel as though you have returned
+    Somehow, although it sounds silly, you feel as though you have returned
     home.
     """)
 Clearing.SetDesc(u"Odor", u"""

@@ -1,0 +1,11 @@
+throw at actor
+pray to
+kick actor
+approach/go near ?
+wish for s/th -> parser hits in too early
+order a whiskey
+
+----
+
+attack + direction = error
+
