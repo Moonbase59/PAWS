@@ -570,6 +570,18 @@ def Youm():
     """Synonym for current actor's FormatYoum property."""
     return P.CA().FormatYoum
 
+def Random(percent):
+    """
+    Return TRUE with a xx % chance.
+    So if something should happen with a 25% chance, you can write:
+        if Random(25):
+            …
+    """
+    if random.random() < float(percent/100.0):
+        return TRUE
+    else:
+        return FALSE
+
 
 #********************************************************************************
 #                    U N I V E R S E     S E R V I C E S
@@ -5768,12 +5780,35 @@ class ClassDanceWithVerb(ClassBasicVerb):
 
         DirectObject = P.DOL()[0]
 
-        # only dance with actors, not things
+        # Since a real dance takes some time, we return TURN_ENDS on a dance,
+        # TURN_CONTINUES otherwise.
+        # And, of course, only dance with Actors, not Things!
         if DirectObject.CheckActor():
-            Complain(u"""
-                Dancing with %s might be appalling
-                but you can’t persuade %s.
-                """ % (DirectObject.TheDesc(), DirectObject.PronounDesc()))
+            if Random(25):
+                # Let us have a 25% chance for a dance :-)
+                Complain(u"""
+                    A soothing and somehow magical tune can suddenly be heard.
+                    Enchanted, both you and %s move closer together, gently
+                    lock hands and slowly start dancing. Both of you don’t
+                    break eye contact during the dance. ~p
+
+                    Still overwhelmed by your feelings, unable to speak, you
+                    bow and gently part. This must have been the most enchanting
+                    experience you’ve had for a long time. You feel lighthearted
+                    and refreshed now. How dearly you hope to meet %s again …
+                    """ % (DirectObject.TheDesc(), DirectObject.PronounDesc()))
+                # Because this was such a wonderful experience and that’s
+                # good for the health of both of you, we also increase Health!
+                HealthBonus = 100
+                DirectObject.IncrementHealth(HealthBonus, TRUE) # silent, your partner
+                P.CA().IncrementHealth(HealthBonus, TRUE) # silent, player
+                return TURN_ENDS
+            else:
+                # No luck another 75% of the time :-(
+                Complain(u"""
+                    Dancing with %s might be appealing
+                    but you can’t persuade %s.
+                    """ % (DirectObject.TheDesc(), DirectObject.PronounDesc()))
         else:
             Complain(u"""
                 Dance with %s? You have strange fantasies!
