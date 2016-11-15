@@ -86,6 +86,7 @@ If you were to start such a massive approach, I’d suggest to follow a route li
 * [PAWS Version 2.0.3 on Archive.org’s Wayback Machine](https://web.archive.org/web/20150219103902/http://home.fuse.net/wolfonenet/PAWS.htm). Sadly, no source file ZIPs and manuals.
 * [Parsiya’s Malware Adventure](https://github.com/parsiya/malwareadventure). This is where I found the seemingly last v2.0.3 PAWS playing modules, the base of my work with this version.
 * [Roger Firth’s »Cloak of Darkness«](http://www.firthworks.com/roger/). A well-defined mini adventure, coded in many different languages (playable PAWS version included here).
+* The [rec.arts.int-fiction forum](https://groups.google.com/forum/#!forum/rec.arts.int-fiction) on Google Groups, a place to meet interesting people and find out much more about Interactive Fiction (a.k.a. Text Adventures).
 
 
 ## Collaboration
