@@ -509,9 +509,8 @@ def Universe_SetUpGame():
 
 def Universe_AfterTurnHandler():
     """
-    The Pre-Turn Handler is called just before the user is allowed to enter
-    his command. It is called whether or not the last turn was successful
-    or even understood.
+    The After-Turn Handler is called after a successful user command,
+    i.e. whenever a function or method returns TURN_ENDS.
     It is used here to heal the players, by adding the Healing points for
     rooms stayed in and items carried.
     If you want the healing features in your own game, override the class
@@ -539,6 +538,11 @@ def Universe_AfterTurnHandler():
                 if hasattr(Object, u"Healing") and Object.Healing != 0:
                     # update silently
                     Actor.IncrementHealth(Object.Healing, TRUE)
+
+    # Call default_AfterTurnHandler from Core
+    # which builds the status line and runs the daemons.
+    # (Because we just EXTEND the AfterTurnHandler, not replace it!)
+    default_AfterTurnHandler()
 
 Engine.AfterTurnHandler = Universe_AfterTurnHandler
 
@@ -5783,7 +5787,7 @@ class ClassDanceWithVerb(ClassBasicVerb):
         # Since a real dance takes some time, we return TURN_ENDS on a dance,
         # TURN_CONTINUES otherwise.
         # And, of course, only dance with Actors, not Things!
-        if DirectObject.CheckActor():
+        if DirectObject.CheckActor() and DirectObject != P.CA():
             if Random(25):
                 # Let us have a 25% chance for a dance :-)
                 Complain(u"""
