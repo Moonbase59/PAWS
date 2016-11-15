@@ -32,6 +32,14 @@ self.SetDesc(u"Odor", u"All I can smell is fresh air.")
 
 Yeah, really. Almost on every machine that you can manage to install _Python 2.7_ and _wxPython_ on. And this version even gets all these beautiful Unicode characters right. See the _screenshots_ at the end of this page.
 
+### Making a well-built game universe
+
+Currently, the game "Universe" (i.e. `PAWS/Universe.py`) is the part I spend most time on.
+
+The goal is not to break existing games, but have a fully-functional game universe that can handle an enormous amount of places, actions and user input—all by itself.
+
+Thus, it shall be easier and easier to put your own game "on top" of it, have a robust foundation that can handle _a lot_ itself and still allows you to override/re-specify the default places, actions and behaviour if you wish to do so. Hopefully without ever needing to change a line of code inside of what’s in the `PAWS` folder!
+
 ### Playing older games (v1.5/2.0.3)
 
 I very much tried to keep the core and PAWS’ "Universe" compatible with older games, like from version 1.5 and 2.0.3. You’ll probably only have to change the following two lines in those games’ source files:
@@ -82,10 +90,12 @@ If you were to start such a massive approach, I’d suggest to follow a route li
 
 ## Collaboration
 
-* If you find any bugs, use the [Issues tracker](https://github.com/Moonbase59/PAWS/issues) on this page to let me know.
+* If you find any **bugs**, use the [Issues tracker](https://github.com/Moonbase59/PAWS/issues) on this page to let me know.
+* If you have any **great ideas** that might benefit the base engine (mostly Universe) and a general public, please also let me know on the [Issues tracker](https://github.com/Moonbase59/PAWS/issues). The Universe will probably be the main part that gets extended for some time still.
 * Should you wish to add to the code, or have some better ideas, by all means **fork this repo and make pull requests!**
+* Should you decide to write your own Adventure using PAWS, I’d be delighted to hear from you. If anyhow feasible, it’d be just _great_ if you also **publish your Adventure here on GitHub and leave it Free and Open Source Software!** _(And leave me a link, so I can make a page with all your beautiful PAWS Adventures!)_
 
-Whenever I have some spare time, I’ll go over these and maybe even fix or implement them. 😉
+Whenever I have some spare time, I’ll go over the issues/bugs and possible extensions and maybe even fix or implement them. 😉
 
 ## How to play Adventures
 
