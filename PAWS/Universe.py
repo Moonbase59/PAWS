@@ -2979,7 +2979,12 @@ class ClassBasicThing(ClassBaseObject):
         # if Self IS somewhere, it's in the Contents list of it's location—so
         # the first thing we do is remove it from its location's contents list.
 
-        if self.Location != None: self.Location.Contents.remove(self)
+        # crahes when beaming (ValueError: list.remove(x): x not in list)
+        # so better use a try
+        try:
+            if self.Location != None: self.Location.Contents.remove(self)
+        except ValueError:
+            pass
 
         #----------------------
         # Add Self to Container
@@ -6529,6 +6534,30 @@ class ClassHealthVerb(ClassSystemVerb):
 
         return TURN_CONTINUES
 
+class ClassSecretVerb(ClassBasicVerb):
+    """
+    Defines a verb to joke about the SECRET secrets.
+    It is also actually a hint. ;-)
+    """
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
+        self.OkInDark = FALSE # TODO: Check if feasible
+
+    def Action(self):
+        if Random(50):
+            Complain(u"""
+                Do you really think I tell you everything? Which part
+                of the sentence ›It’s a SECRET!‹ did you not understand?
+                """)
+        else:
+            Complain(u"""
+                It’s a secret, man, a SECRET! Use your brains, try the help
+                or jump from a ledge … what do I care?
+                """)
+        return TURN_CONTINUES
+
 class ClassSmellVerb(ClassBasicVerb):
     """Sniff Verb"""
 
@@ -6770,6 +6799,60 @@ class ClassWishForVerb(ClassBasicVerb):
 
         Complain(Text1 + u" ~n " + Text2)
         return TURN_CONTINUES
+
+class ClassXyzzyVerb(ClassBasicVerb):
+    """
+    Defines a verb to joke about another adventure, the origin of them all …
+    With a 10% chance, he will be BEAMED around into a random room, so beware!
+    """
+
+    def SetMyProperties(self):
+        """Sets default instance properties"""
+        self.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
+        self.OkInDark = TRUE
+
+    def Action(self):
+        if P.CV() == BeamVerb or P.CV() == BeamToVerb:
+            if Random(50):
+                Text = u"""
+                    Contrary to all Trekkies’ beliefs, beaming isn’t
+                    yet functional!
+                    """
+            else:
+                Text = u"""
+                    ~i »Scotch me up, Beamie!« ~l … Alcoholic beverages we might
+                    have, but the transporter beam is broken. Sorry, Capt’n!
+                    """
+            return Complain(Text)
+        # With a 10% chance …
+        if Random(10):
+            # Beam player into a random room
+            RoomList = []
+            # Rooms are also in Global.AllObjectsList
+            for Obj in Global.AllObjectsList:
+                # if an object’s location is "SpaceTime" it must be a Room
+                if Obj.Location == SpaceTime:
+                    RoomList.append(Obj)
+            # Choose a random room from the list we built.
+            NewRoom = random.choice(RoomList)
+            # Tell about the journey …
+            Complain(u"""
+                ~b Now you’ve done it! ~l A swirling fog of octarine light
+                builds before you … and with a whooshing sound, you’re sucked
+                away from this place. ~p
+
+                A few seconds seem like endless time in this whirl of
+                undescribable colors. Gasping for breath, you finally reappear
+                at … %s. ~n
+                """ % NewRoom.ADesc())
+            # … and then go there, displaying the room’s description.
+            NewRoom.Enter(P.CA())
+            return TURN_ENDS
+        else:
+            return Complain(u"""
+                A faint possibility here that you think of another adventure? ~n
+                Anyway, nothing happens.
+                """)
 
 
 #********************************************************************************
@@ -7033,6 +7116,10 @@ AgainVerb = ClassSystemVerb(u"g,again")
 P.AP().Again = AgainVerb
 AttackVerb = ClassAttackVerb(u"attack,assault,combat,fight")
 AttackWithVerb = ClassAttackWithVerb(u"attack,assault,combat,fight", u"with,using")
+BeamVerb = ClassXyzzyVerb(u"beam") # Star Trek: BEAM (not supported)
+BeamVerb.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
+BeamToVerb = ClassXyzzyVerb(u"beam", u"to") # Star Trek: BEAM (not supported)
+BeamToVerb.ObjectAllowance = ALLOW_ONE_DOBJ + ALLOW_NO_IOBJS
 ClimbVerb = ClassGoVerb(u"climb")
 CloseVerb = ClassCloseVerb(u"close,shut")
 CommunicateWithVerb = ClassHelloVerb(u"communicate,speak,talk", u"with")
@@ -7113,6 +7200,7 @@ SaveVerb = ClassSaveVerb(u"save")
 SayVerb = ClassSayVerb(u"say")
 P.AP().SayVerb = SayVerb
 ScoreVerb = ClassScoreVerb(u"score")
+SecretVerb = ClassSecretVerb(u"secret,rdbqds") # a joke, really
 SmellVerb = ClassSmellVerb(u"smell,sniff")
 SouthVerb = ClassTravelVerb(u"south,s")
 SouthVerb.TravelDirection = South
@@ -7143,6 +7231,8 @@ WestVerb = ClassTravelVerb(u"west,w")
 WestVerb.TravelDirection = West
 WishVerb = ClassWishForVerb(u"wish")
 WishForVerb = ClassWishForVerb(u"wish", u"for")
+XyzzyVerb = ClassXyzzyVerb(u"xyzzy,plugh,y2,building") # other advs: BEAM!
+XyzzyVerb.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
 
 #********************************************************************************
 #                     U N I V E R S E     O B J E C T S
