@@ -68,7 +68,16 @@ I found and tried to repair a lot of bugs, some in the _Core_ and most of them i
 
 Unfortunately, I couldn’t get hold of Roger’s great manuals for the 2.0.3 version. Sadly, you’ll have to make with the included manuals of version 1.5, and adapt a little here and there. They’re still worth reading, though. If anyone knows about or even _has_ the version 2.0.3 manuals, **please let me know!**
 
-For completeness, I’ve included everything I could still find on the Internet within the `/docs` folder, even the old `PAWS20-Player.zip` that only contains the Windows executables for version 2.0. _You should never need this,_ it’s just for reference and because the original license stated it should be included.
+Finally, I got hold of Roger’s great manuals for the 2.0.3 version. These are included in the `/docs` folder. I also created copies named `… v2.1.doc`, but be warned—these still need reworking (mostly to tell you to use `u"something"` on each and every string literal).
+
+For completeness, I’ve also included everything I could still find on the Internet within the `/docs` folder, like documentation for v1.3/1.4/1.5 and 2.0. For your reference (and because the original license recommends it), I even include the old `PAWS20-Player.zip` that only contains the Windows executables for version 2.0, and `PAWS20-Dev.zip`. _You should never need these, though!_
+
+Suggested reading (in this order):
+
+* PAWS Player's Guide v2.1.doc
+* The Mittens Come Off v2.1.doc
+* Writing Interactive Fiction In PAWS v2.1.doc
+* PAWS Technical Manual v2.1.doc
 
 **Making PAWS work in other languages than English:** Even though I laid the groundwork—making PAWS fully Unicode-aware—, changing it to work with languages other than English will be a major task. The built-in parser (that part that tries to "understand" the sentences and commands you type in) is hard-coded for English in so many places and would have to be completely replaced. Be warned: Writing a parser for natural-language-like sentences is _not_ an easy task!
 
