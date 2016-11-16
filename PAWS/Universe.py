@@ -5801,7 +5801,7 @@ class ClassDanceWithVerb(ClassBasicVerb):
 
     def Action(self):
         if len(P.DOL()) < 1:
-            Complain(u"""
+            Say(u"""
                 ~i »They dance alone …« ~l Some sadness in your eyes and
                 maybe even tears, you dance for a while … until all this
                 completely overwhelms you and you simply MUST stop.
@@ -5816,10 +5816,10 @@ class ClassDanceWithVerb(ClassBasicVerb):
         # Since a real dance takes some time, we return TURN_ENDS on a dance,
         # TURN_CONTINUES otherwise.
         # And, of course, only dance with Actors, not Things!
-        if DirectObject.CheckActor() and DirectObject != P.CA():
+        if DirectObject.IsActor and DirectObject != P.CA():
             if Random(25):
                 # Let us have a 25% chance for a dance :-)
-                Complain(u"""
+                Say(u"""
                     A soothing and somehow magical tune can suddenly be heard.
                     Enchanted, both you and %s move closer together, gently
                     lock hands and slowly start dancing. Both of you don’t
@@ -5838,16 +5838,14 @@ class ClassDanceWithVerb(ClassBasicVerb):
                 return TURN_ENDS
             else:
                 # No luck another 75% of the time :-(
-                Complain(u"""
+                return Complain(u"""
                     Dancing with %s might be appealing
                     but you can’t persuade %s.
                     """ % (DirectObject.TheDesc(), DirectObject.PronounDesc()))
         else:
-            Complain(u"""
+            return Complain(u"""
                 Dance with %s? You have strange fantasies!
                 """ % DirectObject.ADesc())
-
-        return TURN_CONTINUES
 
 class ClassDeactivateVerb (ClassBasicVerb):
     """
@@ -6108,7 +6106,7 @@ class ClassInsertVerb (ClassBasicVerb):
         Multiple = len(P.DOL()) > 1
 
         # Should not insert things into an actor!
-        if P.IOL()[0].CheckActor():
+        if P.IOL()[0].IsActor:
             # build list of things he wanted to insert
             Result = P.DOL()[0].ADesc()
             TempList = []
