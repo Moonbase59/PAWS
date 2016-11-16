@@ -535,7 +535,7 @@ class MakeCliffRoom(MakeOutside):
         self.SetDesc(u"Sky", u"""
                            Most of the sky is cut off by the cliffs and the
                            trees, but what you can see is blue with a few
-                           fluffy white clounds. Good weather to be OUT of
+                           fluffy white clouds. Good weather to be OUT of
                            this valley, hmm?
                            """)
 

@@ -1,357 +1,593 @@
 # -*- coding: utf-8 -*-
 
-# COD version 1.3 modified slightly by Wolf to take advantage of new features
-# available in PAWS version 1.3.
-# Modified again by Matthias C. Hormann to be compatible with PAWS 2.1 (Unicode).
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#                                 Cloak Of Darkness                             #
+#                              Created by Roger Firth                           #
+#                     Implemented by Neil Cerutti (c) 1999-2002                 #
+#                 Updated for PAWS 2.1 by Matthias C. Hormann 2016              #
+#                                                                               #
+# The C="""...""" statements scattered throughout this source code are actually #
+# a work-around for Python's lack of block comments. Notepad++ can only fold    #
+# block comments, not a series of comment lines. Using C="""...""" doesn't      #
+# increase PAWS memory footprint, although it does have a tiny impact           #
+# on loading time.                                                              #
+#                                                                               #
+C="""
+  Although a tiny game, (3 rooms, 3 objects) the real point of this game is
+  to be a Rosetta Stone for interactive fiction. At the Cloak Of Darkness
+  website (http://www.firthworks.com/roger/cloak/index.html) the game is
+  available in 20 different authoring languages to show a prospective author
+  how a language "feels".                                                                      #
 
-#=================
-# Import Libraries
-#=================
+  This file follows PAWS Style Guidelines and is annotated for study by
+  novice game authors. Therefore it's VERY verbose, with tons of comments
+  about even the smallest detail--far too bulky for the Cloak Website. The
+  file called CloakRS.py (Rosetta Stone) is the one on the Cloak website. It
+  has far fewer comments, so if you want a bare bones sample, look there.
+  CloakRS.py is also included as part of the PAWS download.
 
-# import the engine and world library.
+  This version also dispenses with the end game wrap up, simplifying things.
 
-#from PAWS import *
-#from Universe import *
-# The ONLY change needed fpr PAWS 2.03:
-from PAWS.Core import *
-from PAWS.Universe import *
+  Created by: Roger Firth                                                       #
+  Originally Implemented by: Neil Cerutti                                       #
+  Originally Implemented on: 09/24/2000                                         #
+  Refactored By: Roger Plowman
+  Refactored On: 12/14/2007
+  Refactored By: Matthias C. Hormann
+  Refactored On: 2016-11-16
+  """
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+#********************************************************************************
+#                                 Style Guidelines                              #
+#                                                                               #
+C="""
+  To organize PAWS all the files share the same design conventions. The
+  files have been organized into sections to make it easier to navigate
+  through them with a text editor.
 
-#==========
-# Game data
-#==========
+  The major sections are marked by boxes with borders made of ******'s that
+  stretch across the entire page. If you search for #*** you can jump from
+  section to section. The sections provide an overview of the entire file.
 
-# Set common game related information like who the author is, the game's
-# copyright, name, and version. IntroText is the text that appears just before
-# the player gives their first command.
+  Within each section you'll find a set of related classes, objects, and
+  functions. If you use the Notepad++ text editor, the Alt-0 keystroke will
+  fold the file into its smallest, most easily navigated form. Clicking a +
+  to the left of a folded section will allow you to unfold only that
+  section. Thus you can keep most of the file folded, seeing only the part
+  you're actually interested in. This helps tremendously.
+
+  COLOR CODES
+
+  This source code is best read with a color coding editor, preferably
+  Notepad++ using 18 point Lucinda Console font, in 1280x1024 resolution
+  (large fonts).
+
+  The following colors were used:
+
+  Grey          - Comments (italics)
+  Orange        - Quoted Text (bold)
+  Bright Blue   - Python and PAWS keywords (bold)
+  Green         - Local Variables (bold)
+  Purple        - Operators, parentheses, etc.
+  Red           - Numbers
+  """
+#********************************************************************************
+
+#*******************************************************************************
+#                           Import Game Engine & Libraries
+#
+C="""
+  Python doesn't know where any of the other pieces of our game are, so we
+  have to tell it. To do this we have to "import" them.
+
+  The two most important pieces are the "game engine" and the "world
+  library".
+
+  1. The game engine is the part of the program that does all the "dirty
+     work". For instance it asks the player to enter commands and translates
+     those commands into verbs and objects for you. It handles saving and
+     restoring games, it handles the initial game set up and so forth. The
+     game engine is stored in Core.py (source code) and Core.pyc (compiled
+     code). Don't change these files! (Unless you REALLY know what you're
+     doing! :))
+
+  2. The world library is the part of the program that builds the
+     underpinnings of the game universe, it defines what a room is, what an
+     actor is, what a door is, and so on. The object library is contained in
+     Universe.py (source code) and Universe.pyc (compiled code) Don't change
+     these files!
+
+  Since each of these modules is used in its entirity we import everything,
+  that is, we import all objects in these files. This is frowned upon in
+  "official" Python circles, but it makes writing the game a LOT easier!
+
+  3. To convert a PAWS 2.0 game to run with PAWS 1.5 the two lines below
+  need to be changed from:
+
+  from PAWS.Core import *
+  from PAWS.Universe import *
+
+  to
+
+  from PAWS import *
+  from Universe import *
+
+  That's all there is to it!
+  """
+
+from PAWS.Core import *      # Game Engine (already written for you)
+from PAWS.Universe import *  # Game World Library (already written for you)
+
+#*******************************************************************************
+#                               G A M E   D A T A
+#
+C="""
+  This is simple enough. You're the author, your copyright is the year you
+  wrote your game (or range of years), and the game's name is what you call
+  it.
+
+  The game version should start at version 1.0 and while it's being
+  developed you may want to put the word Alpha after it. This means it's an
+  "alpha" copy, a work in progress. When you finish it and you want a few
+  people to test it, change "Alpha" to "Beta". A beta copy is one that is in
+  preliminary testing. Once the game is finished, remove the word "Beta".
+
+  The IntroText is what the player sees just after the game's title and
+  copyright notices, but before the first command prompt. It introduces the
+  player into your game: why they're there, what the situation is, and
+  (perhaps) what they have to do about it.
+
+  If you want to have help for the player (perhaps listing commands unique
+  to your game) you may put them in Game.HelpText just after the
+  Game.IntroText. When the player clicks Hints on the Help menu or types
+  "help" the text will appear.
+  """
 
 Game.Author = u"Roger Firth (implemented by Neil Cerutti)"
-Game.Copyright = u"1999-2002"
+Game.Copyright = u"1999-2000"
 Game.Name = u"Cloak of Darkness"
-Game.Version = u"1.3"
+Game.Version = u"1.5"
 
 Game.IntroText = u"""
-    Hurrying through the rainswept November night, you're glad to see the
-    bright lights of the Opera House. It's surprising that there aren't more
-    people about, but, hey, what do you expect from a cheap demo game? ~p
-    """
+                 Hurrying through the rainswept November night, you’re glad
+                 to see the bright lights of the Opera House. It’s
+                 surprising that there aren’t more people about, but, hey,
+                 what do you expect from a cheap demo game? ~p
+                 """
 
-#------------
-# Game Set Up
-#------------
+#*******************************************************************************
+#                  G A M E   S E T U P   /   W R A P U P
+#
+C="""
+  Every game you write has to have a "user set up". This is where you can do
+  anything special needed to set up your game. Fortunately, very few games
+  need anything unusual in terms of setup, so you can copy the setup from
+  one game to another.
 
-# Always written by the author, the last chance to perform custom set up before
-# the game begins. Normally it sets 3 things: whether the game is in production
-# (all done and ready to play), which character the player will play, and where
-# that character starts.
+  The only thing you have to do is change the name of your setup function,
+  and change the StartingLocation to the room the player starts in.
+
+  """
 
 def CloakUserSetUpGame():
     Global.Production = FALSE
     P.AP().CurrentActor = Global.Player
     P.CA().StartingLocation = Foyer
 
-#-------------
-# Game Wrap Up
-#-------------
+#--- Hook New Functions To Engine
 
-# Always written by the author, this is the final chance to print text to the
-# screen before the game ends.
+C="""
+  The line below hooks your set up game function to the engine in place of
+  the default one. If you don't do that, no set up will take place, since
+  the default user setup does nothing--not even put the player in the right
+  starting room!
 
-def CloakPostGameWrapUp():
-    if not Bar.Visited: return
+  The original Cloak used a post game wrap up, so there was a second line to
+  hook the wrap up game function to the engine. If you don't do that your
+  wrap up function won't be called.
 
-    if Sawdust.TrampleState < 2:
-        Say(u"~p *** You have won. *** ~p ")
-    else:
-        Say(u"~p *** You have lost. *** ~p ")
+  Many games (including this version of Cloak) don't use a wrap up. For
+  those games either comment out the second line or delete it entirely (note
+  we have no second line!).
+  """
 
-#---------------------------------------
-# Hook Author's Set Up/Wrap Up To Engine
-#---------------------------------------
+Engine.UserSetUpGame = CloakUserSetUpGame   # Always copy this line
 
-# This is how you tell the PAWS engine to use your functions instead of the
-# default ones (which don't do much).
+#*******************************************************************************
+#                            R O O M   B L U E P R I N T S
+#
+C="""
+  Python requires every object you create have a blueprint. Python calls
+  that blueprint a "class". The word class comes from the ivory tower
+  computer scientists who created the idea of objects in the first place. So
+  don't worry about it, just remember "class = blueprint".
 
-Engine.UserSetUpGame = CloakUserSetUpGame
-Engine.PostGameWrapUp = CloakPostGameWrapUp
+  The advantage of using classes (blueprints) to create objects should be
+  obvious. Create a single blueprint and you can use that blueprint to
+  create not just one object, but many different objects.
 
-#==============
-# Rooms In Game
-#==============
+  In a game as small as this one it's hard to see why blueprints (classes)
+  give you an advantage. Consider this. There are 4 rooms in Cloak, the
+  Foyer, the Bar, the Cloakroom and the special Nowhere room.
 
-# There are 3 rooms in the game, the Foyer, the Bar, and the Cloakroom. A fourth
-# "room" (Nowhere) is actually a way to create a room that complains, refuses
-# entry, and tramples the message.
+  But there are only 3 room blueprints. The Foyer and the Cloakroom both use
+  the MakeCODRoom blueprint. That's because while obviously very different,
+  both rooms also have a lot in common. Blueprints (classes) let you
+  leverage what's common between objects to your advantage. The larger your
+  game, the larger the advantage becomes.
+  """
 
-#--------------------------------------
-# Blueprint for Cloak Of Darkness Rooms
-#--------------------------------------
+class MakeCODRoom(ServiceDictDescription, ClassRoom):
+    """
+    This is a "doc string". A doc string is like a comment, but has the
+    added advantage that Python can automatically collect and print the
+    doc strings, helping you create automatic documentation. As a second
+    advantage doc strings vanish along with the rest of the class when you
+    fold the file using Notepad++.
 
-# Since all the rooms are pretty much the same, all rooms can be created
-# from a single "blueprint", or a slightly modified version of the blueprint.
-# Either way, this room blueprint does all the heavy lifting.
+    Now let's talk about this class. We're going to use it to create the
+    rooms in Cloak. Notice that there are two other classes (blueprints)
+    used to start this class: ServiceDictDescription and ClassRoom.
 
-class ClassCODRoom(ServiceDictDescription, ClassRoom):
-    """Blueprint for all rooms in game."""
+    That brings up an important point. Blueprints almost always start from
+    other blueprints. That means whatever those two classes can do,
+    MakeCODRoom can ALSO do--without you coding a thing!
 
-    #-------------------
-    # Set Default Values
-    #-------------------
-
-    # Any properties you set in SetMyProperties() will be inherited automatically
-    # by rooms created from it. In this case the rooms will be lit by default.
-
+    In other words, MakeCODRoom will ADD functionality on top of whatever
+    functionality it inherited from ServiceDictDescription and ClassRoom.
+    """
     def SetMyProperties(self):
+        """
+        This method allows you to change properties you inherited from other
+        classes, or create new properties. In this case we inherited IsLit
+        from ClassRoom. But IsLit is normally FALSE--in other words rooms
+        are dark.
+
+        Obviously, we want rooms lit unless we specifically say otherwise.
+        """
         self.IsLit = TRUE
 
-    #-----------------
-    # Feel Description
-    #-----------------
+    def FeelDesc(self):
+        """
+        We inherited this method from ServiceDictDescription, but we
+        actually want the one from ClassRoom instead. The code below lets
+        us call FeelDesc() from ClassRoom, and that gives us the description
+        we want.
+        """
 
-    # This method lets us use the Feel method from ClassRoom, which is better
-    # than the one from the description service ServiceDictDescription for this
-    # game.
+        return ClassRoom.FeelDesc(self)
 
-    def FeelDesc(self): return ClassRoom.FeelDesc(self)
+class MakeBar(MakeCODRoom):
+    """
+    We're basing the bar blueprint on the MakeCODRoom blueprint (class,
+    remember class = blueprint).
 
-#---------------
-# Northern Foyer
-#---------------
+    By doing that we gain all the capabilities of MakeCODRoom for free. All
+    this blueprint adds is a way to turn the lights on and off.
+    """
 
-# All we have to do is create the room, then set the room's name and long
-# description. All the other senses (sound, smell, taste, touch) already have
-# reasonable defaults.
+    def SetIsLit(self, LightStatus):
+        """
+        This method sets IsLit for the room to whatever LightStatus is.
+        LightStatus will either be TRUE or FALSE, depending on where the
+        cloak is. We'll talk about this method more when we actually call
+        it.
+        """
 
-Foyer = ClassCODRoom()
+        self.IsLit = LightStatus
+        return ""
 
+class MakeNowhere(MakeCODRoom):
+    """
+    This blueprint will be used to create the Nowhere room. Like MakeBar
+    this blueprint starts with the MakeCODRoom blueprint (class). All we
+    need to do is change the Enter method.
+    """
+
+    def Enter(self, Object):
+        """
+        The Enter method of a room checks to see if the object trying to
+        enter the room is allowed to. If entry is allowed the method returns
+        SUCCESS, if entry is not allowed it returns FAILURE.
+
+        In this case we ALWAYS return FAILURE. The Complain() function
+        prints the complaint to the screen but then returns FAILURE, so
+        Enter() passes that failure back to the parser.
+
+        If the bar is lit the complaint is the only thing that happens, but
+        if the bar is NOT lit (is dark) we add 1 to the Trampled property
+        of the sawdust, and give a different complaint.
+        """
+
+        if Bar.IsLit:
+            return Complain(u"There’s no exit in that direction.")
+        else:
+            Sawdust.Trampled += 1
+            return Complain(u"Blundering around in the dark isn’t a good idea.")
+
+
+#*******************************************************************************
+#                         T H I N G   B L U E P R I N T S
+#
+C="""
+  As you'd expect, things use blueprints just like rooms do--and for exactly
+  the same reason. In a small game like Cloak there are as many blueprints
+  as there are things--but the larger the game, the larger the gain.
+  """
+
+class MakeCloak(ClassItem):
+    """
+    ClassItem is used to create objects that the player can pick up, drop,
+    and carry--just like the cloak. The problem is, we don't want the
+    player to drop the cloak. So we change the way drop works for MakeCloak.
+    """
+    def Drop(self, Multiple=FALSE):
+        """We simply return a complaint, and the drop doesn't happen."""
+        return Complain(u"""
+                        This isn’t the best place to leave a smart cloak
+                        lying around.
+                        """)
+
+class MakeHook(ServiceActivation, ClassShelf):
+    """
+    Blueprint for the hook. A shelf is any object that can have other
+    objects put on it. Normally you'd think of a shelf--but a hook works
+    exactly the same way for cloak, right?
+
+    We just need to change the Enter method to turn the lights on in the
+    bar.
+    """
+
+    def Enter(self, Object):
+        """
+        Turn on the light in the Bar when player puts the cloak on the hook.
+        """
+        if Object == Cloak: Bar.SetIsLit(TRUE)
+        return ClassShelf.Enter(self, Object)
+
+class MakeSawdust(ClassScenery):
+    """
+    The sawdust is scenery--a thing that the player can't take. But we also
+    need to add some things to make the sawdust work like we need it to.
+    """
+    def SetMyProperties(self):
+        """
+        Add the Trampled property to track how much the player tramped
+        around the bar in the dark.
+        """
+
+        self.Trampled = 0
+
+    def ReadDesc(self):
+        """
+        Reading the message ends the game, one way or another. That's why
+        we set the Global.GameState to FINISHED. Once this method ends
+        the game ends.
+        """
+
+        #-------------
+        # End The Game
+        #-------------
+
+        # Global GameState is normally RUNNING. Changing it to FINISHED signals
+        # the engine that the game is over.
+
+        Global.GameState = FINISHED
+
+        #--------------
+        # Trampled < 2?
+        #--------------
+
+        # If Trampled is less than 2 return the winning message.
+
+        if self.Trampled < 2: return u"""
+                                     The message, neatly marked in the
+                                     sawdust, reads...
+
+                                     ~p *** You have won. *** ~p
+                                     """
+        #----------------------
+        # Return Losing Message
+        #----------------------
+
+        # By reaching this point we know Trampled is 2 or more, so the player
+        # lost. Return the losing message. We could have used an ELSE clause on
+        # the IF test above to return the losing message, but this is yet another
+        # example of KISS--keeping it simple, Sam. :)
+        #
+        # IF tests are a break of the reader's concentration. IF ELSE tests are
+        # even worse. Since there was no real need for ELSE, we didn't use it.
+        # And made the program simpler to follow.
+
+        return u"""
+               The message has been carelessly trampled, making it
+               difficult to read. You can just distinguish the words...
+
+               ~p *** You have lost. *** ~p
+               """
+#*******************************************************************************
+#                               M A K E   R O O M S
+#
+C="""
+  In this section we finally start MAKING rooms! Up to now we've just been
+  drawing blueprints, so to speak. But in this section we make the rooms the
+  player will travel through.
+  """
+
+#--- Foyer
+
+C="""
+  The first line makes the Foyer object. Notice how naturally it reads?
+  That's why we named the blueprint (the class) the way we did.
+
+  NamePhrase is the name of the room. The SetDesc() method takes two
+  arguments, the "L" (for long description) and the actual long description.
+  """
+
+Foyer = MakeCODRoom()
 Foyer.NamePhrase = u"Foyer of the Opera House"
-
-Foyer.SetDesc(u"L", u"""
-                  You are standing in a spacious hall, splendidly decorated in
-                  red and gold, with glittering chandeliers overhead. The
+Foyer.SetDesc(u"L",u"""
+                  You are standing in a spacious hall, splendidly decorated
+                  in red and gold, with glittering chandeliers overhead. The
                   entrance from the street is to the north, and there are
                   doorways south and west.
                   """)
 
-#-----------
-# Cloak Room
-#-----------
+#--- Cloakroom
 
-Cloakroom = ClassCODRoom()
+C="""
+  The cloakroom is created the same way as the Foyer, using the same
+  properties. The only difference is the text used! This demonstrates how
+  useful the blueprint approach is. Imagine now if you had a hundred rooms
+  to create?
+  """
 
+Cloakroom = MakeCODRoom()
 Cloakroom.NamePhrase = u"Cloakroom"
-
-Cloakroom.SetDesc(u"L", u"""
-                      The walls of this small room were clearly once lined with
-                      hooks, though now only one remains. The exit is a door to
-                      the east.
+Cloakroom.SetDesc(u"L",u"""
+                      The walls of this small room were clearly once lined
+                      with hooks, though now only one remains. The exit is a
+                      door to the east.
                       """)
 
-#--------------
-# Bar Blueprint
-#--------------
+#--- Bar
 
-# The bar is a little more complex, but we base the bar's blueprint on the
-# ClassCODRoom and just add a new method to easily turn the lights on and off.
+C="""
+  The bar is very similar, even though it uses a slightly different
+  blueprint. One interesting item is the floor description (the 4'th line).
+  Notice the curly braces? PAWS will read between the curly braces and
+  replace the CBE (Curly Brace Expression) with the calculated value. In
+  this case reading the floor of the bar does EXACTLY the same thing as
+  reading the message directly!
 
-class ClassBar(ClassCODRoom):
-    """Blueprint for bar, based on a regular COD room"""
+  CBE's are an extremely useful technique and very simple to use.
+  """
 
-    def SetIsLit(self, LightStatus):
-        """
-        Allows for easy changing of the Bar's IsLit property in CBEs. A routine
-        called in a CBE must return a string.
-        """
-
-        self.IsLit = LightStatus
-
-        return u""
-
-#--------
-# The Bar
-#--------
-
-# Like the Foyer and the Cloak Room we set the bar's name and long description
-# but we also turn off the lights
-
-Bar = ClassBar()
-
+Bar = MakeBar()
 Bar.NamePhrase = u"Foyer Bar"
-
-Bar.SetDesc(u"L", u"""
+Bar.IsLit = FALSE
+Bar.SetDesc(u"Floor",u"{Sawdust.ReadDesc()}")
+Bar.SetDesc(u"L",u"""
                 The bar, much rougher than you expected after the opulence of the
                 northern foyer, is completely empty. There seems to be some sort
                 of message scrawled in the sawdust on the floor.
                 """)
 
-Bar.SetDesc(u"Floor", u"{Sawdust.ReadDesc()}")
+#--- Nowhere Room
 
-Bar.IsLit = FALSE
+C="""
+  Since the Nowhere room is never actually entered, it doesn't need a long
+  description, just a name.
+  """
 
-#------------------
-# Nowhere Blueprint
-#------------------
-
-# Based on the standard COD room blueprint, this room has a different Enter()
-# method. It refuses to let the player enter the room, complains, and tramples
-# the message.
-
-class ClassNowhere(ClassCODRoom):
-    def Enter(self, Object):
-        Say(u"Blundering around in the dark isn't a good idea.")
-        Sawdust.TrampleState = Sawdust.TrampleState + 2
-        return FAILURE
-
-#------------
-# Create Room
-#------------
-
-# Notice the room doesn't need a long description because it will never
-# let the player inside in the first place.
-
-Nowhere = ClassNowhere()
+Nowhere = MakeNowhere()
 Nowhere.NamePhrase = u"Nowhere Room"
 
-#================
-# Objects In Game
-#================
-
-# The game contains three objects, the cloak, the hook, and the message.
-
-#----------------
-# Cloak Blueprint
-#----------------
-
-# The cloak is pretty normal except you can't drop it anywhere. So we base the
-# cloak blueprint on ClassItem blueprint (which is used for normal things the
-# player can pick up) and just change the Drop() method.
-
-class ClassCloak(ClassItem):
-    def Drop(self, Multiple=FALSE):
-        """You can't put the cloak anywhere but on the hook."""
-        Say(u"This isn't the best place to leave a smart cloak lying around.")
-        return FAILURE
-
-#----------
-# The Cloak
-#----------
-
-# When we create the cloak we tell PAWS what nouns will refer to the cloak, then
-# what adjectives. We give it a starting location (the player) and set its bulk
-# and weight, then set the long and take descriptions.
+#*******************************************************************************
+#                                   M A K E   T H I N G S
 #
-# Notice the curly brace expression? CBE's allow you to put code inside pieces of
-# text to make them more flexible.
+C="""
+  These are the things the player will interact with. But we're actually
+  making them here, not just drawing blueprints.
+  """
 
-Cloak = ClassCloak(u"cloak", u"velvet,black,satin,dark,handsome")
+#--- Cloak
 
+C="""
+  Note there's a new wrinkle. When we made rooms there was nothing between
+  the parentheses. But when you make a thing you need to specify two
+  different groups of words between the parentheses. Each group of words is
+  in quotes, with commas between them.
+
+  The first group of words are nouns that describe the thing. "Cloak" in
+  this case. The second group of words are adjectives describing the thing.
+  We need the adjectives in case the player says something like "get black
+  cloak".
+
+  Also notice the CBE in the Take discription, this turns OFF the light in
+  the bar--but since SetIsLit returns "", all the player sees is "Taken".
+  """
+
+Cloak = MakeCloak(u"cloak",u"velvet,black,satin,dark,handsome")
 Cloak.StartingLocation = Global.Player
 Cloak.Bulk = 1
 Cloak.Weight = 10
-
+Cloak.SetDesc(u"Take", u"{Bar.SetIsLit(FALSE)}Taken.")
 Cloak.SetDesc(u"L", u"""
                    A handsome cloak, of velvet trimmed with satin, and
                    slightly spattered with raindrops. Its blackness is so
                    deep that it almost seems to suck light from the room.
                    """)
 
-Cloak.SetDesc(u"Take", u"{Bar.SetIsLit(FALSE)}Taken.")
+#--- Hook
 
-#---------------------
-# Brass Hook Blueprint
-#---------------------
+C="""
+  Same arrangement we saw when making the cloak, you need both nouns and
+  adjectives, a long description, and so on. Notice there's a property
+  called StartingLocation. This is the room the hook will be found in when
+  the game starts.
 
-# The brass hook is a "shelf", a thing you can put other things on. It's ALSO a
-# light switch IF the cloak is put on the hook. Notice once we deal with the
-# light switch aspect we actually use the Enter() method from ClassShelf to do
-# all the real work.
+  Also notice the CBE in the long description. The Choose() function returns
+  TRUE if the cloak is in the hook's contents. In other words, hanging on
+  the hook. Notice how the long description changes naturally?
+  """
 
-class ClassHook(ClassShelf):
-
-    def Enter(self, Object):
-        """Turn on the light in the Bar when player puts the cloak on the hook."""
-        if Object == Cloak: Bar.SetIsLit(TRUE)
-        return ClassShelf.Enter(self, Object)
-
-#---------
-# The Hook
-#---------
-
-# We create the hook, set the maximum bulk and weight it will hold, set its
-# starting location, the complaint if the player tries to take it, and the
-# long description. Notice the CBE in the long description.
-
-Hook = ClassHook(u"hook,peg", u"small,brass")
-
+Hook = MakeHook(u"hook,peg",u"small,brass")
 Hook.MaxBulk = 1
 Hook.MaxWeight = 10
 Hook.StartingLocation = Cloakroom
-
+Hook.ActivateSpontaneousPhrase = u"I don’t know how to do that."
+Hook.ActivatePassivePhrase = u"I don’t know how to do that."
 Hook.SetDesc(u"Take", u"The hook is screwed to the wall.")
-
 Hook.SetDesc(u"L", u"""
-                  It's just a small brass hook,
+                  It’s just a small brass hook,
                   {Choose (Cloak in Self().Contents,
                            u" with a cloak hanging on it.",
                            u" screwed to the wall.")}
                   """)
 
-#--------------------------
-# Sawdust Message Blueprint
-#--------------------------
 
-# The message is scenery--it won't be described as a seperate item unless the
-# player specifically examines it. SetMyProperties() let's us add a TrampleState
-# property.
-#
-# The ReadDesc() does more than simply return the message. It also signals the
-# game is over so the natural game cycle will cause the game to end before the
-# player can type in another command.
+#--- Sawdust
 
-class ClassSawdust(ClassScenery):
-    def SetMyProperties(self):
-        self.TrampleState = 0
+C="""
+  There's a CBE in the long description but by now that's old news. The
+  ParserFavors property is new, and will take a little explaining. Simply
+  put, it means if two objects have the same name in the same place, the
+  Sawdust will win.
 
-    def ReadDesc(self):
-        Global.GameState = FINISHED
-        if self.TrampleState < 2:
-            return u"The message, neatly marked in the sawdust, reads …"
-        else:
-            return u"""The message has been carelessly trampled, making it
-                   difficult to read. You can just distinguish the
-                   words …
-                   """
+  There's a floor (actually ground) object that's defined by Universe that
+  is normally where the player is (it moves with the player). That lets the
+  player say things like "look at floor".
 
-#--------------------
-# The Sawdust Message
-#--------------------
+  But the parser can confuse the floor and the sawdust under unusual
+  circumstances. When that happens the ParserFavors property insures the
+  Sawdust is picked instead of the ground.
+  """
 
-# All we need are the message long description (notice the CBE which takes the
-# long description from the read description) and the message's starting location.
-
-Sawdust = ClassSawdust(u"message,sawdust,floor")
+Sawdust = MakeSawdust(u"message,sawdust,floor")
 Sawdust.SetDesc(u"L", u"{Self().ReadDesc()}")
 Sawdust.ParserFavors = TRUE
 Sawdust.StartingLocation = Bar
 
-#--------
-# The map
-#--------
-
-# Maps are defined last in PAWS because all rooms referenced on the map must
-# already have been defined. We have maps for the 3 rooms the player can actually
-# enter, the Nowhere room refuses the player entry but still provides a text
-# message.
+#*******************************************************************************
+#                                      M A P S
 #
-# Also notice we don't have to provide map directions for directions that aren't
-# valid, the system takes care of that for you.
+C="""
+  Maps have to be defined last because Python requires you define things
+  before you use them. By putting the maps as the last part of the file
+  we're making sure all rooms have already been created.
+
+  Notice only the directions actually used are defined. If you don't define
+  a direction PAWS will provide an appropriate complaint.
+  """
 
 Foyer.Map = {North: u"""
-                    You've only just arrived and besides, the weather
+                    You’ve only just arrived and besides, the weather
                     outside seems to be getting worse.
                     """,
              South: Bar,
-             West: Cloakroom}
+             West:  Cloakroom}
 
 Cloakroom.Map = {East: Foyer}
 
@@ -369,3 +605,7 @@ Bar.Map = {North:      Foyer,
            Downstream: Nowhere,
            In:         Nowhere,
            Out:        Nowhere}
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#                       End Of Cloak Of Darkness Game                           #
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
