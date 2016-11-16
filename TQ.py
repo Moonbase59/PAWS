@@ -934,10 +934,10 @@ class MakeDruid(MakeTQActor):
 
         return u"""
             The man bows to you, and says: ~i »I am Amak, keeper of
-            the ancient places.  Welcome, bold adventurer.  Behold
-            the mandala, the sacred circle of the druids.  Take it,
+            the ancient places. Welcome, bold adventurer. Behold
+            the mandala, the sacred circle of the druids. Take it,
             and let it be your shield and your sword in the places
-            of the dark.  To summon its aid, cry aloud the word
+            of the dark. To summon its aid, cry aloud the word
             ›Nirna‹, but do so only in dire need, for the mandala
             is a sacred object, and not for profane use.« ~l He hands
             you a small crystal disk, divided into four quarters.
@@ -969,7 +969,7 @@ class MakeDruid(MakeTQActor):
                     damnable game.« ~l he whispers urgently. ~i »We’re all
                     trapped here. Help us!« ~l ~p
 
-                    Looking around the man bears an uncanny resemblence to a
+                    Looking around the man bears an uncanny resemblance to a
                     thief expecting the city watch to show up any second.
                     ~i »I’ve said too much. But for all our sakes: DON’T WIN
                     the game!« ~l With that cryptic utterance he resumes his
@@ -1390,9 +1390,9 @@ StartCliff.SetDesc(u"L", u"""
     Behind you (to the west) is a cliff stretching upward
     at least two thousand feet. About a third of the way up
     you can plainly see the word »Start« carved in letters
-    fifty feet high.  The cliff is slightly hollowed out
+    fifty feet high. The cliff is slightly hollowed out
     so that it seems to menace you like a crashing wave of
-    granite.  To the north and south you can see trackless
+    granite. To the north and south you can see trackless
     pine forest. To the east a faint trail leads away from
     the cliff and deeper into the forest.
     """)
@@ -1419,7 +1419,7 @@ C="""
 A3WayPath = MakeForestPath()
 A3WayPath.NamePhrase = u"A 3 Way Intersection"
 A3WayPath.SetDesc(u"L", u"""
-    You are in the middle of a fork in the path.  A faint trail leads east and
+    You are in the middle of a fork in the path. A faint trail leads east and
     upward, the path you are on continues south, and back toward the west.
     """)
 
@@ -1862,7 +1862,7 @@ C="""
 NorthPath = MakeNorthPath()
 NorthPath.NamePhrase = u"Northern Path"
 NorthPath.SetDesc(u"L", u"""
-    You are on the northern path.  The forest around you is dim and cool.
+    You are on the northern path. The forest around you is dim and cool.
     The path runs north to south. To either side the trees press closely,
     as though guarding against your intrusion.
     """)
