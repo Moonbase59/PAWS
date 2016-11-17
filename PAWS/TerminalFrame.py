@@ -84,7 +84,7 @@ class TFrame(wx.Frame):
         # generated method, don't edit
 
         parent.Append(help='', id=wxID_TFRAMEMENUFILEPLAYGAME,
-              kind=wx.ITEM_NORMAL, text=u'Pick Game...')
+              kind=wx.ITEM_NORMAL, text=u'Pick Game …')
         parent.AppendSeparator()
         parent.Append(help='', id=wxID_TFRAMEMENUFILESAVE, kind=wx.ITEM_NORMAL,
               text=u'Save')
