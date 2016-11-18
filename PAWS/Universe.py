@@ -327,7 +327,7 @@ def Universe_BuildStatusLine(LeftSideText=None):
 
     if not LeftSideText: LeftSideText = Game.Name
 
-    RightSide = u" Health: " + Global.Player.HealthPercent(FALSE) + \
+    RightSide = u" Health: " + Global.Player.ShowHealth(FALSE) + \
                 u" Score: " + repr(Global.CurrentScore) + \
                 u" Turn: " + repr(Global.CurrentTurn) + u"  "
 
@@ -4119,6 +4119,9 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
 
         return u"yourself"
 
+    def IsDead(self):
+        return self.Health <= 0
+
     def Attack(self, Weapon):
         """
         The "Being under attack" method.
@@ -4138,10 +4141,6 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
             ADesc = Weapon.ADesc()
             Damage = Weapon.Damage
 
-        # don't let anyone attack themselves
-        if id(self) == id(P.CA()):
-            return Complain(u"Huh? Attacking yourself?")
-
         # You find him unimpressed, stating »You can’t attack me with a rock.«
         Complaint = u"You find %s unimpressed, stating ~i »%s can’t attack %s with %s" % \
             (self.TheDesc(), SCase(self.FormatYou), self.FormatMe, ADesc)
@@ -4155,21 +4154,40 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
 
         # Here would be the health & damage logic
         self.IncrementHealth(-Damage)
-        Complain(Complaint)
+        if not self.IsDead():
+            State = u""
+            Percent = self.HealthPercent()
+            if Percent < 25:
+                State = u"almost killed"
+            elif Percent < 50:
+                State = u"severely wounded"
+            elif Percent < 75:
+                State = u"wounded"
+            if State:
+                Complaint = u"{SCase(You())} {Agree(u'have')} %s {Self().TheDesc()}." % State
+            Say(Complaint)
+        else:
+            Say(u"{SCase(You())} {Agree(u'have')} killed {Self().TheDesc()}!")
+            # If the actor was following the player, stop that on death
+            if hasattr(self, u"Follow"):
+                self.Follow = FALSE
         return TURN_ENDS
+
+    def HealthPercent(self):
+        return int(float(self.Health) / float(self.MaxHealth) * 100.0)
 
     # Health Percent as String for display.
     # We need an uncolored version for the status line, too.
 
-    def HealthPercent(self, colored=TRUE):
-        Percent = float(self.Health) / float(self.MaxHealth) * 100.0
-        Text = u"%.0f%%" % Percent
+    def ShowHealth(self, colored=TRUE):
+        Percent = self.HealthPercent()
+        Text = u"%d%%" % Percent
         if colored:
-            # show with yellow background if < 50%
-            if Percent < 25.0:
-                Text = u" ~blrd " + Text + u" ~l "
             # show with red background if < 25%
-            elif Percent < 50.0:
+            if Percent < 25:
+                Text = u" ~blrd " + Text + u" ~l "
+            # show with yellow background if < 50%
+            elif Percent < 50:
                 Text = u" ~blbr " + Text + u" ~l "
         return Text
 
@@ -4185,9 +4203,9 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         at healing places.
         """
 
-        #-----------------------
-        # Adjust Score By Amount
-        #-----------------------
+        #------------------------
+        # Adjust Health By Amount
+        #------------------------
 
         # force it silent if at or above MaxHealth: there's no point to tell
         if self.Health >= self.MaxHealth and \
@@ -4223,7 +4241,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         #--------------
 
         Comment = u"[Your health just %s by %d points. It is now at %s.] ~n" % \
-                  (ChangeWord, abs(Amount), self.HealthPercent())
+                  (ChangeWord, abs(Amount), self.ShowHealth())
 
         #------------------------
         # Say it if health changed
@@ -5702,15 +5720,16 @@ class ClassAttackVerb(ClassBasicVerb):
 
     def Action(self):
         # Check if current player has any weapons
+        # If so, select the one with the highest damaga factor.
         HasWeapon = FALSE
         SelectedWeapon = None
         SelectedDamage = 0
-        for i in P.CA().Contents:
-            if hasattr(i, u"IsWeapon") and i.IsWeapon == TRUE:
+        for Object in P.CA().Contents:
+            if hasattr(Object, u"IsWeapon") and Object.IsWeapon == TRUE:
                 HasWeapon = TRUE
-                if i.Damage >= SelectedDamage:
-                    SelectedWeapon = i
-                    SelectedDamage = i.Damage
+                if Object.Damage >= SelectedDamage:
+                    SelectedWeapon = Object
+                    SelectedDamage = Object.Damage
         if not HasWeapon:
             return Complain(u"{SCase(You())} {Agree('do')} not have any weapons!")
 
@@ -5718,9 +5737,17 @@ class ClassAttackVerb(ClassBasicVerb):
         DirectObject.MakeCurrent()
         DirectObject.MarkPronoun()
 
+        # don't let anyone attack themselves
+        if DirectObject == P.CA():
+            return Complain(u"Huh? Attacking yourself?")
+
         if not hasattr(DirectObject, u"Attack"):
             return Complain(u"I don’t know how to attack %s." % DirectObject.ADesc())
 
+        # Target already dead?
+        if DirectObject.IsDead():
+            return Complain(u"Huh? Attacking the dead corpse of %s? You’re a sick person!"
+                % DirectObject.TheDesc())
 
         # Say what's happening
         Say(u"%s try to attack %s with %s. ~n" % \
@@ -6523,7 +6550,7 @@ class ClassHealthVerb(ClassSystemVerb):
         # string that the % function can handle properly.
 
         Say(u"Your health is currently at %s (%s of %s points)." % \
-            (Global.Player.HealthPercent(),
+            (Global.Player.ShowHealth(),
             str(Global.Player.Health), str(Global.Player.MaxHealth)))
 
         #----------------------
@@ -7112,8 +7139,8 @@ C="""
 
 AgainVerb = ClassSystemVerb(u"g,again")
 P.AP().Again = AgainVerb
-AttackVerb = ClassAttackVerb(u"attack,assault,combat,fight")
-AttackWithVerb = ClassAttackWithVerb(u"attack,assault,combat,fight", u"with,using")
+AttackVerb = ClassAttackVerb(u"attack,kill,assault,combat,fight")
+AttackWithVerb = ClassAttackWithVerb(u"attack,kill,assault,combat,fight", u"with,using")
 BeamVerb = ClassXyzzyVerb(u"beam") # Star Trek: BEAM (not supported)
 BeamVerb.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
 BeamToVerb = ClassXyzzyVerb(u"beam", u"to") # Star Trek: BEAM (not supported)

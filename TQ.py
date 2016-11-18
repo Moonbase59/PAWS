@@ -318,6 +318,18 @@ def TQUserSetUpGame():
 
     P.CA().StartingLocation = StartCliff
 
+    #---------------------------------
+    # Start the global Follower Daemon
+    #---------------------------------
+
+    # Start the game-wide Follower Daemon. After each turn it will
+    # make other actors follow Global.Player, if they currently
+    # have their "Follow" attribute set TRUE. Actors that can follow
+    # the player should be inheriting from ServiceFollow,
+    # like the Jackalope in this game.
+
+    StartDaemon(FollowerDaemon)
+
 #-----------------------------
 # Hook New Functions To Engine
 #-----------------------------
@@ -998,7 +1010,7 @@ class MakeDruid(MakeTQActor):
 
     def TheDesc(self): return u"him"
 
-class MakeJackalope(MakeTQActor):
+class MakeJackalope(ServiceFollow, MakeTQActor):
     """
     The Jackalope is another cameo actor, and a non-combatant.
     He follows the player around.
@@ -1008,7 +1020,6 @@ class MakeJackalope(MakeTQActor):
     He also only follows the player (and adds to player’s score)
     when the player has the mandala.
     """
-    #FIXME: Following around not yet implemented.
 
     def SetMyProperties(self):
         """
@@ -2830,7 +2841,6 @@ Druid.StartingLocation = Brenin
 #-------- Jackalope
 Jackalope = MakeJackalope(u"jackalope,jørge,jorge,critter", u"jaunty,ancient,fearsome")
 Jackalope.StartingLocation = Clearing
-Jackalope.Follow = TRUE
 
 #-------- Dryad
 Dryad = MakeDryad(u"woman,dryad,hers", u"red,haired,small,short")
