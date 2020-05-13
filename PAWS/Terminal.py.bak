@@ -26,9 +26,9 @@ C="""
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 import wx
-from . import TerminalFrame
+import TerminalFrame
 
-modules ={'TerminalFrame': [1, 'Main frame of Application', 'TerminalFrame.py']}
+modules ={u'TerminalFrame': [1, 'Main frame of Application', u'TerminalFrame.py']}
 
 class BoaApp(wx.App):
     def OnInit(self):
