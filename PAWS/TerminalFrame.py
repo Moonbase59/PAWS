@@ -169,10 +169,10 @@ class TFrame(wx.Frame):
 
         self.TMenuBar = wx.MenuBar()
 
-#        self._init_coll_menuFile_Items(self.menuFile)
-#        self._init_coll_menuView_Items(self.menuView)
-#        self._init_coll_menuHelp_Items(self.menuHelp)
-#        self._init_coll_TMenuBar_Menus(self.TMenuBar)
+        self._init_coll_menuFile_Items(self.menuFile)
+        self._init_coll_menuView_Items(self.menuView)
+        self._init_coll_menuHelp_Items(self.menuHelp)
+        self._init_coll_TMenuBar_Menus(self.TMenuBar)
 
     def _init_ctrls(self, prnt):
         # generated method, don't edit
