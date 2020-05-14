@@ -333,7 +333,8 @@ def Universe_BuildStatusLine(LeftSideText=None):
 
     SLL = 80 # Terminal.MaxScreenColumns
     RSL = len(RightSide)
-    LeftSide = string.ljust(" " + LeftSideText[:SLL], SLL)
+    #LeftSide = string.ljust(" " + LeftSideText[:SLL], SLL)
+    LeftSide = (" " + LeftSideText[:SLL]).ljust(SLL)
     Global.StatusLine = LeftSide[:-RSL] + RightSide
 
 def Universe_SetUpGame():
@@ -2513,7 +2514,7 @@ class ClassBasicThing(ClassBaseObject):
         # author (you) has a safety margin for spelling arguments in any case
         # preferred.
 
-        UCDA=string.upper(DescriptionArgument)
+        UCDA=DescriptionArgument.upper()
 
         #----------------------------
         # Say Appropriate Description

@@ -62,10 +62,10 @@ def create(parent):
 class TFrame(wx.Frame):
     def _init_coll_flexGridSizer1_Items(self, parent):
         # generated method, don't edit
-
-        parent.AddWindow(self.TDisplay, 0, border=0, flag=wx.GROW | wx.EXPAND)
-        parent.AddWindow(self.TInput, 1, border=1,
+        parent.Add(self.TDisplay, 0, border=0, flag=wx.GROW | wx.EXPAND)
+        parent.Add(self.TInput, 1, border=1,
               flag=wx.GROW | wx.RIGHT | wx.LEFT | wx.EXPAND | wx.ALIGN_BOTTOM)
+
 
     def _init_coll_flexGridSizer1_Growables(self, parent):
         # generated method, don't edit
@@ -183,7 +183,7 @@ class TFrame(wx.Frame):
         self.SetClientSize(wx.Size(821, 748))
         self.SetMenuBar(self.TMenuBar)
         self.SetAutoLayout(True)
-        self.SetToolTipString('TFrame')
+        self.SetToolTip('TFrame')
         self.SetMinSize(wx.Size(-1, 21))
 
         self.TStatusBar = wx.StatusBar(id=wxID_TFRAMETSTATUSBAR,
@@ -198,7 +198,7 @@ class TFrame(wx.Frame):
               style=wx.SIMPLE_BORDER | wx.TE_PROCESS_ENTER, value="''")
         self.TInput.SetFont(wx.Font(12, wx.SWISS, wx.NORMAL, wx.BOLD, False,
               'Courier'))
-        self.TInput.SetToolTipString('Type command here.')
+        self.TInput.SetToolTip('Type command here.')
         self.TInput.SetAutoLayout(False)
         self.TInput.SetEditable(True)
         self.TInput.Enable(False)
@@ -211,7 +211,7 @@ class TFrame(wx.Frame):
               value='To run a game, choose File → Pick Game … then choose a game from the list.')
         self.TDisplay.SetMinSize(wx.Size(517, 440))
         self.TDisplay.SetEditable(False)
-        self.TDisplay.SetToolTipString("Game's output displays here.")
+        self.TDisplay.SetToolTip("Game's output displays here.")
         self.TDisplay.SetFont(wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL, False,
               'Arial'))
         self.TDisplay.Enable(True)
@@ -414,7 +414,8 @@ class TFrame(wx.Frame):
                             ".",
                             "",
                             "PAWS Games (*.py)|*.py",
-                            wx.OPEN)
+                            wx.FD_OPEN)
+                            #wx.OPEN)
 
         #------------------------------
         # Show The Dialog To The Player
@@ -864,8 +865,11 @@ def TranslateCBExpression(Text=""):
     # Text. We'll use this information to replace only that portion of the
     # string with its translation.
 
-    OpenBrace  = string.find(Text,"{")
-    CloseBrace = string.find(Text,"}")
+    OpenBrace  = Text.find("{")
+    CloseBrace = Text.find("}")
+
+#    OpenBrace  = string.find(Text,"{")
+#    CloseBrace = string.find(Text,"}")
 
     #---------------------
     # Try To Translate CBE

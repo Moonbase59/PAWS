@@ -689,7 +689,7 @@ class ClassTerminal(ClassFundamental):
 
     def GetXY(self):
         TD = Terminal.Frame.TDisplay
-        x,y = TD.PositionToXY(TD.GetInsertionPoint())
+        bln, x,y = TD.PositionToXY(TD.GetInsertionPoint())
         return x,y
 
     def HomeCursor(self):
@@ -2121,7 +2121,7 @@ def SCase(Sentence):
     # Just in case there are leading spaces, we strip them away so the function
     # will work correctly.
 
-    NewSentence = string.lstrip(Sentence)
+    NewSentence = Sentence.lstrip()
 
     #--------------------------------
     # Return the Capitalized Sentence
@@ -2131,7 +2131,7 @@ def SCase(Sentence):
     # capitalized, along with the rest of new sentence from the second character
     # onward. (Remember the first character of a string is 0, not 1.)
 
-    return string.capitalize(NewSentence[0]) + NewSentence[1:]
+    return (NewSentence[0] + NewSentence[1:]).capitalize()
 
 def Self():
     """
@@ -2935,7 +2935,7 @@ class ClassParser(ClassFundamental):
             # word on the line. It's also the name phrase of the Say verb, so
             # we make sure it's in lower case.
 
-            FirstWord = string.lower(self.SayVerb.NamePhrase)
+            FirstWord = self.SayVerb.NamePhrase.lower()
 
             #---------------------
             # Is First Word "Say"?
@@ -2946,7 +2946,7 @@ class ClassParser(ClassFundamental):
             # is 3. We compare First Word against Said Text, from the beginning
             # to the 3'rd letter.
 
-            if string.lower(self.SaidText[:len(FirstWord)]) == FirstWord:
+            if self.SaidText[:len(FirstWord)].lower()  == FirstWord:
 
                 #-------------------------
                 # Return Say Verb's Action
@@ -3003,7 +3003,7 @@ class ClassParser(ClassFundamental):
         # string.split takes a string and creates a list by dividing the string
         # by a given character. By default that character is a space.
 
-        TempWordList = string.split(OutputString)
+        TempWordList = OutputString.split()
 
         #---------------------------------------
         # Break Word list into separate commands
@@ -3999,7 +3999,7 @@ class ClassParser(ClassFundamental):
 
                 # Strip off any leading spaces to make the conversion easier.
 
-                ObjectNames = string.lstrip(ObjectNames)
+                ObjectNames = ObjectNames.lstrip()
 
                 #-------------------------
                 # Add Words To Return List
@@ -4011,7 +4011,7 @@ class ClassParser(ClassFundamental):
                 # command.
 
                 if len(ObjectNames)>0:
-                    WordList = string.split(ObjectNames)
+                    WordList = ObjectNames.split()
                     for word in WordList: ReturnList.append(word)
 
             else:
@@ -4475,7 +4475,7 @@ class ClassAdverb(ClassFundamental):
         # to the KeyNoun, this allows us to avoid having to set it
         # explicitly.
 
-        AdverbList = string.split(Name, ",")
+        AdverbList = Name.split(",")
         self.NamePhrase = AdverbList[0]
 
         #--------------------
