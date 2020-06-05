@@ -144,12 +144,12 @@ C="""
   "help" the text will appear.
   """
 
-Game.Author = "Roger Firth (implemented by Neil Cerutti)"
-Game.Copyright = "1999-2000"
-Game.Name = "Cloak of Darkness"
-Game.Version = "1.5"
+Game.Author = u"Roger Firth (implemented by Neil Cerutti)"
+Game.Copyright = u"1999-2000"
+Game.Name = u"Cloak of Darkness"
+Game.Version = u"1.5"
 
-Game.IntroText = """
+Game.IntroText = u"""
                  Hurrying through the rainswept November night, you’re glad
                  to see the bright lights of the Opera House. It’s
                  surprising that there aren’t more people about, but, hey,
@@ -301,10 +301,10 @@ class MakeNowhere(MakeCODRoom):
         """
 
         if Bar.IsLit:
-            return Complain("There’s no exit in that direction.")
+            return Complain(u"There’s no exit in that direction.")
         else:
             Sawdust.Trampled += 1
-            return Complain("Blundering around in the dark isn’t a good idea.")
+            return Complain(u"Blundering around in the dark isn’t a good idea.")
 
 
 #*******************************************************************************
@@ -324,7 +324,7 @@ class MakeCloak(ClassItem):
     """
     def Drop(self, Multiple=FALSE):
         """We simply return a complaint, and the drop doesn't happen."""
-        return Complain("""
+        return Complain(u"""
                         This isn’t the best place to leave a smart cloak
                         lying around.
                         """)
@@ -381,7 +381,7 @@ class MakeSawdust(ClassScenery):
 
         # If Trampled is less than 2 return the winning message.
 
-        if self.Trampled < 2: return """
+        if self.Trampled < 2: return u"""
                                      The message, neatly marked in the
                                      sawdust, reads...
 
@@ -400,7 +400,7 @@ class MakeSawdust(ClassScenery):
         # even worse. Since there was no real need for ELSE, we didn't use it.
         # And made the program simpler to follow.
 
-        return """
+        return u"""
                The message has been carelessly trampled, making it
                difficult to read. You can just distinguish the words...
 
@@ -426,8 +426,8 @@ C="""
   """
 
 Foyer = MakeCODRoom()
-Foyer.NamePhrase = "Foyer of the Opera House"
-Foyer.SetDesc("L","""
+Foyer.NamePhrase = u"Foyer of the Opera House"
+Foyer.SetDesc(u"L",u"""
                   You are standing in a spacious hall, splendidly decorated
                   in red and gold, with glittering chandeliers overhead. The
                   entrance from the street is to the north, and there are
@@ -444,8 +444,8 @@ C="""
   """
 
 Cloakroom = MakeCODRoom()
-Cloakroom.NamePhrase = "Cloakroom"
-Cloakroom.SetDesc("L","""
+Cloakroom.NamePhrase = u"Cloakroom"
+Cloakroom.SetDesc(u"L",u"""
                       The walls of this small room were clearly once lined
                       with hooks, though now only one remains. The exit is a
                       door to the east.
@@ -465,10 +465,10 @@ C="""
   """
 
 Bar = MakeBar()
-Bar.NamePhrase = "Foyer Bar"
+Bar.NamePhrase = u"Foyer Bar"
 Bar.IsLit = FALSE
-Bar.SetDesc("Floor","{Sawdust.ReadDesc()}")
-Bar.SetDesc("L","""
+Bar.SetDesc(u"Floor",u"{Sawdust.ReadDesc()}")
+Bar.SetDesc(u"L",u"""
                 The bar, much rougher than you expected after the opulence of the
                 northern foyer, is completely empty. There seems to be some sort
                 of message scrawled in the sawdust on the floor.
@@ -482,7 +482,7 @@ C="""
   """
 
 Nowhere = MakeNowhere()
-Nowhere.NamePhrase = "Nowhere Room"
+Nowhere.NamePhrase = u"Nowhere Room"
 
 #*******************************************************************************
 #                                   M A K E   T H I N G S
@@ -509,12 +509,12 @@ C="""
   the bar--but since SetIsLit returns "", all the player sees is "Taken".
   """
 
-Cloak = MakeCloak("cloak","velvet,black,satin,dark,handsome")
+Cloak = MakeCloak(u"cloak",u"velvet,black,satin,dark,handsome")
 Cloak.StartingLocation = Global.Player
 Cloak.Bulk = 1
 Cloak.Weight = 10
-Cloak.SetDesc("Take", "{Bar.SetIsLit(FALSE)}Taken.")
-Cloak.SetDesc("L", """
+Cloak.SetDesc(u"Take", u"{Bar.SetIsLit(FALSE)}Taken.")
+Cloak.SetDesc(u"L", u"""
                    A handsome cloak, of velvet trimmed with satin, and
                    slightly spattered with raindrops. Its blackness is so
                    deep that it almost seems to suck light from the room.
@@ -533,14 +533,14 @@ C="""
   the hook. Notice how the long description changes naturally?
   """
 
-Hook = MakeHook("hook,peg","small,brass")
+Hook = MakeHook(u"hook,peg",u"small,brass")
 Hook.MaxBulk = 1
 Hook.MaxWeight = 10
 Hook.StartingLocation = Cloakroom
-Hook.ActivateSpontaneousPhrase = "I don’t know how to do that."
-Hook.ActivatePassivePhrase = "I don’t know how to do that."
-Hook.SetDesc("Take", "The hook is screwed to the wall.")
-Hook.SetDesc("L", """
+Hook.ActivateSpontaneousPhrase = u"I don’t know how to do that."
+Hook.ActivatePassivePhrase = u"I don’t know how to do that."
+Hook.SetDesc(u"Take", u"The hook is screwed to the wall.")
+Hook.SetDesc(u"L", u"""
                   It’s just a small brass hook,
                   {Choose (Cloak in Self().Contents,
                            u" with a cloak hanging on it.",
@@ -565,8 +565,8 @@ C="""
   Sawdust is picked instead of the ground.
   """
 
-Sawdust = MakeSawdust("message,sawdust,floor")
-Sawdust.SetDesc("L", "{Self().ReadDesc()}")
+Sawdust = MakeSawdust(u"message,sawdust,floor")
+Sawdust.SetDesc(u"L", u"{Self().ReadDesc()}")
 Sawdust.ParserFavors = TRUE
 Sawdust.StartingLocation = Bar
 
@@ -582,7 +582,7 @@ C="""
   a direction PAWS will provide an appropriate complaint.
   """
 
-Foyer.Map = {North: """
+Foyer.Map = {North: u"""
                     You’ve only just arrived and besides, the weather
                     outside seems to be getting worse.
                     """,

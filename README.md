@@ -142,3 +142,11 @@ _Linux Screenshot_
 _Windows Screenshot_
 
 **Have fun!**
+
+------------
+Update 2020-05-14
+
+I have updated the PAWS code to work under Python 3, and wxPython v4 (Phoenix).  
+And Added a Requirements file.
+
+While I did not add Python 2 & 3 support, I believe by using the __Future__ library, the changes should be useable under Python 2.
