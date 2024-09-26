@@ -115,12 +115,12 @@ C="""
   "help" the text will appear.
   """
 
-Game.Author = u"<name of author>"
-Game.Copyright = u"<copyright year>"
-Game.Name = u"<full name of game>"
-Game.Version = u"1.0 Alpha"
+Game.Author = "<name of author>"
+Game.Copyright = "<copyright year>"
+Game.Name = "<full name of game>"
+Game.Version = "1.0 Alpha"
 
-Game.IntroText = u"""
+Game.IntroText = """
                  Put your game introduction here.
                  """
 
@@ -240,8 +240,8 @@ C="""
   """
 
 StartingRoom = MakeRoom()
-StartingRoom.NamePhrase=u"Starting Room"
-StartingRoom.SetDesc(u"L",u"""
+StartingRoom.NamePhrase="Starting Room"
+StartingRoom.SetDesc("L","""
                          You’re in a room with no exits. So quit looking
                          around and finish writing your game already!
                          """)

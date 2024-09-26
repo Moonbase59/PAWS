@@ -190,6 +190,7 @@ import pickle           # picking functions (for save/restore)
 import re               # Regular Expressions
 import string           # String handling functions
 import random           # Random # generator & functions
+import six
 import sys              # System related functions
 import types            # variable type identifiers
 import wx               # wxPython GUI
@@ -272,7 +273,7 @@ def BaseClasses(Class):
       to [] in the statement above).
       """
 
-    if type(Class) != types.ClassType: return ReturnList
+    if type(Class) != type: return ReturnList
 
     #-----------------------------
     # Append Class to return list.
@@ -393,7 +394,8 @@ def ObjectBaseClasses(Object):
     # a class from being passed. This function will fail if a class were passed
     # to it.
 
-    if type(Object)!=types.InstanceType: return ReturnList
+#    if type(Object)!=types.InstanceType: return ReturnList
+    if not isinstance(Object, object): return ReturnList
 
     #--------------------------
     # Get Object's Base Classes
@@ -647,22 +649,22 @@ class ClassTerminal(ClassFundamental):
         # Attribute Properties
         #---------------------
 
-        self.BLACK        = u'black'
-        self.BLUE         = u'blue'
-        self.GREEN        = u'green'
-        self.CYAN         = u'cyan'
-        self.RED          = u'red'
-        self.MAGENTA      = u'magenta'
-        self.BROWN        = u'brown'
-        self.GRAY         = u'grey'
-        self.LIGHTBLACK   = u'dark grey'
-        self.LIGHTBLUE    = u'light blue'
-        self.LIGHTGREEN   = u'lime green'
-        self.LIGHTCYAN    = u'aquamarine'
-        self.LIGHTRED     = u'coral'
-        self.LIGHTMAGENTA = u'orchid'
-        self.YELLOW       = u'yellow'
-        self.WHITE        = u'white'
+        self.BLACK        = 'black'
+        self.BLUE         = 'blue'
+        self.GREEN        = 'green'
+        self.CYAN         = 'cyan'
+        self.RED          = 'red'
+        self.MAGENTA      = 'magenta'
+        self.BROWN        = 'brown'
+        self.GRAY         = 'grey'
+        self.LIGHTBLACK   = 'dark grey'
+        self.LIGHTBLUE    = 'light blue'
+        self.LIGHTGREEN   = 'lime green'
+        self.LIGHTCYAN    = 'aquamarine'
+        self.LIGHTRED     = 'coral'
+        self.LIGHTMAGENTA = 'orchid'
+        self.YELLOW       = 'yellow'
+        self.WHITE        = 'white'
 
     def ClearScreen(self):
         """Clear Screen"""
@@ -670,7 +672,7 @@ class ClassTerminal(ClassFundamental):
 
     def Configure(self):
         """Configure terminal colors"""
-        Say(u"Use the View Fonts … menu item instead.")
+        Say("Use the View Fonts … menu item instead.")
 
     def DisplayStatusLine(self,DisplayString):
         """Display Status Line"""
@@ -687,7 +689,7 @@ class ClassTerminal(ClassFundamental):
 
     def GetXY(self):
         TD = Terminal.Frame.TDisplay
-        x,y = TD.PositionToXY(TD.GetInsertionPoint())
+        bln, x,y = TD.PositionToXY(TD.GetInsertionPoint())
         return x,y
 
     def HomeCursor(self):
@@ -702,17 +704,17 @@ class ClassTerminal(ClassFundamental):
         #-------------------
 
         InputValue = Terminal.Frame.TInput.GetValue()
-        if InputValue is None: InputValue = u""
+        if InputValue is None: InputValue = ""
 
         #---------------------------------------------
         # Echo the player's command in the Output pane
         #---------------------------------------------
 
-        self.RawOutput(u" " + InputValue + u"\n")
+        self.RawOutput(" " + InputValue + "\n")
 
         if Global.Transcribe:
-            Global.LogFile.write(u"\n\n"+PromptString+InputValue+u"\n")
-            if Global.Debug: Global.DebugFile.write(u"\n\n"+PromptString+InputValue+u"\n")
+            Global.LogFile.write("\n\n"+PromptString+InputValue+"\n")
+            if Global.Debug: Global.DebugFile.write("\n\n"+PromptString+InputValue+"\n")
 
         #------------------------------
         # Return Player's Typed Command
@@ -754,7 +756,7 @@ class ClassTerminal(ClassFundamental):
         """
 
         self.RawOutput(OutputString)
-        if OutputString != u"\n": self.RawOutput(u" ")
+        if OutputString != "\n": self.RawOutput(" ")
         self.CurrentScreenColumn, self.CurrentScreenLine = self.GetXY()
 
     def RawOutput(self, Text):
@@ -806,12 +808,12 @@ class ClassTerminal(ClassFundamental):
 
     def Terminate(self):
         """Close up the Tkinter widgets."""
-        self.RawOutput(u"\n")
+        self.RawOutput("\n")
         self.MoreMessage()
         Terminal.Frame.TDisplay.SetFocus()
         Terminal.Frame.TInput.Enable(False)
         Terminal.Frame.TInput.Clear()
-        Terminal.Frame.TInput.AppendText(u"Please click File → Exit to close terminal")
+        Terminal.Frame.TInput.AppendText("Please click File → Exit to close terminal")
 
     #----------------------
     # Background Dim Colors
@@ -1019,7 +1021,8 @@ def AppendDictList(Dict,Key,Value):
     # the developer doesn't have to worry about case sensitivity when
     # defining verbs and objects.
 
-    WordList = string.split(string.lower(Key),u",")
+#    WordList = string.split(string.lower(Key),",")
+    WordList = Key.lower().split(",")#string.split(string.lower(Key),",")
 
     #-----------------------------
     # For each word in the list …
@@ -1047,7 +1050,7 @@ def AppendDictList(Dict,Key,Value):
         # Value to a list the second object added to the same key value
         # would cause the game to blow up with an error message.
 
-        if Dict.has_key(word):
+        if word in Dict:
             Dict[word] = Union(Dict[word],[Value])
         else:
             Dict[word] = [Value]
@@ -1073,7 +1076,7 @@ def ClearScreen():
     Terminal.ClearScreen()
 
 
-def Complain(Text=u""):
+def Complain(Text=""):
     """Call Say(Text) and return TURN_CONTINUES.
 
     Because the action of printing a message and going back for a more
@@ -1098,8 +1101,8 @@ def DebugTrace(Text):
     """
 
     if not Global.Debug: return
-    print Text
-    if Global.Transcribe: Global.DebugFile.write(Text+u"\n")
+    print(Text)
+    if Global.Transcribe: Global.DebugFile.write(Text+"\n")
 
 def DebugDObjList():
     """
@@ -1111,7 +1114,7 @@ def DebugDObjList():
     """
 
     for Object in P.DOL():
-        DebugTrace(u"-->" + Object.Get(SDesc))
+        DebugTrace("-->" + Object.Get(SDesc))
 
 
 def DebugIObjList():
@@ -1124,7 +1127,7 @@ def DebugIObjList():
     """
 
     for Object in P.IOL():
-        DebugTrace(u"Debug-->" + Object.Get(SDesc))
+        DebugTrace("Debug-->" + Object.Get(SDesc))
 
 
 def DebugPassedObjList(Msg,ObjList):
@@ -1136,8 +1139,8 @@ def DebugPassedObjList(Msg,ObjList):
 
     DebugTrace(Msg)
     for Object in ObjList:
-        DebugTrace(u"-->" + Object.SDesc())
-    return u""
+        DebugTrace("-->" + Object.SDesc())
+    return ""
 
 
 def DeleteDictList(Dictionary,Object=None):
@@ -1169,7 +1172,7 @@ def DeleteDictList(Dictionary,Object=None):
     # For each key in the dictionary we retrieve the value, which should be
     # a list. If it isn't we skip this key.
 
-    for key in Dictionary.keys():
+    for key in list(Dictionary.keys()):
 
         #------------------------------
         # Retrieve List From Dictionary
@@ -1311,10 +1314,10 @@ def DisambiguateList(List,TestMethod,ErrorMethod,Actor=None):
 
         if TestResult == TRUE:
             ReturnList.append(Object)
-            DebugTrace(u"    "+Object.SDesc() + u" passed")
+            DebugTrace("    "+Object.SDesc() + " passed")
         else:
             List.remove(Object)
-            DebugTrace(u"    "+Object.SDesc() + u" failed")
+            DebugTrace("    "+Object.SDesc() + " failed")
 
 
     #------------------------
@@ -1487,13 +1490,13 @@ def DisambiguateListOfLists(ListOfLists,TestMethod,ErrorMethod,Actor=None):
         # of the object we just eliminated.
 
         if not TestResult:
-            DebugTrace(u"    "+List.SDesc() + u" Failed")
+            DebugTrace("    "+List.SDesc() + " Failed")
             ListOfLists.remove(List)
             Say(ErrorMethod(List))
-            DebugTrace(u"    "+List.SDesc() + u" unambiguous failure")
+            DebugTrace("    "+List.SDesc() + " unambiguous failure")
             continue
 
-        DebugTrace(u"    "+List.SDesc() + u" passed")
+        DebugTrace("    "+List.SDesc() + " passed")
         ReturnList.append(List)
 
 
@@ -1511,7 +1514,7 @@ def DisambiguateListOfLists(ListOfLists,TestMethod,ErrorMethod,Actor=None):
     # object lists untouched. How it does it is something of a Python
     # mystery, but rest assured it works.
 
-    ReturnList = filter(None,ReturnList)
+    ReturnList = [_f for _f in ReturnList if _f]
 
     #---------------------------
     # Return New "List Of Lists"
@@ -1547,7 +1550,7 @@ def DisambiguateListOfLists(ListOfLists,TestMethod,ErrorMethod,Actor=None):
 
 
 
-def DoIt(CodeString,ReturnMessage=u""):
+def DoIt(CodeString,ReturnMessage=""):
     """
     This function takes a string and tries to turn it into valid Python
     code, then execute it. Its main purpose is for use in debugging, to set
@@ -1555,13 +1558,13 @@ def DoIt(CodeString,ReturnMessage=u""):
     fragment with it. Be careful!
     """
     try:
-        eval(compile(CodeString,u"<string>",u"exec"))
+        eval(compile(CodeString,"<string>","exec"))
     except:
-        Say(u"Syntax Error In CodeString")
+        Say("Syntax Error In CodeString")
 
     return ReturnMessage
 
-def Fence(Token,Fence1=u'\"',Fence2=u'\"'):
+def Fence(Token,Fence1='\"',Fence2='\"'):
     """
     This function takes token and returns it with Fence1 leading and Fence2
     trailing it. By default the function fences with quotations, but it
@@ -1602,8 +1605,8 @@ def Indent(Level):
     CHARACTERS TRANSLATE TO 3 SPACES, NOT ASCII CODE 9!
     """
 
-    RV = u""
-    for x in range(0,Level): RV = RV + u" ~t "
+    RV = ""
+    for x in range(0,Level): RV = RV + " ~t "
     return RV
 
 def Intersect(list1,list2):
@@ -1625,12 +1628,12 @@ def InVocabulary(Word):
     vocabulary, FALSE if it isn't.
     """
 
-    if P.AP().NounsDict.has_key(Word): return TRUE
-    if P.AP().VerbsDict.has_key(Word): return TRUE
-    if P.AP().AdverbsDict.has_key(Word): return TRUE
-    if P.AP().AdjsDict.has_key(Word): return TRUE
-    if P.AP().PrepsDict.has_key(Word): return TRUE
-    if P.AP().PronounsListDict.has_key(Word): return TRUE
+    if Word in P.AP().NounsDict: return TRUE
+    if Word in P.AP().VerbsDict: return TRUE
+    if Word in P.AP().AdverbsDict: return TRUE
+    if Word in P.AP().AdjsDict: return TRUE
+    if Word in P.AP().PrepsDict: return TRUE
+    if Word in P.AP().PronounsListDict: return TRUE
     if Word in P.AP().ArticlesList: return TRUE
     if Word in P.AP().ConjunctionsList: return TRUE
     if Word in P.AP().DisjunctionsList: return TRUE
@@ -1638,7 +1641,7 @@ def InVocabulary(Word):
 
     return FALSE
 
-def NZ(PassedValue,ValueIfNone=u""):
+def NZ(PassedValue,ValueIfNone=""):
     """
     This function replaces the first argument with the second if the first
     argument is None. By default the second argument is an empty string.
@@ -1666,7 +1669,7 @@ def RunDaemons():
     # will actually run the appropriate function!
 
 
-    for DaemonFuse in Global.DaemonDict.keys():
+    for DaemonFuse in list(Global.DaemonDict.keys()):
 
         #-------------------------
         # Get Original Fuse Length
@@ -1803,7 +1806,7 @@ def RunDaemons():
 
     return
 
-def SayOriginal(Text=u""):
+def SayOriginal(Text=""):
     """
     Because the print statement isn't particularly intelligent when it comes
     to printing we'll have to create our own. This function makes sure that
@@ -1830,7 +1833,7 @@ def SayOriginal(Text=u""):
 
     # If Text is empty (nothing) then return without doing anything.
 
-    if Text == u"": return
+    if Text == "": return
 
     #--------------------------------
     # Translate {} Expressions and ~p
@@ -1840,7 +1843,7 @@ def SayOriginal(Text=u""):
     # expression. ~p is replaced with a pair of ~n's.
 
     Text = Engine.XlateCBEFunction(Text)
-    Text = string.replace(Text, u"~p", u"~n ~n")
+    Text = string.replace(Text, "~p", "~n ~n")
 
     #-----------------
     # Create Word List
@@ -1866,52 +1869,52 @@ def SayOriginal(Text=u""):
         # have connected the Word="" statement on the same physical line, this
         # is just to make the code easier on the eyes.
 
-        if Word[0] == u"~":
-            if Word == u"~title": Terminal.A_TITLE();Word = u""
+        if Word[0] == "~":
+            if Word == "~title": Terminal.A_TITLE();Word = ""
             if len(Word) == 2:
-                if Word == u"~b": Terminal.A_BOLD();Word = u""
-                if Word == u"~d": Terminal.A_DIM();Word = u""
-                if Word == u"~e": Terminal.A_MORE();Word = u""
-                if Word == u"~i": Terminal.A_ITALIC();Word = u""
-                if Word == u"~l": Terminal.A_NORMAL();Word = u""
-                if Word == u"~r": Terminal.A_REVERSE();Word = u""
-                if Word == u"~s": Terminal.A_STANDOUT();Word = u""
-                if Word == u"~u": Terminal.A_UNDERLINED();Word = u""
+                if Word == "~b": Terminal.A_BOLD();Word = ""
+                if Word == "~d": Terminal.A_DIM();Word = ""
+                if Word == "~e": Terminal.A_MORE();Word = ""
+                if Word == "~i": Terminal.A_ITALIC();Word = ""
+                if Word == "~l": Terminal.A_NORMAL();Word = ""
+                if Word == "~r": Terminal.A_REVERSE();Word = ""
+                if Word == "~s": Terminal.A_STANDOUT();Word = ""
+                if Word == "~u": Terminal.A_UNDERLINED();Word = ""
             if len(Word) == 3:
-                if Word == u"~bk": Terminal.A_BLACK();Word = u""
-                if Word == u"~bl": Terminal.A_BLUE();Word = u""
-                if Word == u"~gr": Terminal.A_GREEN();Word = u""
-                if Word == u"~cy": Terminal.A_CYAN();Word = u""
-                if Word == u"~rd": Terminal.A_RED();Word = u""
-                if Word == u"~mg": Terminal.A_MAGENTA();Word = u""
-                if Word == u"~br": Terminal.A_BROWN();Word = u""
-                if Word == u"~gy": Terminal.A_GRAY();Word = u""
+                if Word == "~bk": Terminal.A_BLACK();Word = ""
+                if Word == "~bl": Terminal.A_BLUE();Word = ""
+                if Word == "~gr": Terminal.A_GREEN();Word = ""
+                if Word == "~cy": Terminal.A_CYAN();Word = ""
+                if Word == "~rd": Terminal.A_RED();Word = ""
+                if Word == "~mg": Terminal.A_MAGENTA();Word = ""
+                if Word == "~br": Terminal.A_BROWN();Word = ""
+                if Word == "~gy": Terminal.A_GRAY();Word = ""
             if len(Word) == 4:
-                if Word == u"~lbk": Terminal.A_LBLACK();Word = u""
-                if Word == u"~lbl": Terminal.A_LBLUE();Word = u""
-                if Word == u"~lgr": Terminal.A_LGREEN();Word = u""
-                if Word == u"~lcy": Terminal.A_LCYAN();Word = u""
-                if Word == u"~lrd": Terminal.A_LRED();Word = u""
-                if Word == u"~lmg": Terminal.A_LMAGENTA();Word = u""
-                if Word == u"~lbr": Terminal.A_YELLOW();Word = u""
-                if Word == u"~lgy": Terminal.A_WHITE();Word = u""
-                if Word == u"~bbk": Terminal.A_BBLACK();Word = u""
-                if Word == u"~bbl": Terminal.A_BBLUE();Word = u""
-                if Word == u"~bgr": Terminal.A_BGREEN();Word = u""
-                if Word == u"~bcy": Terminal.A_BCYAN();Word = u""
-                if Word == u"~brd": Terminal.A_BRED();Word = u""
-                if Word == u"~bmg": Terminal.A_BMAGENTA();Word = u""
-                if Word == u"~bbr": Terminal.A_BBROWN();Word = u""
-                if Word == u"~bgy": Terminal.A_BGRAY();Word = u""
+                if Word == "~lbk": Terminal.A_LBLACK();Word = ""
+                if Word == "~lbl": Terminal.A_LBLUE();Word = ""
+                if Word == "~lgr": Terminal.A_LGREEN();Word = ""
+                if Word == "~lcy": Terminal.A_LCYAN();Word = ""
+                if Word == "~lrd": Terminal.A_LRED();Word = ""
+                if Word == "~lmg": Terminal.A_LMAGENTA();Word = ""
+                if Word == "~lbr": Terminal.A_YELLOW();Word = ""
+                if Word == "~lgy": Terminal.A_WHITE();Word = ""
+                if Word == "~bbk": Terminal.A_BBLACK();Word = ""
+                if Word == "~bbl": Terminal.A_BBLUE();Word = ""
+                if Word == "~bgr": Terminal.A_BGREEN();Word = ""
+                if Word == "~bcy": Terminal.A_BCYAN();Word = ""
+                if Word == "~brd": Terminal.A_BRED();Word = ""
+                if Word == "~bmg": Terminal.A_BMAGENTA();Word = ""
+                if Word == "~bbr": Terminal.A_BBROWN();Word = ""
+                if Word == "~bgy": Terminal.A_BGRAY();Word = ""
             if len(Word) == 5:
-                if Word == u"~blbk": Terminal.A_BLBLACK();Word = u""
-                if Word == u"~blbl": Terminal.A_BLBLUE();Word = u""
-                if Word == u"~blgr": Terminal.A_BLGREEN();Word = u""
-                if Word == u"~blcy": Terminal.A_BLCYAN();Word = u""
-                if Word == u"~blrd": Terminal.A_BLRED();Word = u""
-                if Word == u"~blmg": Terminal.A_BLMAGENTA();Word = u""
-                if Word == u"~blbr": Terminal.A_BYELLOW();Word = u""
-                if Word == u"~blgy": Terminal.A_BWHITE();Word = u""
+                if Word == "~blbk": Terminal.A_BLBLACK();Word = ""
+                if Word == "~blbl": Terminal.A_BLBLUE();Word = ""
+                if Word == "~blgr": Terminal.A_BLGREEN();Word = ""
+                if Word == "~blcy": Terminal.A_BLCYAN();Word = ""
+                if Word == "~blrd": Terminal.A_BLRED();Word = ""
+                if Word == "~blmg": Terminal.A_BLMAGENTA();Word = ""
+                if Word == "~blbr": Terminal.A_BYELLOW();Word = ""
+                if Word == "~blgy": Terminal.A_BWHITE();Word = ""
 
 
         #----------------------------------
@@ -1920,8 +1923,8 @@ def SayOriginal(Text=u""):
 
         # Replace ~n and ~t with their print() statement equivalents.
 
-        Word = string.replace(Word, u"~n", u"\n")
-        Word = string.replace(Word, u"~t", u"  ")
+        Word = string.replace(Word, "~n", "\n")
+        Word = string.replace(Word, "~t", "  ")
 
         #-------------------------------
         # If it starts with a line break
@@ -1932,14 +1935,14 @@ def SayOriginal(Text=u""):
         # Send a newline to the terminal, increment the number of lines printed
         # and clear the word.
 
-        if Word == u"\n":
+        if Word == "\n":
             Terminal.NewLine()
 
             if Global.Transcribe:
-                Global.LogFile.write(u"\n")
-                if Global.Debug: Global.DebugFile.write(u"\n")
+                Global.LogFile.write("\n")
+                if Global.Debug: Global.DebugFile.write("\n")
 
-            Word = u""
+            Word = ""
 
         #-------------------------
         # Will Word Fit on line?
@@ -1953,10 +1956,10 @@ def SayOriginal(Text=u""):
             Terminal.Output(Word)
 
             if Global.Transcribe:
-                Global.LogFile.write(Word+u" ")
-                if Global.Debug: Global.DebugFile.write(Word+u" ")
+                Global.LogFile.write(Word+" ")
+                if Global.Debug: Global.DebugFile.write(Word+" ")
 
-def Say(Text=u""):
+def Say(Text=""):
     """
     Because the print statement isn't particularly intelligent when it comes
     to printing we'll have to create our own. This function makes sure that
@@ -1983,7 +1986,7 @@ def Say(Text=u""):
 
     # If Text is empty (nothing) then return without doing anything.
 
-    if Text == u"": return
+    if Text == "": return
 
     #--------------------------------
     # Translate {} Expressions and ~p
@@ -2002,13 +2005,13 @@ def Say(Text=u""):
     # loop on.
 
     # We want to get rid of any extraneous whitespace.
-    Text = u" ".join(Text.split())
+    Text = " ".join(Text.split())
 
     # We'll display chunks separated by style changes, so split the text up by
     # space ~. We need to account for the possibility that the ~ is at the
     # beginning of the line.
-    if Text[0] == u"~": Text = u" " + Text
-    WordsList = Text.split(u" ~")
+    if Text[0] == "~": Text = " " + Text
+    WordsList = Text.split(" ~")
 
     #---------------------------
     # For each word in Word List
@@ -2023,7 +2026,7 @@ def Say(Text=u""):
 
             # The style marker will be the first 'word'. Get the first space
             # to be able to extract it.
-            FirstSpace = Words.find(u" ")
+            FirstSpace = Words.find(" ")
 
             # The index will be -1 if there is no actual space. If there are
             # no spaces, the chunk itself is a style marker.
@@ -2032,59 +2035,59 @@ def Say(Text=u""):
             else:
                 StyleMarker = Words
 
-            Words = Words[FirstSpace + 1:] if FirstSpace != -1 else u""
+            Words = Words[FirstSpace + 1:] if FirstSpace != -1 else ""
 
-            if StyleMarker == u"title": Terminal.A_TITLE()
-            elif StyleMarker == u"b": Terminal.A_BOLD()
-            elif StyleMarker == u"d": Terminal.A_DIM()
-            elif StyleMarker == u"e": Terminal.A_MORE()
-            elif StyleMarker == u"i": Terminal.A_ITALIC()
-            elif StyleMarker == u"l": Terminal.A_NORMAL()
-            elif StyleMarker == u"r": Terminal.A_REVERSE()
-            elif StyleMarker == u"s": Terminal.A_STANDOUT()
-            elif StyleMarker == u"u": Terminal.A_UNDERLINED()
-            elif StyleMarker == u"bk": Terminal.A_BLACK()
-            elif StyleMarker == u"bl": Terminal.A_BLUE()
-            elif StyleMarker == u"gr": Terminal.A_GREEN()
-            elif StyleMarker == u"cy": Terminal.A_CYAN()
-            elif StyleMarker == u"rd": Terminal.A_RED()
-            elif StyleMarker == u"mg": Terminal.A_MAGENTA()
-            elif StyleMarker == u"br": Terminal.A_BROWN()
-            elif StyleMarker == u"gy": Terminal.A_GRAY()
-            elif StyleMarker == u"lbk": Terminal.A_LBLACK()
-            elif StyleMarker == u"lbl": Terminal.A_LBLUE()
-            elif StyleMarker == u"lgr": Terminal.A_LGREEN()
-            elif StyleMarker == u"lcy": Terminal.A_LCYAN()
-            elif StyleMarker == u"lrd": Terminal.A_LRED()
-            elif StyleMarker == u"lmg": Terminal.A_LMAGENTA()
-            elif StyleMarker == u"lbr": Terminal.A_YELLOW()
-            elif StyleMarker == u"lgy": Terminal.A_WHITE()
-            elif StyleMarker == u"bbk": Terminal.A_BBLACK()
-            elif StyleMarker == u"bbl": Terminal.A_BBLUE()
-            elif StyleMarker == u"bgr": Terminal.A_BGREEN()
-            elif StyleMarker == u"bcy": Terminal.A_BCYAN()
-            elif StyleMarker == u"brd": Terminal.A_BRED()
-            elif StyleMarker == u"bmg": Terminal.A_BMAGENTA()
-            elif StyleMarker == u"bbr": Terminal.A_BBROWN()
-            elif StyleMarker == u"bgy": Terminal.A_BGRAY()
-            elif StyleMarker == u"blbk": Terminal.A_BLBLACK()
-            elif StyleMarker == u"blbl": Terminal.A_BLBLUE()
-            elif StyleMarker == u"blgr": Terminal.A_BLGREEN()
-            elif StyleMarker == u"blcy": Terminal.A_BLCYAN()
-            elif StyleMarker == u"blrd": Terminal.A_BLRED()
-            elif StyleMarker == u"blmg": Terminal.A_BLMAGENTA()
-            elif StyleMarker == u"blbr": Terminal.A_BYELLOW()
-            elif StyleMarker == u"blgy": Terminal.A_BWHITE()
-            elif StyleMarker == u"n": Words = u"\n" + Words
-            elif StyleMarker == u"p": Words = u"\n\n" + Words
-            elif StyleMarker == u"t": Words = u"  " + Words
+            if StyleMarker == "title": Terminal.A_TITLE()
+            elif StyleMarker == "b": Terminal.A_BOLD()
+            elif StyleMarker == "d": Terminal.A_DIM()
+            elif StyleMarker == "e": Terminal.A_MORE()
+            elif StyleMarker == "i": Terminal.A_ITALIC()
+            elif StyleMarker == "l": Terminal.A_NORMAL()
+            elif StyleMarker == "r": Terminal.A_REVERSE()
+            elif StyleMarker == "s": Terminal.A_STANDOUT()
+            elif StyleMarker == "u": Terminal.A_UNDERLINED()
+            elif StyleMarker == "bk": Terminal.A_BLACK()
+            elif StyleMarker == "bl": Terminal.A_BLUE()
+            elif StyleMarker == "gr": Terminal.A_GREEN()
+            elif StyleMarker == "cy": Terminal.A_CYAN()
+            elif StyleMarker == "rd": Terminal.A_RED()
+            elif StyleMarker == "mg": Terminal.A_MAGENTA()
+            elif StyleMarker == "br": Terminal.A_BROWN()
+            elif StyleMarker == "gy": Terminal.A_GRAY()
+            elif StyleMarker == "lbk": Terminal.A_LBLACK()
+            elif StyleMarker == "lbl": Terminal.A_LBLUE()
+            elif StyleMarker == "lgr": Terminal.A_LGREEN()
+            elif StyleMarker == "lcy": Terminal.A_LCYAN()
+            elif StyleMarker == "lrd": Terminal.A_LRED()
+            elif StyleMarker == "lmg": Terminal.A_LMAGENTA()
+            elif StyleMarker == "lbr": Terminal.A_YELLOW()
+            elif StyleMarker == "lgy": Terminal.A_WHITE()
+            elif StyleMarker == "bbk": Terminal.A_BBLACK()
+            elif StyleMarker == "bbl": Terminal.A_BBLUE()
+            elif StyleMarker == "bgr": Terminal.A_BGREEN()
+            elif StyleMarker == "bcy": Terminal.A_BCYAN()
+            elif StyleMarker == "brd": Terminal.A_BRED()
+            elif StyleMarker == "bmg": Terminal.A_BMAGENTA()
+            elif StyleMarker == "bbr": Terminal.A_BBROWN()
+            elif StyleMarker == "bgy": Terminal.A_BGRAY()
+            elif StyleMarker == "blbk": Terminal.A_BLBLACK()
+            elif StyleMarker == "blbl": Terminal.A_BLBLUE()
+            elif StyleMarker == "blgr": Terminal.A_BLGREEN()
+            elif StyleMarker == "blcy": Terminal.A_BLCYAN()
+            elif StyleMarker == "blrd": Terminal.A_BLRED()
+            elif StyleMarker == "blmg": Terminal.A_BLMAGENTA()
+            elif StyleMarker == "blbr": Terminal.A_BYELLOW()
+            elif StyleMarker == "blgy": Terminal.A_BWHITE()
+            elif StyleMarker == "n": Words = "\n" + Words
+            elif StyleMarker == "p": Words = "\n\n" + Words
+            elif StyleMarker == "t": Words = "  " + Words
 
             # If none of the above, it wasn't a style marker.
-            else: Words = u"~" + StyleMarker + u" " + Words
+            else: Words = "~" + StyleMarker + " " + Words
 
         if len(Words) > 0:
             # We may have an extra space at the end. Oops. Get rid of that.
-            if Words[-1] == u" ":
+            if Words[-1] == " ":
                 Words = Words[:-1]
 
             Terminal.Output(Words)
@@ -2109,7 +2112,7 @@ def SCase(Sentence):
     # exit immediately, returning Sentence unchanged.
 
     if Sentence == None: return Sentence
-    if type(Sentence) != type(u""): return Sentence
+    if type(Sentence) != type(""): return Sentence
 
     #-------------------------
     # Strip Leading Whitespace
@@ -2118,7 +2121,7 @@ def SCase(Sentence):
     # Just in case there are leading spaces, we strip them away so the function
     # will work correctly.
 
-    NewSentence = string.lstrip(Sentence)
+    NewSentence = Sentence.lstrip()
 
     #--------------------------------
     # Return the Capitalized Sentence
@@ -2128,7 +2131,7 @@ def SCase(Sentence):
     # capitalized, along with the rest of new sentence from the second character
     # onward. (Remember the first character of a string is 0, not 1.)
 
-    return string.capitalize(NewSentence[0]) + NewSentence[1:]
+    return (NewSentence[0] + NewSentence[1:]).capitalize()
 
 def Self():
     """
@@ -2252,7 +2255,7 @@ def StopDaemon(DaemonFuse):
     # silent but testable way to see if the daemon was removed, or wasn't
     # in the dictionary to start with.
 
-    if not Global.DaemonDict.has_key(DaemonFuse): return FAILURE
+    if DaemonFuse not in Global.DaemonDict: return FAILURE
 
     #-----------------------------------------
     # Remove DaemonFuse From Global.DaemonDict
@@ -2457,7 +2460,7 @@ class ClassGlobal(ClassFundamental):
 
     def __init__(self):
         """Sets default instance properties"""
-        self.NamePhrase = u"Global Object"
+        self.NamePhrase = "Global Object"
         ClassFundamental.InheritProperties(self)
 
 
@@ -2577,7 +2580,7 @@ class ClassGlobal(ClassFundamental):
 
         # The status line is maintained even if the terminal can't support it.
 
-        self.StatusLine = u" "
+        self.StatusLine = " "
 
         #--------------
         # Logging Flags
@@ -2603,7 +2606,7 @@ class ClassParser(ClassFundamental):
         in the proper sequence.
         """
 
-        self.NamePhrase = u"Parser Object"
+        self.NamePhrase = "Parser Object"
         ClassFundamental.InheritProperties(self)
 
     def SetMyProperties(self):
@@ -2646,7 +2649,7 @@ class ClassParser(ClassFundamental):
         # Articles aren't used, they're discarded at the present time. It is
         # possible future enhancements of the parser will make use of these.
 
-        self.ArticlesList = [u"a", u"an", u"the"]
+        self.ArticlesList = ["a", "an", "the"]
 
         #--------------------
         # Command Breaks List
@@ -2654,7 +2657,7 @@ class ClassParser(ClassFundamental):
 
         # Items in this list seperate multiple commands entered on a single line.
 
-        self.CommandBreaksList = [u"then", u".", u"?", u"!"]
+        self.CommandBreaksList = ["then", ".", "?", "!"]
 
         #--------------
         # Commands List
@@ -2678,7 +2681,7 @@ class ClassParser(ClassFundamental):
         # Conjunctions are currently ignored, but future enhancements to the
         # parser may make of them.
 
-        self.ConjunctionsList = [u"and", u","]
+        self.ConjunctionsList = ["and", ","]
 
         #----------------
         # Decoded Objects
@@ -2714,7 +2717,7 @@ class ClassParser(ClassFundamental):
 
         self.CurrentVerbNoun = None     # Word
         self.CurrentPrepList = []       # WORDS
-        self.SaidText = u""             # string
+        self.SaidText = ""             # string
 
         #------------------
         # Disjunctions List
@@ -2723,7 +2726,7 @@ class ClassParser(ClassFundamental):
         # Disjunctions are currently ignored, but may be used in future enhancements to the
         # parser.
 
-        self.DisjunctionsList = [u"but", u"except"]
+        self.DisjunctionsList = ["but", "except"]
 
         #-----------------------
         # Noun/Verb Dictionaries
@@ -2771,15 +2774,15 @@ class ClassParser(ClassFundamental):
         # Parser Errors
         #--------------
 
-        self.NoVerb = u"There’s no verb in that sentence."
-        self.NoPreposition = u"'%s' needs a preposition."
-        self.NoPreviousCommand = u"You haven’t done anything yet!"
-        self.NoSuchVerbPreposition = u"I don’t recognize that verb/preposition(s) combination"
-        self.MultipleVerbPrepositions = u"PROGRAMMING ERROR: Two or more verbs share this verb and preposition combination."
-        self.MultipleActors = u"You can only tell one thing at a time to do something."
-        self.DObjsNotAllowed = u"'%s' can’t have any direct objects."
-        self.IObjsNotAllowed = u"'%s' can’t have any indirect objects."
-        self.NotInVocabulary = u"I don’t know the word '%s'."
+        self.NoVerb = "There’s no verb in that sentence."
+        self.NoPreposition = "'%s' needs a preposition."
+        self.NoPreviousCommand = "You haven’t done anything yet!"
+        self.NoSuchVerbPreposition = "I don’t recognize that verb/preposition(s) combination"
+        self.MultipleVerbPrepositions = "PROGRAMMING ERROR: Two or more verbs share this verb and preposition combination."
+        self.MultipleActors = "You can only tell one thing at a time to do something."
+        self.DObjsNotAllowed = "'%s' can’t have any direct objects."
+        self.IObjsNotAllowed = "'%s' can’t have any indirect objects."
+        self.NotInVocabulary = "I don’t know the word '%s'."
 
         #---------------------------
         # Parts Of Speech Dictionary
@@ -2846,12 +2849,12 @@ class ClassParser(ClassFundamental):
         # singular). If the player later says 'Read it', the parser knows
         # "it" refers to BlueBook.
 
-        self.PronounsListDict = {u"it": IT,
-                                 u"them": THEM,
-                                 u"all": THEM,
-                                 u"everything": THEM,
-                                 u"him": HIM,
-                                 u"her": HER}
+        self.PronounsListDict = {"it": IT,
+                                 "them": THEM,
+                                 "all": THEM,
+                                 "everything": THEM,
+                                 "him": HIM,
+                                 "her": HER}
 
         self.PronounsDict = {IT: None,
                              THEM: [],
@@ -2932,7 +2935,7 @@ class ClassParser(ClassFundamental):
             # word on the line. It's also the name phrase of the Say verb, so
             # we make sure it's in lower case.
 
-            FirstWord = string.lower(self.SayVerb.NamePhrase)
+            FirstWord = self.SayVerb.NamePhrase.lower()
 
             #---------------------
             # Is First Word "Say"?
@@ -2943,7 +2946,7 @@ class ClassParser(ClassFundamental):
             # is 3. We compare First Word against Said Text, from the beginning
             # to the 3'rd letter.
 
-            if string.lower(self.SaidText[:len(FirstWord)]) == FirstWord:
+            if self.SaidText[:len(FirstWord)].lower()  == FirstWord:
 
                 #-------------------------
                 # Return Say Verb's Action
@@ -2960,7 +2963,7 @@ class ClassParser(ClassFundamental):
                 # since we don't run through the full parser.
                 self.SayVerb.Action()
                 Terminal.Frame.TInput.Clear()
-                Say(u"~n ")
+                Say("~n ")
                 return TURN_CONTINUES
 
         #------------------
@@ -2984,12 +2987,12 @@ class ClassParser(ClassFundamental):
         # however, we add *3* characters, a space, the puncutation and another
         # space.
 
-        OutputString = u""
+        OutputString = ""
 
         for Character in InputString:
 
             if Character in string.punctuation:
-                Character = Fence(Character, u" ", u" ")
+                Character = Fence(Character, " ", " ")
 
             OutputString = OutputString + Character
 
@@ -3000,7 +3003,7 @@ class ClassParser(ClassFundamental):
         # string.split takes a string and creates a list by dividing the string
         # by a given character. By default that character is a space.
 
-        TempWordList = string.split(OutputString)
+        TempWordList = OutputString.split()
 
         #---------------------------------------
         # Break Word list into separate commands
@@ -3231,10 +3234,10 @@ class ClassParser(ClassFundamental):
 
         if Global.Debug:
             for Word in self.ActiveCommandList:
-                if P.AP().POSDict.has_key(Word):
-                    DebugTrace(Word + u": " + repr(P.AP().POSDict[Word]))
+                if Word in P.AP().POSDict:
+                    DebugTrace(Word + ": " + repr(P.AP().POSDict[Word]))
                 else:
-                    DebugTrace(Word + u": Not In Vocabulary")
+                    DebugTrace(Word + ": Not In Vocabulary")
 
 
         #===================
@@ -3317,7 +3320,7 @@ class ClassParser(ClassFundamental):
         PotentialVerbList = []
 
         for word in self.ActiveCommandList:
-            if self.VerbsDict.has_key(word):
+            if word in self.VerbsDict:
                 self.CurrentVerbNoun = word
                 VerbLocation = self.ActiveCommandList.index(word)
                 PotentialVerbList = Union(PotentialVerbList,self.VerbsDict[word])
@@ -3330,7 +3333,7 @@ class ClassParser(ClassFundamental):
             PotentialVerbList.append(self.PreviousVerb)
             self.ActiveCommandList = [self.CurrentVerbNoun] + self.ActiveCommandList
 
-        DebugPassedObjList(u"Potential Verbs", PotentialVerbList)
+        DebugPassedObjList("Potential Verbs", PotentialVerbList)
 
 
         #-----------------
@@ -3368,7 +3371,7 @@ class ClassParser(ClassFundamental):
 
         if len(self.ActiveCommandList) > 1:
             for word in self.ActiveCommandList[VerbLocation + 1:]:
-                if self.PrepsDict.has_key(word):
+                if word in self.PrepsDict:
                     self.CurrentPrepList.append(word)
                     PrepositionList = Union(PrepositionList,self.PrepsDict[word])
                     if FirstPrepLocation == VerbLocation:
@@ -3405,9 +3408,9 @@ class ClassParser(ClassFundamental):
 
 
         if len(PrepositionList) == 0:
-            PrepositionList = Union(PrepositionList,self.PrepsDict[u"nopreposition"])
+            PrepositionList = Union(PrepositionList,self.PrepsDict["nopreposition"])
 
-        DebugPassedObjList(u"Prepositions",PrepositionList)
+        DebugPassedObjList("Prepositions",PrepositionList)
 
 
         #============================
@@ -3438,7 +3441,7 @@ class ClassParser(ClassFundamental):
 
         PotentialVerbList = Intersect(PotentialVerbList,PrepositionList)
 
-        DebugPassedObjList(u"Winnowed Verb List", PotentialVerbList)
+        DebugPassedObjList("Winnowed Verb List", PotentialVerbList)
 
         #-------------------------------
         # No Verbs, no prepositions used
@@ -3493,7 +3496,7 @@ class ClassParser(ClassFundamental):
         # PotentialVerbList.
 
         self.CurrentVerb = PotentialVerbList[0]
-        DebugTrace(u"Current Verb-->" + PotentialVerbList[0].SDesc())
+        DebugTrace("Current Verb-->" + PotentialVerbList[0].SDesc())
 
 
         #---------------------------
@@ -3506,7 +3509,7 @@ class ClassParser(ClassFundamental):
         # the previous command should execute normally.
 
         if self.CurrentVerb == self.Again and self.Again != None:
-            DebugTrace(u"Verb is 'Again' (" + self.Again.SDesc() + u")")
+            DebugTrace("Verb is 'Again' (" + self.Again.SDesc() + ")")
             if self.PreviousVerb == None: return Complain(self.NoPreviousCommand)
             self.CurrentVerb = self.PreviousVerb
             return SUCCESS
@@ -3646,7 +3649,7 @@ class ClassParser(ClassFundamental):
         # for most cases, you can override specific verbs on a case by case
         # basis.
 
-        DebugTrace(u"Parsed Verb Is " + self.CurrentVerb.SDesc())
+        DebugTrace("Parsed Verb Is " + self.CurrentVerb.SDesc())
         return SUCCESS
 
     def ParserIdentifyNoun(self,StartPos,EndPos):
@@ -3714,9 +3717,9 @@ class ClassParser(ClassFundamental):
             # If the word is an adjective, look up all objects that have
             # that adjective and append them to the adjective's list.
 
-            if self.AdjsDict.has_key(word):
+            if word in self.AdjsDict:
                 AdjectiveList = Union(AdjectiveList, self.AdjsDict[word])
-                DebugTrace(word + u" is Adjective")
+                DebugTrace(word + " is Adjective")
 
 
             #--------------
@@ -3729,8 +3732,8 @@ class ClassParser(ClassFundamental):
             # the trimmed down NounList to the ReturnList (the list of
             # objects returned by this function).
 
-            if self.NounsDict.has_key(word):
-                DebugTrace(word + u" is Noun")
+            if word in self.NounsDict:
+                DebugTrace(word + " is Noun")
                 NounList = Union(NounList,self.NounsDict[word])
 
                 if len(AdjectiveList) > 0:
@@ -3750,9 +3753,9 @@ class ClassParser(ClassFundamental):
             # it doesn't hurt to have more than one adverb object use the same
             # word.
 
-            if self.AdverbsDict.has_key(word):
+            if word in self.AdverbsDict:
                 self.CurrentAdverbList = Union(self.CurrentAdverbList,self.AdverbsDict[word])
-                DebugTrace(word + u" is Adverb")
+                DebugTrace(word + " is Adverb")
 
 
 
@@ -3876,7 +3879,7 @@ class ClassParser(ClassFundamental):
             # If the command was "take them" where them was a ring and sword then
             # ObjectNames would eventually hold "gold ring sharp sword".
 
-            ObjectNames = u""
+            ObjectNames = ""
 
             #-------------------
             # Is Word A Pronoun?
@@ -3886,7 +3889,7 @@ class ClassParser(ClassFundamental):
             # has_keys returns true if word is in the dictionary, false if it
             # isn't.
 
-            if P.AP().PronounsListDict.has_key(word):
+            if word in P.AP().PronounsListDict:
 
                 #------------------
                 # Word IS A Pronoun
@@ -3980,7 +3983,7 @@ class ClassParser(ClassFundamental):
 
                     for Object in ObjectList:
                         if Object != None and Object!= self.CurrentActor and not Object.IsScenery:
-                            ObjectNames = ObjectNames + u" " + Object.SDesc()
+                            ObjectNames = ObjectNames + " " + Object.SDesc()
 
                 #================================
                 # Add Object Words To Return List
@@ -3996,7 +3999,7 @@ class ClassParser(ClassFundamental):
 
                 # Strip off any leading spaces to make the conversion easier.
 
-                ObjectNames = string.lstrip(ObjectNames)
+                ObjectNames = ObjectNames.lstrip()
 
                 #-------------------------
                 # Add Words To Return List
@@ -4008,7 +4011,7 @@ class ClassParser(ClassFundamental):
                 # command.
 
                 if len(ObjectNames)>0:
-                    WordList = string.split(ObjectNames)
+                    WordList = ObjectNames.split()
                     for word in WordList: ReturnList.append(word)
 
             else:
@@ -4031,7 +4034,7 @@ class ClassParser(ClassFundamental):
         return SUCCESS
 
 
-    def Prompt(self, PromptArg=u">"):
+    def Prompt(self, PromptArg=">"):
         """
         Default function to return player prompt
 
@@ -4088,7 +4091,7 @@ class ClassEngine(ClassFundamental):
 
     def __init__(self):
         """Sets default instance properties"""
-        self.NamePhrase = u"Engine Object"
+        self.NamePhrase = "Engine Object"
         ClassFundamental.InheritProperties(self)
 
 
@@ -4132,7 +4135,7 @@ class ClassEngine(ClassFundamental):
         self.SetUpGame = default_SetUpGame
         self.TurnHandler = default_TurnHandler
         self.UserSetUpGame = default_UserSetUpGame
-        self.Version = u"2.1.0"
+        self.Version = "2.1.0"
         self.XlateCBEFunction = None
 
 class ClassBaseObject(ClassFundamental):
@@ -4142,7 +4145,7 @@ class ClassBaseObject(ClassFundamental):
     also provides minimal functionality to support the parser.
     """
 
-    def __init__(self, Name = u"", Adjs = u"", PluralName = u""):
+    def __init__(self, Name = "", Adjs = "", PluralName = ""):
         """
         This method is called ONLY when an object is instantiated. For
         instance if "rock" were being defined the instantiation would look
@@ -4170,9 +4173,9 @@ class ClassBaseObject(ClassFundamental):
         # Append Vocabulary To Part Of Speech To Dictionary
         #--------------------------------------------------
 
-        AppendDictList(P.AP().POSDict, Name, u"N")
-        AppendDictList(P.AP().POSDict, PluralName, u"N")
-        AppendDictList(P.AP().POSDict, Adjs, u"A")
+        AppendDictList(P.AP().POSDict, Name, "N")
+        AppendDictList(P.AP().POSDict, PluralName, "N")
+        AppendDictList(P.AP().POSDict, Adjs, "A")
 
         #---------------------------
         # Set KeyNoun And NamePhrase
@@ -4182,12 +4185,13 @@ class ClassBaseObject(ClassFundamental):
         # purposes. Notice we also set the NamePhrase to the KeyNoun, this
         # allows us to avoid having to set it explicitly.
 
-        NounList = string.split(Name, u",")
+#        NounList = string.split(Name, ",")
+        NounList = Name.split(",")#string.split(Name, ",")
 
         if len(NounList) > 0:
             self.KeyNoun = NounList[0]
         else:
-            self.KeyNoun = u""
+            self.KeyNoun = ""
 
         self.NamePhrase = self.KeyNoun
 
@@ -4195,12 +4199,13 @@ class ClassBaseObject(ClassFundamental):
         # Set AdjectivePhrase
         #--------------------
 
-        AdjectiveList = string.split(Adjs, u",")
+#        AdjectiveList = string.split(Adjs, ",")
+        AdjectiveList = Adjs.split(",") #string.split(Adjs, ",")
 
         if len(AdjectiveList) > 0:
             self.AdjectivePhrase = AdjectiveList[0]
         else:
-            self.AdjectivePhrase = u""
+            self.AdjectivePhrase = ""
 
         #--------------------
         # Set self properties
@@ -4215,7 +4220,7 @@ class ClassBaseVerbObject(ClassFundamental):
     the appropriate prepositions.
     """
 
-    def __init__(self, Name = u"", Preps = u"nopreposition"):
+    def __init__(self, Name = "", Preps = "nopreposition"):
         """
         This method is called ONLY when an object is instantiated. For
         instance if "quit" were being defined the instantiation would look
@@ -4246,8 +4251,8 @@ class ClassBaseVerbObject(ClassFundamental):
         # Append All Verbs To Parts Of Speech Dictionary
         #-----------------------------------------------
 
-        AppendDictList(P.AP().POSDict, Name, u"V")
-        AppendDictList(P.AP().POSDict, Preps, u"P")
+        AppendDictList(P.AP().POSDict, Name, "V")
+        AppendDictList(P.AP().POSDict, Preps, "P")
 
 
         #---------------------------
@@ -4259,12 +4264,13 @@ class ClassBaseVerbObject(ClassFundamental):
         # to the KeyNoun, this allows us to avoid having to set it
         # explicitly.
 
-        VerbList = string.split(Name, u",")
+#        VerbList = string.split(Name, ",")
+        VerbList = Name.split(",") # string.split(Name, ",")
 
         if len(VerbList) > 0:
             self.KeyNoun = VerbList[0]
         else:
-            self.KeyNoun = u""
+            self.KeyNoun = ""
 
         self.NamePhrase = self.KeyNoun
 
@@ -4376,7 +4382,7 @@ class ClassBaseVerbObject(ClassFundamental):
         is invisible, is locked, etc).
         """
 
-        DebugTrace(u"Chosen Verb --> " + self.__class__.__name__)
+        DebugTrace("Chosen Verb --> " + self.__class__.__name__)
 
         #-----------------------------------
         # Check for forbidden direct objects
@@ -4445,7 +4451,7 @@ class ClassAdverb(ClassFundamental):
     adverb was used in the current command.
     """
 
-    def __init__(self, Name = u""):
+    def __init__(self, Name = ""):
         """Adds adverb to appropriate Global dicts"""
 
         #---------------------------------------------
@@ -4458,7 +4464,7 @@ class ClassAdverb(ClassFundamental):
         # Append All Verbs To Parts Of Speech Dictionary
         #-----------------------------------------------
 
-        AppendDictList(P.AP().POSDict, Name, u"D")
+        AppendDictList(P.AP().POSDict, Name, "D")
 
         #---------------
         # Set NamePhrase
@@ -4469,7 +4475,7 @@ class ClassAdverb(ClassFundamental):
         # to the KeyNoun, this allows us to avoid having to set it
         # explicitly.
 
-        AdverbList = string.split(Name, u",")
+        AdverbList = Name.split(",")
         self.NamePhrase = AdverbList[0]
 
         #--------------------

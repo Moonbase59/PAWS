@@ -39,8 +39,8 @@ import wx
 from wx.lib.anchors import LayoutAnchors
 from wx.lib.wordwrap import wordwrap
 
-from Core import *
-from Universe import *
+from .Core import *
+from .Universe import *
 
 def create(parent):
     return TFrame(parent)
@@ -62,10 +62,10 @@ def create(parent):
 class TFrame(wx.Frame):
     def _init_coll_flexGridSizer1_Items(self, parent):
         # generated method, don't edit
-
-        parent.AddWindow(self.TDisplay, 0, border=0, flag=wx.GROW | wx.EXPAND)
-        parent.AddWindow(self.TInput, 1, border=1,
+        parent.Add(self.TDisplay, 0, border=0, flag=wx.GROW | wx.EXPAND)
+        parent.Add(self.TInput, 1, border=1,
               flag=wx.GROW | wx.RIGHT | wx.LEFT | wx.EXPAND | wx.ALIGN_BOTTOM)
+
 
     def _init_coll_flexGridSizer1_Growables(self, parent):
         # generated method, don't edit
@@ -76,33 +76,33 @@ class TFrame(wx.Frame):
     def _init_coll_TMenuBar_Menus(self, parent):
         # generated method, don't edit
 
-        parent.Append(menu=self.menuFile, title=u'&File')
-        parent.Append(menu=self.menuView, title=u'&View')
-        parent.Append(menu=self.menuHelp, title=u'&Help')
+        parent.Append(menu=self.menuFile, title='&File')
+        parent.Append(menu=self.menuView, title='&View')
+        parent.Append(menu=self.menuHelp, title='&Help')
 
     def _init_coll_menuFile_Items(self, parent):
         # generated method, don't edit
 
-        parent.Append(help='', id=wxID_TFRAMEMENUFILEPLAYGAME,
-              kind=wx.ITEM_NORMAL, text=u'Pick Game …')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILEPLAYGAME,
+              kind=wx.ITEM_NORMAL, item='Pick Game …')
         parent.AppendSeparator()
-        parent.Append(help='', id=wxID_TFRAMEMENUFILESAVE, kind=wx.ITEM_NORMAL,
-              text=u'Save')
-        parent.Append(help='', id=wxID_TFRAMEMENUFILEITEMS2,
-              kind=wx.ITEM_NORMAL, text=u'Restore')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILESAVE, kind=wx.ITEM_NORMAL,
+              item='Save')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILEITEMS2,
+              kind=wx.ITEM_NORMAL, item='Restore')
         parent.AppendSeparator()
-        parent.Append(help='', id=wxID_TFRAMEMENUFILEDEBUG, kind=wx.ITEM_NORMAL,
-              text=u'Debug')
-        parent.Append(help='', id=wxID_TFRAMEMENUFILELOGGAME,
-              kind=wx.ITEM_NORMAL, text=u'Log Game')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILEDEBUG, kind=wx.ITEM_NORMAL,
+              item='Debug')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILELOGGAME,
+              kind=wx.ITEM_NORMAL, item='Log Game')
         parent.AppendSeparator()
-        parent.Append(help='', id=wxID_TFRAMEMENUFILEVERBOSE,
-              kind=wx.ITEM_NORMAL, text=u'Verbose')
-        parent.Append(help='', id=wxID_TFRAMEMENUFILETERSE, kind=wx.ITEM_NORMAL,
-              text=u'Terse')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILEVERBOSE,
+              kind=wx.ITEM_NORMAL, item='Verbose')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILETERSE, kind=wx.ITEM_NORMAL,
+              item='Terse')
         parent.AppendSeparator()
-        parent.Append(help='', id=wxID_TFRAMEMENUFILEEXIT, kind=wx.ITEM_NORMAL,
-              text=u'E&xit')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUFILEEXIT, kind=wx.ITEM_NORMAL,
+              item='E&xit')
         self.Bind(wx.EVT_MENU, self.OnMenuFileSaveMenu,
               id=wxID_TFRAMEMENUFILESAVE)
         self.Bind(wx.EVT_MENU, self.OnMenuFileItems2Menu,
@@ -123,18 +123,18 @@ class TFrame(wx.Frame):
     def _init_coll_menuView_Items(self, parent):
         # generated method, don't edit
 
-        parent.Append(help='', id=wxID_TFRAMEMENUVIEWFONT, kind=wx.ITEM_NORMAL,
-              text=u'Font …')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUVIEWFONT, kind=wx.ITEM_NORMAL,
+              item='Font …')
         self.Bind(wx.EVT_MENU, self.OnMenuViewFontMenu,
               id=wxID_TFRAMEMENUVIEWFONT)
 
     def _init_coll_menuHelp_Items(self, parent):
         # generated method, don't edit
 
-        parent.Append(help='', id=wxID_TFRAMEMENUHELPHINTS, kind=wx.ITEM_NORMAL,
-              text=u'Hints')
-        parent.Append(help='', id=wxID_TFRAMEMENUHELPABOUT, kind=wx.ITEM_NORMAL,
-              text=u'About PAWS')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUHELPHINTS, kind=wx.ITEM_NORMAL,
+              item='Hints')
+        parent.Append(helpString='', id=wxID_TFRAMEMENUHELPABOUT, kind=wx.ITEM_NORMAL,
+              item='About PAWS')
         self.Bind(wx.EVT_MENU, self.OnMenuHelpHintsMenu,
               id=wxID_TFRAMEMENUHELPHINTS)
         self.Bind(wx.EVT_MENU, self.OnMenuHelpAboutMenu,
@@ -144,7 +144,7 @@ class TFrame(wx.Frame):
         # generated method, don't edit
         parent.SetFieldsCount(1)
 
-        parent.SetStatusText(number=0, text=u'Status Bar Info Goes Here')
+        parent.SetStatusText(i=0, text='Status Bar Info Goes Here')
 
         parent.SetStatusWidths([-1])
 
@@ -161,11 +161,11 @@ class TFrame(wx.Frame):
 
     def _init_utils(self):
         # generated method, don't edit
-        self.menuFile = wx.Menu(title=u'')
+        self.menuFile = wx.Menu(title='')
 
-        self.menuView = wx.Menu(title=u'')
+        self.menuView = wx.Menu(title='')
 
-        self.menuHelp = wx.Menu(title=u'')
+        self.menuHelp = wx.Menu(title='')
 
         self.TMenuBar = wx.MenuBar()
 
@@ -178,18 +178,18 @@ class TFrame(wx.Frame):
         # generated method, don't edit
         wx.Frame.__init__(self, id=wxID_TFRAME, name='TFrame', parent=prnt,
               pos=wx.Point(254, 241), size=wx.Size(829, 786),
-              style=wx.DEFAULT_FRAME_STYLE, title=u'PAWS Terminal')
+              style=wx.DEFAULT_FRAME_STYLE, title='PAWS Terminal')
         self._init_utils()
         self.SetClientSize(wx.Size(821, 748))
         self.SetMenuBar(self.TMenuBar)
         self.SetAutoLayout(True)
-        self.SetToolTipString('TFrame')
+        self.SetToolTip('TFrame')
         self.SetMinSize(wx.Size(-1, 21))
 
         self.TStatusBar = wx.StatusBar(id=wxID_TFRAMETSTATUSBAR,
               name='TStatusBar', parent=self, style=0)
         self.TStatusBar.SetFont(wx.Font(12, wx.SWISS, wx.NORMAL, wx.BOLD, False,
-              u'Courier New'))
+              'Courier New'))
         self._init_coll_TStatusBar_Fields(self.TStatusBar)
         self.SetStatusBar(self.TStatusBar)
 
@@ -197,8 +197,8 @@ class TFrame(wx.Frame):
               parent=self, pos=wx.Point(1, 728), size=wx.Size(819, 20),
               style=wx.SIMPLE_BORDER | wx.TE_PROCESS_ENTER, value="''")
         self.TInput.SetFont(wx.Font(12, wx.SWISS, wx.NORMAL, wx.BOLD, False,
-              u'Courier'))
-        self.TInput.SetToolTipString(u'Type command here.')
+              'Courier'))
+        self.TInput.SetToolTip('Type command here.')
         self.TInput.SetAutoLayout(False)
         self.TInput.SetEditable(True)
         self.TInput.Enable(False)
@@ -208,12 +208,12 @@ class TFrame(wx.Frame):
         self.TDisplay = wx.TextCtrl(id=wxID_TFRAMETDISPLAY, name='TDisplay',
               parent=self, pos=wx.Point(0, 0), size=wx.Size(821, 728),
               style=wx.TE_RICH2 | wx.TE_MULTILINE | wx.TE_READONLY,
-              value=u'To run a game, choose File → Pick Game … then choose a game from the list.')
+              value='To run a game, choose File → Pick Game … then choose a game from the list.')
         self.TDisplay.SetMinSize(wx.Size(517, 440))
         self.TDisplay.SetEditable(False)
-        self.TDisplay.SetToolTipString(u"Game's output displays here.")
+        self.TDisplay.SetToolTip("Game's output displays here.")
         self.TDisplay.SetFont(wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL, False,
-              u'Arial'))
+              'Arial'))
         self.TDisplay.Enable(True)
 
         self._init_sizers()
@@ -256,7 +256,7 @@ class TFrame(wx.Frame):
         a command.
         """
 
-        Terminal.Feed(u"save")
+        Terminal.Feed("save")
         # event.Skip()
 
     def OnMenuFileItems2Menu(self, event):
@@ -266,7 +266,7 @@ class TFrame(wx.Frame):
         a command.
         """
 
-        Terminal.Feed(u"restore")
+        Terminal.Feed("restore")
         # event.Skip()
 
     def OnMenuFileDebugMenu(self, event):
@@ -276,7 +276,7 @@ class TFrame(wx.Frame):
         a command.
         """
 
-        Terminal.Feed(u"debug")
+        Terminal.Feed("debug")
         # event.Skip()
 
     def OnMenuFileLoggameMenu(self, event):
@@ -286,7 +286,7 @@ class TFrame(wx.Frame):
         typing a command.
         """
 
-        Terminal.Feed(u"transcribe")
+        Terminal.Feed("transcribe")
         # event.Skip()
 
     def OnMenuFileVerboseMenu(self, event):
@@ -296,7 +296,7 @@ class TFrame(wx.Frame):
         typing a command.
         """
 
-        Terminal.Feed(u"verbose")
+        Terminal.Feed("verbose")
         # event.Skip()
 
     def OnMenuFileTerseMenu(self, event):
@@ -306,7 +306,7 @@ class TFrame(wx.Frame):
         a command.
         """
 
-        Terminal.Feed(u"terse")
+        Terminal.Feed("terse")
         # event.Skip()
 
     def OnMenuFileExitMenu(self, event):
@@ -325,7 +325,7 @@ class TFrame(wx.Frame):
         typing a command.
         """
 
-        Terminal.Feed(u"help")
+        Terminal.Feed("help")
         # event.Skip()
 
     def OnMenuHelpAboutMenu(self, event):
@@ -335,21 +335,21 @@ class TFrame(wx.Frame):
         """
 
         info = wx.AboutDialogInfo()
-        info.Name = u"PAWS"
+        info.Name = "PAWS"
         info.Version = Engine.Version
-        info.Copyright = u"© 1998–2016 Roger Plowman, Matthias C. Hormann"
+        info.Copyright = "© 1998–2016 Roger Plowman, Matthias C. Hormann"
         info.Description = wordwrap(
-            u"Core Engine: v" + Engine.Version + u", "
-            u"Universe: v" + UniverseVersion + u"\n\n"
-            u"PAWS is the Python Adventure Writing System, "
-            u"a software to play and develop Interactive Fiction with. "
-            u"It was originally developed by Roger Plowman and continued "
-            u"in 2016 by Matthias C. Hormann, just for the fun of it.",
+            "Core Engine: v" + Engine.Version + ", "
+            "Universe: v" + UniverseVersion + "\n\n"
+            "PAWS is the Python Adventure Writing System, "
+            "a software to play and develop Interactive Fiction with. "
+            "It was originally developed by Roger Plowman and continued "
+            "in 2016 by Matthias C. Hormann, just for the fun of it.",
             350, wx.ClientDC(self))
-        info.WebSite = (u"https://github.com/Moonbase59/PAWS", u"PAWS GitHub page")
-        info.Developers = [u"Roger Plowman", u"Kevin Russell", u"Matthias C. Hormann"]
+        info.WebSite = ("https://github.com/Moonbase59/PAWS", "PAWS GitHub page")
+        info.Developers = ["Roger Plowman", "Kevin Russell", "Matthias C. Hormann"]
         info.License = wordwrap(
-            u"Please see the LICENSE file that came with the software.",
+            "Please see the LICENSE file that came with the software.",
             350, wx.ClientDC(self))
 
         # show it
@@ -410,11 +410,12 @@ class TFrame(wx.Frame):
         # list.
 
         dlg = wx.FileDialog(self,
-                            u"Choose a game",
-                            u".",
-                            u"",
-                            u"PAWS Games (*.py)|*.py",
-                            wx.OPEN)
+                            "Choose a game",
+                            ".",
+                            "",
+                            "PAWS Games (*.py)|*.py",
+                            wx.FD_OPEN)
+                            #wx.OPEN)
 
         #------------------------------
         # Show The Dialog To The Player
@@ -442,9 +443,9 @@ class TFrame(wx.Frame):
 
         Global.GameModule = dlg.GetFilename()[:-3]
 
-        if Global.GameModule == u"LoadTerminal":
+        if Global.GameModule == "LoadTerminal":
             Terminal.Frame.TDisplay.Clear()
-            Say(u"~p ~p ~p ~title ~lrd ~b LoadTerminal ~l is not a game.")
+            Say("~p ~p ~p ~title ~lrd ~b LoadTerminal ~l is not a game.")
             event.Skip()
             return
 
@@ -497,8 +498,8 @@ class TFrame(wx.Frame):
         # import statement would only last until this function ends--and that's
         # bad.
 
-        STMT = u"from %s import *" % Global.GameModule
-        exec STMT in globals()
+        STMT = "from %s import *" % Global.GameModule
+        exec(STMT, globals())
 
         #-------------------
         # Start Running Game
@@ -509,7 +510,7 @@ class TFrame(wx.Frame):
 
         Engine.SetUpGame()
         Global.GameState = RUNNING
-        Say(u"~p " + P.AP().Prompt())
+        Say("~p " + P.AP().Prompt())
 
         # event.Skip()
 
@@ -650,7 +651,7 @@ class TFrame(wx.Frame):
             # One turn finished, put a paragraph in the output
             #-------------------------------------------------
 
-            Say(u"~n ")
+            Say("~n ")
 
             #---------------
             # Game Finished?
@@ -674,7 +675,7 @@ class TFrame(wx.Frame):
         # For some very odd reason, we can only output this AFTER the event,
         # i.e. display it for the NEXT command ...
 
-        Say(u"~n " + P.AP().Prompt())
+        Say("~n " + P.AP().Prompt())
 
 
 #********************************************************************************
@@ -700,7 +701,7 @@ def Restore(FileName):
     try:
         SavedGame = open(FileName+".PSG","rb")
     except:
-        Say(u"You haven't saved a game yet.")
+        Say("You haven't saved a game yet.")
         return FAILURE
 
     #-----------------------
@@ -726,9 +727,9 @@ def Restore(FileName):
     # the items() method returns a tuple (group) of 2 objects. These two
     # variables are the ones required by the setattr function. Convenient, yes?
 
-    for attr,value in SavedObject.__dict__.items():
+    for attr,value in list(SavedObject.__dict__.items()):
         setattr(Global,attr,value)
-        DebugTrace(u"Restoring "+attr)
+        DebugTrace("Restoring "+attr)
 
     #----------------------
     # Close Saved Game File
@@ -810,7 +811,7 @@ def Save(FileName):
     try:
         PickleJar.dump(Global)
     except:
-        print u"save error!"
+        print("save error!")
 
     #----------------------
     # Close Saved Game File
@@ -845,7 +846,7 @@ def TranslateCBExpression(Text=""):
     # repr() returns the "representation" of the object, in other words what
     # you'd get at the Python prompt if you tried to print it.
 
-    if type(Text) != type(u""): Text = repr(Text)
+    if type(Text) != type(""): Text = repr(Text)
 
     #-----------------------
     # Return Text If not CBE
@@ -854,7 +855,7 @@ def TranslateCBExpression(Text=""):
     # If this isn't a CBE (Curly Brace Expression) we don't need to translate it,
     # return it as is.
 
-    if u"{" not in Text or u"}" not in Text: return Text
+    if "{" not in Text or "}" not in Text: return Text
 
     #-----------------------------------
     # Find { and } Positions Within Text
@@ -864,8 +865,11 @@ def TranslateCBExpression(Text=""):
     # Text. We'll use this information to replace only that portion of the
     # string with its translation.
 
-    OpenBrace  = string.find(Text,u"{")
-    CloseBrace = string.find(Text,u"}")
+    OpenBrace  = Text.find("{")
+    CloseBrace = Text.find("}")
+
+#    OpenBrace  = string.find(Text,"{")
+#    CloseBrace = string.find(Text,"}")
 
     #---------------------
     # Try To Translate CBE
@@ -881,9 +885,9 @@ def TranslateCBExpression(Text=""):
 
     try:
         Expr = eval(Text[OpenBrace+1:CloseBrace])
-        if type(Expr) != type(u""): Expr = repr(Expr)
+        if type(Expr) != type(""): Expr = repr(Expr)
     except:
-        Expr = u"Invalid CBE '%s'" % Text[OpenBrace+1:CloseBrace]
+        Expr = "Invalid CBE '%s'" % Text[OpenBrace+1:CloseBrace]
 
 
     #------------------------
@@ -963,7 +967,7 @@ C="""
   to do so.
   """
 
-Global.PlayModuleVersion = u"2.1"
+Global.PlayModuleVersion = "2.1"
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #                             END OF TERMINAL SUPPORT CODE                      %

@@ -109,7 +109,7 @@ C="""
   copies of the same thing, and we also save on typing!
 """
 
-from Core import *
+from .Core import *
 
 #********************************************************************************
 #                        U N I V E R S E   F U N C T I O N S
@@ -170,7 +170,7 @@ def Agree(Verb, Subject=None, Contract=FALSE):
     # VerbAgreementDict. VerbAgreementDict holds exceptions to the general rules
     # of verb agreement (which both "be" and "have" are).
 
-    if Contract and Verb in [u"be", u"have"]: Verb = u"contracted" + Verb
+    if Contract and Verb in ["be", "have"]: Verb = "contracted" + Verb
 
     #-------------------
     # Is Verb Irregular?
@@ -183,8 +183,8 @@ def Agree(Verb, Subject=None, Contract=FALSE):
     # Note if this IF test is true, the function returns a value and
     # doesn't continue.
 
-    if Global.VerbAgreementDict.has_key(Verb):
-        if Subject.FormatYou == u"you" or Subject.IsPlural:
+    if Verb in Global.VerbAgreementDict:
+        if Subject.FormatYou == "you" or Subject.IsPlural:
             return Global.VerbAgreementDict[Verb][0]
         else:
             return Global.VerbAgreementDict[Verb][1]
@@ -199,7 +199,7 @@ def Agree(Verb, Subject=None, Contract=FALSE):
     # If the subject is "you" or the subject is plural (like "they") then just
     # return the verb you were sent and the function stops here.
 
-    if Subject.FormatYou == u"you" or Subject.IsPlural: return Verb
+    if Subject.FormatYou == "you" or Subject.IsPlural: return Verb
 
     #-------------------------------------
     # Verb Is Regular, Subject is Singular
@@ -209,18 +209,18 @@ def Agree(Verb, Subject=None, Contract=FALSE):
     # Verb ends in "y": if the second last letter is not a vowel, the "y" should
     # be replaced with "ies", otherwise just add "s"
 
-    if Verb[-1] == u"y" and Verb[-2] not in u"aeiou":
-        return Verb[:-1] + u"ies"
+    if Verb[-1] == "y" and Verb[-2] not in "aeiou":
+        return Verb[:-1] + "ies"
     else:
-        return Verb + u"s"
+        return Verb + "s"
 
 def Be(Subject = P.CA(), Contract=FALSE):
     """Synonym for Agree("be")."""
-    return Agree(u"be", Subject, Contract)
+    return Agree("be", Subject, Contract)
 
 def Do(Subject = P.CA(), Contract=FALSE):
     """Synonym for Agree("do")."""
-    return Agree(u"do", Subject, Contract)
+    return Agree("do", Subject, Contract)
 
 def FollowerDaemon():
     """
@@ -232,15 +232,15 @@ def FollowerDaemon():
     """
 
     for actor in Global.ActorList:
-        if actor.Get(u"Follow"): actor.FollowPlayer()
+        if actor.Get("Follow"): actor.FollowPlayer()
 
 def Go(Subject = P.CA(), Contract=FALSE):
     """Synonym for Agree("go")."""
-    return Agree(u"go", Subject, Contract)
+    return Agree("go", Subject, Contract)
 
 def Have(Subject = P.CA(), Contract=FALSE):
     """Synonym for Agree("have")."""
-    return Agree(u"have", Subject, Contract)
+    return Agree("have", Subject, Contract)
 
 def IncrementScore(Amount, Silent=FALSE):
     """
@@ -262,9 +262,9 @@ def IncrementScore(Amount, Silent=FALSE):
     # We want to say decreased for a negative amount, increased for a positive
     # one, and nothing at all for a 0 amount.
 
-    ChangeWord = u""
-    if Amount < 0: ChangeWord = u"decreased"
-    if Amount > 0: ChangeWord = u"increased"
+    ChangeWord = ""
+    if Amount < 0: ChangeWord = "decreased"
+    if Amount > 0: ChangeWord = "increased"
 
     #--------
     # Plural?
@@ -272,14 +272,14 @@ def IncrementScore(Amount, Silent=FALSE):
 
     # It's 1 point, but otherwise 0 points, 2 points, etc …
 
-    PluralWord = u"points"
-    if abs(Amount) == 1: PluralWord = u"point"
+    PluralWord = "points"
+    if abs(Amount) == 1: PluralWord = "point"
 
     #--------------
     # Build Comment
     #--------------
 
-    Comment = u"[Your score just %s by %d %s.] ~p" % \
+    Comment = "[Your score just %s by %d %s.] ~p" % \
               (ChangeWord, Amount, PluralWord)
 
     #------------------------
@@ -305,7 +305,7 @@ def UniverseBanner():
     games is the "price" you pay for using Universe.
     """
 
-    Text = u"""
+    Text = """
            ~n This game uses Universe version %s, a PAWS class library. ~n %s.
            ~n Displayed on terminal ~i {Terminal.NamePhrase}. ~l
            ~p
@@ -327,13 +327,14 @@ def Universe_BuildStatusLine(LeftSideText=None):
 
     if not LeftSideText: LeftSideText = Game.Name
 
-    RightSide = u" Health: " + Global.Player.ShowHealth(FALSE) + \
-                u" Score: " + repr(Global.CurrentScore) + \
-                u" Turn: " + repr(Global.CurrentTurn) + u"  "
+    RightSide = " Health: " + Global.Player.ShowHealth(FALSE) + \
+                " Score: " + repr(Global.CurrentScore) + \
+                " Turn: " + repr(Global.CurrentTurn) + "  "
 
     SLL = 80 # Terminal.MaxScreenColumns
     RSL = len(RightSide)
-    LeftSide = string.ljust(u" " + LeftSideText[:SLL], SLL)
+    #LeftSide = string.ljust(" " + LeftSideText[:SLL], SLL)
+    LeftSide = (" " + LeftSideText[:SLL]).ljust(SLL)
     Global.StatusLine = LeftSide[:-RSL] + RightSide
 
 def Universe_SetUpGame():
@@ -392,7 +393,7 @@ def Universe_SetUpGame():
         # Since the loop we're in runs through all objects, all we need to do is
         # add the object's value (if it has one) to the maximum score.
 
-        if hasattr(Object, u"Value"):
+        if hasattr(Object, "Value"):
             Global.MaxScore = Global.MaxScore + Object.Value
 
         #---------------------------
@@ -454,8 +455,8 @@ def Universe_SetUpGame():
     # that we simply add two nouns to the NounsDict with values of
     # Global.ItemList. Remember, the item list contains only takable items.
 
-    P.AP().NounsDict[u"everything"] = Global.ItemList
-    P.AP().NounsDict[u"all"]        = Global.ItemList
+    P.AP().NounsDict["everything"] = Global.ItemList
+    P.AP().NounsDict["all"]        = Global.ItemList
 
     #----------------------
     # Call User Set Up Game
@@ -528,14 +529,14 @@ def Universe_AfterTurnHandler():
         if Actor.Where():
             # add points for being in healing rooms
             # A room can also be "toxic" by having a negative Healing value!
-            if hasattr(Actor.Where(), u"Healing") and Actor.Where().Healing != 0:
+            if hasattr(Actor.Where(), "Healing") and Actor.Where().Healing != 0:
                 # update silently
                 Actor.IncrementHealth(Actor.Where().Healing, TRUE)
             # add points for carrying healing objects
             # an object can also be poisonous/radioactive
             # by having a negative Healing value!
             for Object in Actor.Contents:
-                if hasattr(Object, u"Healing") and Object.Healing != 0:
+                if hasattr(Object, "Healing") and Object.Healing != 0:
                     # update silently
                     Actor.IncrementHealth(Object.Healing, TRUE)
 
@@ -553,7 +554,7 @@ def Universe_PostGameWrapUp():
     """
 
     if Global.Player.Health <= 0:
-        Say(u"""
+        Say("""
             ~p
             ~b Surprise! You have DIED because you didn’t care about your health! ~l
             ~p
@@ -591,12 +592,12 @@ def Random(percent):
 class CaesarCipher:
 
     def __init__(self):
-        self.Alphabet = u'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ' + \
-            u'abcdefghijklmnopqrstuvwxyzäöüß'
+        self.Alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ' + \
+            'abcdefghijklmnopqrstuvwxyzäöüß'
 
     # shift backwards so "decoding" will be easier by just looking at it ;-)
     def encode(self, text, shift = -1):
-        Cipher = u''
+        Cipher = ''
         for c in text:
             if c in self.Alphabet:
                 Cipher += self.Alphabet[(self.Alphabet.index(c)+shift) % \
@@ -662,12 +663,12 @@ class ServiceActivation:
         # the object. Self(), on the other hand can safely be used in place of
         # "self" in curly brace expressions.
 
-        self.ActivatePassivePhrase = u"""
+        self.ActivatePassivePhrase = """
                                      {SCase(You())} light
                                      {Self().TheDesc()}.
                                      """
 
-        self.ActivateSpontaneousPhrase = u"""
+        self.ActivateSpontaneousPhrase = """
                                          {SCase(Self().TheDesc())}
                                          lights up.
                                          """
@@ -687,7 +688,7 @@ class ServiceActivation:
         # property, including those of your own creation, perhaps IsOn, or
         # IsRunning.
 
-        self.ActivationProperty = u"IsLit"
+        self.ActivationProperty = "IsLit"
 
         #-------------------------------------
         # Already Activated/Deactivated Phrase
@@ -702,12 +703,12 @@ class ServiceActivation:
         # "running" and "already out" to "isn't running" if you're dealing with
         # an electric water pump.
 
-        self.AlreadyActivatedPhrase = u"""
+        self.AlreadyActivatedPhrase = """
                                       {Self().TheDesc()} {Be(Self())}
                                       already lit.
                                       """
 
-        self.AlreadyDeactivatedPhrase = u"""
+        self.AlreadyDeactivatedPhrase = """
                                       {Self().TheDesc()} {Be(Self())}
                                       already out.
                                       """
@@ -733,12 +734,12 @@ class ServiceActivation:
         # the object. Self(), on the other hand can safely be used in place of
         # "self" in curly brace expressions.
 
-        self.DeactivatePassivePhrase = u"""
+        self.DeactivatePassivePhrase = """
                                        {SCase(You())} douse
                                        {Self().TheDesc()}
                                        """
 
-        self.DeactivateSpontaneousPhrase = u"{SCase(Self().TheDesc())} goes out."
+        self.DeactivateSpontaneousPhrase = "{SCase(Self().TheDesc())} goes out."
 
         #-------------------------
         # Required Activation Tool
@@ -813,7 +814,7 @@ class ServiceActivation:
         # Complain If No Life Span Left
         #------------------------------
 
-        if not self.RemainingLifeSpan: return Complain(u"Nothing happens.")
+        if not self.RemainingLifeSpan: return Complain("Nothing happens.")
 
         #------------------------------
         # Complain if already activated
@@ -849,7 +850,7 @@ class ServiceActivation:
         # match …
 
         if ToolUsed and not ToolNeeded:
-            return Complain(u"%s can’t do that." % SCase(You()))
+            return Complain("%s can’t do that." % SCase(You()))
 
         #----------------------------
         # If Tool Needed and Not Used
@@ -964,7 +965,7 @@ class ServiceActivation:
         # For example, if they tried to light the flashlight with a match …
 
         if ToolUsed and not ToolNeeded:
-            return Complain(u"%s can’t do that." % SCase(You()))
+            return Complain("%s can’t do that." % SCase(You()))
 
         #----------------------------
         # If Tool Needed and Not Used
@@ -1095,7 +1096,7 @@ class ServiceActivation:
         Returns the complaint if you try to activate a device without the
         required tool. (You'll need something to do that with.)
         """
-        return SCase(u"%s'll need something to do that with." % You())
+        return SCase("%s'll need something to do that with." % You())
 
     def WrongToolDesc(self, ToolUsed):
         """
@@ -1103,7 +1104,7 @@ class ServiceActivation:
         the wrong tool. (You can't do that with a crowbar.)
         """
 
-        return u"%s can’t do that with %s." % (SCase(You()),ToolUsed.ADesc())
+        return "%s can’t do that with %s." % (SCase(You()),ToolUsed.ADesc())
 
 class ServiceContainIn:
     """
@@ -1144,8 +1145,8 @@ class ServiceContainOn:
         self.MaxWeight = 32000
         self.IsOpen = TRUE
         self.IsTransparent = TRUE
-        self.ContainerPrepositionDynamic = u"on"
-        self.ContainerPrepositionStatic = u"on"
+        self.ContainerPrepositionDynamic = "on"
+        self.ContainerPrepositionStatic = "on"
 
 class ServiceContainUnder:
     """
@@ -1166,8 +1167,8 @@ class ServiceContainUnder:
         self.MaxBulk = 1
         self.MaxWeight = 32000
         self.IsOpen = TRUE
-        self.ContainerPrepositionDynamic = u"under"
-        self.ContainerPrepositionStatic = u"under"
+        self.ContainerPrepositionDynamic = "under"
+        self.ContainerPrepositionStatic = "under"
 
 
 class ServiceContainBehind:
@@ -1189,8 +1190,8 @@ class ServiceContainBehind:
         self.MaxBulk = 1
         self.MaxWeight = 32000
         self.IsOpen = TRUE
-        self.ContainerPrepositionDynamic = u"behind"
-        self.ContainerPrepositionStatic = u"behind"
+        self.ContainerPrepositionDynamic = "behind"
+        self.ContainerPrepositionStatic = "behind"
 
 class ServiceDictDescription:
     """
@@ -1204,79 +1205,79 @@ class ServiceDictDescription:
     def SetMyProperties(self):
         """Sets service properties"""
         self.Descriptions = {
-                            u"HereDesc": u"There is {Self().ADesc()} here.",
-                            u"LDesc": u"""
+                            "HereDesc": "There is {Self().ADesc()} here.",
+                            "LDesc": """
                                      {SCase(Self().PronounDesc())} looks
                                      like an ordinary {Self().NamePhrase} to
                                      {Me()}.
                                      """,
-                            u"OdorDesc": u"""
+                            "OdorDesc": """
                                         {SCase(Self().PronounDesc())} smells
                                         like an ordinary {Self().NamePhrase}
                                         to {Me()}.
                                         """,
-                            u"SoundDesc": u"""
+                            "SoundDesc": """
                                          {SCase(Self().TheDesc())} isn’t
                                          making any noise.
                                          """,
-                            u"ReadDesc":  u"{SCase(You())} can’t read {Self().ADesc()}.",
-                            u"TasteDesc": u"""
+                            "ReadDesc":  "{SCase(You())} can’t read {Self().ADesc()}.",
+                            "TasteDesc": """
                                          {SCase(Self().PronounDesc())}
                                          tastes like an ordinary
                                          {Self().NamePhrase} to {Me()}.
                                          """,
-                            u"FeelDesc": u"""
+                            "FeelDesc": """
                                         {SCase(Self().PronounDesc())} feels
                                         like an ordinary {Self().NamePhrase}
                                         to {Me()}.
                                         """,
-                            u"GroundDesc": u"The ground looks completely ordinary to {Me()}.",
-                            u"SkyDesc": u"The sky looks completely ordinary to {Me()}.",
-                            u"TakeDesc": u"{SCase(You())} can’t take that!",
-                            u"WallDesc": u"The wall looks completely ordinary to {Me()}."
+                            "GroundDesc": "The ground looks completely ordinary to {Me()}.",
+                            "SkyDesc": "The sky looks completely ordinary to {Me()}.",
+                            "TakeDesc": "{SCase(You())} can’t take that!",
+                            "WallDesc": "The wall looks completely ordinary to {Me()}."
                             }
 
     def LDesc(self):
         """
         Returns long description.
         """
-        return self.Descriptions[u"LDesc"]
+        return self.Descriptions["LDesc"]
 
     def OdorDesc(self):
         """
         Returns odor description.
         """
-        return self.Descriptions[u"OdorDesc"]
+        return self.Descriptions["OdorDesc"]
 
     def ReadDesc(self):
         """
         Returns read description. (Any written text on object).
         """
-        return self.Descriptions[u"ReadDesc"]
+        return self.Descriptions["ReadDesc"]
 
     def SoundDesc(self):
         """
         Returns sound description.
         """
-        return self.Descriptions[u"SoundDesc"]
+        return self.Descriptions["SoundDesc"]
 
     def TasteDesc(self):
         """
         Returns taste description.
         """
-        return self.Descriptions[u"TasteDesc"]
+        return self.Descriptions["TasteDesc"]
 
     def FeelDesc(self):
         """
         Returns touch description.
         """
-        return self.Descriptions[u"FeelDesc"]
+        return self.Descriptions["FeelDesc"]
 
     def GroundDesc(self):
         """
         Returns ground/floor description.
         """
-        return self.Descriptions[u"GroundDesc"]
+        return self.Descriptions["GroundDesc"]
 
     def SD(self, Key, Value):
         """SD is just a short synonym for SetDesc()."""
@@ -1302,20 +1303,21 @@ class ServiceDictDescription:
         this *seriously* reduces memory requirements!
         """
 
-        self.Descriptions[Key + u"Desc"] = string.join(string.split(Value))
+        #self.Descriptions[Key + "Desc"] = string.join(string.split(Value))
+        self.Descriptions[Key + "Desc"] = " ".join(Value.split())
 
     def SkyDesc(self):
         """
         Returns sky/ceiling description.
         """
-        return self.Descriptions[u"SkyDesc"]
+        return self.Descriptions["SkyDesc"]
 
     def WallDesc(self):
         """
         Returns Wall description.
         """
 
-        return self.Descriptions[u"WallDesc"]
+        return self.Descriptions["WallDesc"]
 
 
 class ServiceFollow:
@@ -1353,7 +1355,7 @@ class ServiceOpenable:
         closed."
         """
 
-        return SCase(u"%s %s already closed." % (self.TheDesc(), Be(self)))
+        return SCase("%s %s already closed." % (self.TheDesc(), Be(self)))
 
 
     def AlreadyOpenDesc(self):
@@ -1362,7 +1364,7 @@ class ServiceOpenable:
         already open. It says "The door is already open." or whatever.
         """
 
-        return SCase(u"%s %s already open." % (self.TheDesc(), Be(self)))
+        return SCase("%s %s already open." % (self.TheDesc(), Be(self)))
 
     def Close(self, Multiple=FALSE, Silent=FALSE, Spontaneous=FALSE):
         """
@@ -1398,9 +1400,9 @@ class ServiceOpenable:
         """
 
         if not Spontaneous:
-            return SCase(self.TheDesc())+ u" " + Agree(u"close", self)
+            return SCase(self.TheDesc())+ " " + Agree("close", self)
         else:
-            return SCase(u"%s %s %s." % (You(), Agree(u"close"), self.TheDesc()))
+            return SCase("%s %s %s." % (You(), Agree("close"), self.TheDesc()))
 
 
 
@@ -1436,10 +1438,10 @@ class ServiceOpenable:
         """
 
         if not Spontaneous:
-            return SCase(self.TheDesc())+ u" " + Agree(u"open", self)
+            return SCase(self.TheDesc())+ " " + Agree("open", self)
         else:
-            return SCase(u"%s %s %s." %
-                         (You(), Agree(u"open"), self.TheDesc()))
+            return SCase("%s %s %s." %
+                         (You(), Agree("open"), self.TheDesc()))
 
 
 
@@ -1449,7 +1451,7 @@ class ServiceOpenable:
         opened isn't openable, say for example a rock or a tree.
         """
 
-        return SCase(u"%s can’t %s %s." % (You(),
+        return SCase("%s can’t %s %s." % (You(),
                                           self.TheDesc(),
                                           P.CVN()))
 
@@ -1474,14 +1476,14 @@ class ServiceLockable(ServiceOpenable):
         unlocked.
         """
 
-        return SCase(u"%s %s already locked." % (self.TheDesc(), Be(self)))
+        return SCase("%s %s already locked." % (self.TheDesc(), Be(self)))
 
     def AlreadyUnlockedDesc(self):
         """
         This method is called when the object being unlocked is already
         unlocked.
         """
-        return SCase(u"%s %s already unlocked." % (self.TheDesc(), Be(self)))
+        return SCase("%s %s already unlocked." % (self.TheDesc(), Be(self)))
 
 
     def Lock(self, key=None, Silent=FALSE, Spontaneous=FALSE):
@@ -1515,9 +1517,9 @@ class ServiceLockable(ServiceOpenable):
          Spontaneous was FALSE or not.
         """
         if not Spontaneous:
-            return SCase(self.TheDesc())+ u" " + Agree(u"lock", self) + u"."
+            return SCase(self.TheDesc())+ " " + Agree("lock", self) + "."
         else:
-            return SCase(u"%s %s %s." % (You(), Agree(u"lock"), self.TheDesc())) + u"."
+            return SCase("%s %s %s." % (You(), Agree("lock"), self.TheDesc())) + "."
 
 
     def NeedAKeyDesc(self):
@@ -1525,8 +1527,8 @@ class ServiceLockable(ServiceOpenable):
         This method is called when the object being locked/unlocked needs
         a key and no key was given.
         """
-        return SCase(u"%s %s some kind of key to do that." %
-                     (You(), Agree(u"need")))
+        return SCase("%s %s some kind of key to do that." %
+                     (You(), Agree("need")))
 
 
     def Unlock(self, key=None, Multiple=FALSE, Silent=FALSE, Spontaneous=FALSE):
@@ -1561,10 +1563,10 @@ class ServiceLockable(ServiceOpenable):
         whether Spontaneous was True or not.
         """
         if not Spontaneous:
-            return SCase(self.TheDesc())+ u" " + Agree(u"unlock", self) + u"."
+            return SCase(self.TheDesc())+ " " + Agree("unlock", self) + "."
         else:
-            return SCase(u"%s %s %s." %
-                         (You(), Agree(u"unlock"), self.TheDesc()))
+            return SCase("%s %s %s." %
+                         (You(), Agree("unlock"), self.TheDesc()))
 
     def WrongKeyDesc(self, key):
         """
@@ -1572,8 +1574,8 @@ class ServiceLockable(ServiceOpenable):
         a specific key. It returns "This key doesn't work with the door."
         """
 
-        return SCase(u"This %s doesn’t work with %s." %
-                     (key.NamePhrase, self.TheDesc())) + u"."
+        return SCase("This %s doesn’t work with %s." %
+                     (key.NamePhrase, self.TheDesc())) + "."
 
 
 
@@ -1636,7 +1638,7 @@ class ServiceRevealWhenTaken:
         # Describe Revealed Items
         #------------------------
 
-        Desc += u" " + self.LookDeepDesc()
+        Desc += " " + self.LookDeepDesc()
         Say(Desc)
 
         #-----------------------------------------
@@ -1697,7 +1699,7 @@ class ServiceTakeableItem:
         one of many objects being dropped at the same time.
         """
 
-        ReturnValue = u"Dropped."
+        ReturnValue = "Dropped."
 
         #----------------------------
         # Part of multiple item drop?
@@ -1732,7 +1734,7 @@ class ServiceTakeableItem:
         # appropriate for the "you" part of "You aren't carrying that". Be() is
         # the word for "is" or "are".
 
-        Complaint = u"%s %sn’t carrying that." % (You(), Be())
+        Complaint = "%s %sn’t carrying that." % (You(), Be())
 
         return SCase(Complaint)
 
@@ -1745,7 +1747,7 @@ class ServiceTakeableItem:
         """
 
         if self in P.CA().Contents:
-            Say(u"{SCase(You())}{Be(Contract=TRUE)} already carrying it.")
+            Say("{SCase(You())}{Be(Contract=TRUE)} already carrying it.")
             return
 
         if P.CA().Enter(self):
@@ -1758,13 +1760,13 @@ class ServiceTakeableItem:
         or "Rock: Taken".
         """
 
-        ReturnValue = u"Taken."
+        ReturnValue = "Taken."
 
-        if hasattr(self, u"Descriptions"):
-            ReturnValue = self.Descriptions[u"TakeDesc"]
+        if hasattr(self, "Descriptions"):
+            ReturnValue = self.Descriptions["TakeDesc"]
 
         # MultiDesc() already returns the terminating ": "
-        if Multiple: ReturnValue = SCase(self.MultiSDesc()) + u"Taken. ~n"
+        if Multiple: ReturnValue = SCase(self.MultiSDesc()) + "Taken. ~n"
 
         return ReturnValue
 
@@ -1790,12 +1792,12 @@ class ServiceFixedItem:
     def DropDesc(self):
         """Drop complaint"""
 
-        Complaint = u"%s %sn’t carrying that!" % (SCase(You()), Be())
+        Complaint = "%s %sn’t carrying that!" % (SCase(You()), Be())
 
-        if hasattr(self, u"Descriptions"):
+        if hasattr(self, "Descriptions"):
             # need a try here, scenery for instance has no drop description
             try:
-                Complaint = self.Descriptions[u"DropDesc"]
+                Complaint = self.Descriptions["DropDesc"]
             except KeyError:
                 pass
 
@@ -1809,12 +1811,12 @@ class ServiceFixedItem:
     def TakeDesc(self,Multiple=FALSE):
         """Take complaint"""
 
-        Complaint = u"%s can’t take that!" % You()
+        Complaint = "%s can’t take that!" % You()
 
-        if hasattr(self, u"Descriptions"):
+        if hasattr(self, "Descriptions"):
             # need a try here, scenery for instance has no take description
             try:
-                Complaint = self.Descriptions[u"TakeDesc"]
+                Complaint = self.Descriptions["TakeDesc"]
             except KeyError:
                 pass
 
@@ -1851,7 +1853,7 @@ class ClassGameObject(ClassFundamental):
         # Engine.UserInit() or Engine.UserPreInit() function. By default this
         # property is said as part of the game banner.
 
-        self.Author = u"Put your name here"
+        self.Author = "Put your name here"
 
         #----------
         # Copyright
@@ -1859,7 +1861,7 @@ class ClassGameObject(ClassFundamental):
 
         # This property hold your copyright, for instance: "1998-2001"
 
-        self.Copyright = u"Your copyright here"
+        self.Copyright = "Your copyright here"
 
         #------------------
         # Game Introduction
@@ -1870,7 +1872,7 @@ class ClassGameObject(ClassFundamental):
         # banner and gives the player an introduction to the game. Who they are,
         # what they're doing in the game, etc.
 
-        self.IntroText = u"Your Game’s Introductory Text Goes Here"
+        self.IntroText = "Your Game’s Introductory Text Goes Here"
 
         #----------
         # Game Name
@@ -1880,7 +1882,7 @@ class ClassGameObject(ClassFundamental):
         # default it appears as the first text said on the screen once
         # your game is run.
 
-        self.Name = u"Your Game’s Name Goes Here"
+        self.Name = "Your Game’s Name Goes Here"
 
         #-------------
         # Game Version
@@ -1890,13 +1892,13 @@ class ClassGameObject(ClassFundamental):
         # as "1.0" since the game banner automatically says the word
         # Version.
 
-        self.Version = u"1.0"
+        self.Version = "1.0"
 
         #---------------
         # Game Help Text
         #---------------
 
-        self.HelpText = u"Sorry, you’re on your own for this one!"
+        self.HelpText = "Sorry, you’re on your own for this one!"
 
     def Banner(self):
         """
@@ -1907,7 +1909,7 @@ class ClassGameObject(ClassFundamental):
         It's unlikly you'll need to alter the game banner anyway.
         """
 
-        Text = u"~title %s ~l version %s ~n Copyright (c) %s by %s ~n"
+        Text = "~title %s ~l version %s ~n Copyright (c) %s by %s ~n"
 
         Text = Text % (self.Name, self.Version, self.Copyright, self.Author)
         Text = Text + UniverseBanner()
@@ -1990,7 +1992,7 @@ class ClassBasicThing(ClassBaseObject):
         # try saying "a", followed by the short description. If it sounds ok,
         # then use "a", otherwise use "an".
 
-        self.Article = u"a"
+        self.Article = "a"
 
         #-----
         # Bulk
@@ -2033,7 +2035,7 @@ class ClassBasicThing(ClassBaseObject):
         # Preposition used when putting object in/under/behind/on another object.
         # The "active" preposition.
 
-        self.ContainerPrepositionDynamic = u"inside"
+        self.ContainerPrepositionDynamic = "inside"
 
         #-------------------------------
         # Container Preposition (static)
@@ -2041,7 +2043,7 @@ class ClassBasicThing(ClassBaseObject):
 
         # Preposition used when describing how an object holds its contents.
 
-        self.ContainerPrepositionStatic  = u"inside"
+        self.ContainerPrepositionStatic  = "inside"
 
         #--------------------
         # Format Descriptions
@@ -2052,7 +2054,7 @@ class ClassBasicThing(ClassBaseObject):
         # Agree() function (and its siblings) consider this
         # object singular by default (which is generally correct).
 
-        self.FormatYou = u""
+        self.FormatYou = ""
 
         #-----------
         # Has Ground
@@ -2496,7 +2498,7 @@ class ClassBasicThing(ClassBaseObject):
 
         return self.Weight + self.ContentWeight()
 
-    def DescribeSelf(self, DescriptionArgument = u"Long"):
+    def DescribeSelf(self, DescriptionArgument = "Long"):
         """
         The describe self method takes one argument, the type of description
         desired. Unlike the various "Desc" methods, this function actually
@@ -2512,31 +2514,31 @@ class ClassBasicThing(ClassBaseObject):
         # author (you) has a safety margin for spelling arguments in any case
         # preferred.
 
-        UCDA=string.upper(DescriptionArgument)
+        UCDA=DescriptionArgument.upper()
 
         #----------------------------
         # Say Appropriate Description
         #----------------------------
 
-        if UCDA == u"SMART":  self.SmartDescribeSelf();return
-        if UCDA == u"SHORT":  Say(self.SDesc());return
-        if UCDA == u"LONG":   Say(self.LDesc());return
-        if UCDA == u"A":      Say(self.ADesc());return
-        if UCDA == u"THE":    Say(self.TheDesc());return
-        if UCDA == u"HELLO":  Say(self.HelloDesc());return
-        if UCDA == u"HERE":   Say(self.HereDesc());return
-        if UCDA == u"CONTENT":Say(self.ContentDesc());return
-        if UCDA == u"NAME":   Say(self.NamePhrase);return
-        if UCDA == u"ADJ":    Say(self.AdjectivePhrase);return
-        if UCDA == u"READ":   Say(self.ReadDesc());return
-        if UCDA == u"MULTISHORT": Say(self.MultiSDesc());return
-        if UCDA == u"PLURAL": Say(self.PluralDesc());return
-        if UCDA == u"SOUND":  Say(self.SoundDesc());return
-        if UCDA == u"ODOR":   Say(self.OdorDesc());return
-        if UCDA == u"TASTE":  Say(self.TasteDesc());return
-        if UCDA == u"FEEL":   Say(self.FeelDesc());return
-        if UCDA == u"TAKE":   Say(self.TakeDesc());return
-        if UCDA == u"DROP":   Say(self.DropDesc());return
+        if UCDA == "SMART":  self.SmartDescribeSelf();return
+        if UCDA == "SHORT":  Say(self.SDesc());return
+        if UCDA == "LONG":   Say(self.LDesc());return
+        if UCDA == "A":      Say(self.ADesc());return
+        if UCDA == "THE":    Say(self.TheDesc());return
+        if UCDA == "HELLO":  Say(self.HelloDesc());return
+        if UCDA == "HERE":   Say(self.HereDesc());return
+        if UCDA == "CONTENT":Say(self.ContentDesc());return
+        if UCDA == "NAME":   Say(self.NamePhrase);return
+        if UCDA == "ADJ":    Say(self.AdjectivePhrase);return
+        if UCDA == "READ":   Say(self.ReadDesc());return
+        if UCDA == "MULTISHORT": Say(self.MultiSDesc());return
+        if UCDA == "PLURAL": Say(self.PluralDesc());return
+        if UCDA == "SOUND":  Say(self.SoundDesc());return
+        if UCDA == "ODOR":   Say(self.OdorDesc());return
+        if UCDA == "TASTE":  Say(self.TasteDesc());return
+        if UCDA == "FEEL":   Say(self.FeelDesc());return
+        if UCDA == "TAKE":   Say(self.TakeDesc());return
+        if UCDA == "DROP":   Say(self.DropDesc());return
 
     #-------------
     # Enter Object
@@ -2568,8 +2570,8 @@ class ClassBasicThing(ClassBaseObject):
         # to put the object into self.
 
         if not self.IsOpen and not self.IsOpenable:
-            Complaint = You() + u" can’t fit " + \
-                        Object.TheDesc() + u" into " + self.TheDesc() + u"."
+            Complaint = You() + " can’t fit " + \
+                        Object.TheDesc() + " into " + self.TheDesc() + "."
             return Complain(SCase(Complaint))
 
         #--------------
@@ -2582,7 +2584,7 @@ class ClassBasicThing(ClassBaseObject):
         # "DescribeSelf('THE')"
 
         if not self.IsOpen and self.IsOpenable:
-            Complaint = SCase(self.TheDesc() + u" is closed.")
+            Complaint = SCase(self.TheDesc() + " is closed.")
             return Complain(Complaint)
 
         #--------------------------
@@ -2590,7 +2592,7 @@ class ClassBasicThing(ClassBaseObject):
         #--------------------------
 
         if Object.Bulk + self.ContentBulk() > self.MaxBulk:
-            Complaint = Object.TheDesc() + u" won’t fit."
+            Complaint = Object.TheDesc() + " won’t fit."
             return Complain(Complaint)
 
         #------------
@@ -2871,7 +2873,7 @@ class ClassBasicThing(ClassBaseObject):
         # Notice the capitalization of the expected pronoun, it won't work
         # otherwise!
 
-        Attr = u"CantLook" + string.capitalize(Attr)
+        Attr = "CantLook" + string.capitalize(Attr)
 
         #------------
         # Can't Look?
@@ -3345,10 +3347,10 @@ class ClassBasicThing(ClassBaseObject):
         any blatant sound or smell the object is putting off.
         """
         P.CA().Memorize(self)
-        self.DescribeSelf(u"HERE")
+        self.DescribeSelf("HERE")
         if self.IsTransparent and self.Contents: Say(self.LookDeepDesc())
-        if self.IsBlatantSound: self.DescribeSelf(u"SOUND")
-        if self.IsBlatantOdor:  self.DescribeSelf(u"ODOR")
+        if self.IsBlatantSound: self.DescribeSelf("SOUND")
+        if self.IsBlatantOdor:  self.DescribeSelf("ODOR")
 
     def VerbPreposition(self):
         """
@@ -3364,8 +3366,8 @@ class ClassBasicThing(ClassBaseObject):
         if ExpectedPreposition hasn't been defined.
         """
 
-        Preposition = P.CV().Get(u"ExpectedPreposition")
-        if Preposition == None: Preposition = u"inside"
+        Preposition = P.CV().Get("ExpectedPreposition")
+        if Preposition == None: Preposition = "inside"
         return Preposition
 
     def Where(self):
@@ -3401,7 +3403,7 @@ class ClassBasicThing(ClassBaseObject):
         It's used whenever you want to use the object and the correct
         article in a sentence.
         """
-        return u"%s %s" % (self.ArticleDesc(), self.SDesc())
+        return "%s %s" % (self.ArticleDesc(), self.SDesc())
 
     def AmnesiaDesc(self):
         """
@@ -3409,7 +3411,7 @@ class ClassBasicThing(ClassBaseObject):
         the Me object doesn't remember an object.
         """
 
-        return u"I don’t remember ever seeing %s %s around here." % \
+        return "I don’t remember ever seeing %s %s around here." % \
                (self.ArticleDesc(), self.NamePhrase)
 
     def ArticleDesc(self):
@@ -3425,7 +3427,7 @@ class ClassBasicThing(ClassBaseObject):
         try:
             a = self.Article
         except AttributeError:
-            a = u''
+            a = ''
         return a
 
     def CantLookDesc(self):
@@ -3437,7 +3439,7 @@ class ClassBasicThing(ClassBaseObject):
         """
 
         Preposition = self.VerbPreposition()
-        return u"It’s impossible to look %s %s." % (Preposition, self.TheDesc())
+        return "It’s impossible to look %s %s." % (Preposition, self.TheDesc())
 
     def CantReachDesc(self):
         """
@@ -3452,7 +3454,7 @@ class ClassBasicThing(ClassBaseObject):
 
         # If self does NOT have a location, return an empty string.
 
-        if self.Where() == None: return u""
+        if self.Where() == None: return ""
 
         #--------------------------------
         # Assemble first part of sentence
@@ -3462,7 +3464,7 @@ class ClassBasicThing(ClassBaseObject):
         # we're using the You() function and the TheDesc method from self (the
         # rock).
 
-        Sentence = SCase(u"%s can’t reach %s." % (You(), self.TheDesc()))
+        Sentence = SCase("%s can’t reach %s." % (You(), self.TheDesc()))
 
         #-------------------------
         # Is Self's Location Open?
@@ -3484,7 +3486,7 @@ class ClassBasicThing(ClassBaseObject):
         # self! In other words, if self's location is GlassBox, we're
         # using GlassBox.TheDesc, not Rock.TheDesc.
 
-        Sentence = Sentence + u" %s'll have to open %s first." % \
+        Sentence = Sentence + " %s'll have to open %s first." % \
             (SCase(You()), self.Where().TheDesc())
 
         #--------------------------------
@@ -3498,7 +3500,7 @@ class ClassBasicThing(ClassBaseObject):
         Used as an error method on the SpecialDisambiguation routine.
         """
 
-        Sentence = u"%s can’t see any %s here." % (You(), self.NamePhrase)
+        Sentence = "%s can’t see any %s here." % (You(), self.NamePhrase)
 
         return SCase(Sentence)
 
@@ -3541,7 +3543,7 @@ class ClassBasicThing(ClassBaseObject):
         # so we start with a line break (~n), then indent by the current level's
         # number of tabs (~t).
 
-        Sentence = u" ~n " + Indent(CurrentLevel)
+        Sentence = " ~n " + Indent(CurrentLevel)
 
         #-----------------------
         # Get the object's Adesc
@@ -3585,7 +3587,7 @@ class ClassBasicThing(ClassBaseObject):
         else:
             Prefix = self.ContentsPrefixDesc()
 
-        Sentence += Choose(CurrentLevel==0, u"", u" ~n ") + \
+        Sentence += Choose(CurrentLevel==0, "", " ~n ") + \
                     Indent(CurrentLevel) + Prefix
 
         #--------------------------------------
@@ -3637,7 +3639,7 @@ class ClassBasicThing(ClassBaseObject):
         This method is used when a container has contents. It says "The
         box contains:"
         """
-        return SCase(self.TheDesc() + u" contains:")
+        return SCase(self.TheDesc() + " contains:")
 
     def ContentsShallowDesc(self):
         """
@@ -3686,7 +3688,7 @@ class ClassBasicThing(ClassBaseObject):
         # it's ChooseArticleDesc(). In either case these tests simplify the
         # coding for contents of more than one object.
 
-        if ListCount == 0: return u"nothing"
+        if ListCount == 0: return "nothing"
         if ListCount == 1: return self.Contents[0].ChooseArticleDesc()
 
         #-----------------------------
@@ -3709,7 +3711,7 @@ class ClassBasicThing(ClassBaseObject):
         for Object in Contents:
             TempList.append(Object.ChooseArticleDesc())
 
-        Result = string.join(TempList[:-1], u", ") + u" and " + TempList[-1]
+        Result = string.join(TempList[:-1], ", ") + " and " + TempList[-1]
 
         #--------------
         # Return Result
@@ -3727,7 +3729,7 @@ class ClassBasicThing(ClassBaseObject):
         """
 
         Preposition = self.VerbPreposition
-        return SCase(u"%s %sn’t see anything interesting %s %s." % (You(),
+        return SCase("%s %sn’t see anything interesting %s %s." % (You(),
                                                              Do(),
                                                              Preposition,
                                                              self.TheDesc()))
@@ -3736,7 +3738,7 @@ class ClassBasicThing(ClassBaseObject):
     def EmptyDesc(self):
         """Returns 'The treasure chest is empty.'"""
 
-        return SCase(self.TheDesc() + u" is empty.")
+        return SCase(self.TheDesc() + " is empty.")
 
     def FeelDesc(self):
         """
@@ -3746,7 +3748,7 @@ class ClassBasicThing(ClassBaseObject):
         Returns 'It feels like an ordinary rock to me'
         """
 
-        Phrase = u"%s feels like an ordinary %s to %s." % \
+        Phrase = "%s feels like an ordinary %s to %s." % \
          (self.PronounDesc(), self.NamePhrase, Me())
 
         return SCase(Phrase)
@@ -3754,13 +3756,13 @@ class ClassBasicThing(ClassBaseObject):
     def GroundDesc(self):
         """Returns 'The ground looks ordinary to me.'"""
 
-        Phrase = u"The ground looks ordinary to %s." % Me()
+        Phrase = "The ground looks ordinary to %s." % Me()
         return SCase(Phrase)
 
     def HelloDesc(self):
         """Returns 'Did you really expect a rock to speak?'"""
 
-        Phrase = u"Did you really expect %s to speak?" % self.ADesc()
+        Phrase = "Did you really expect %s to speak?" % self.ADesc()
 
         return SCase(Phrase)
 
@@ -3796,13 +3798,13 @@ class ClassBasicThing(ClassBaseObject):
         # using the ServiceDictDescription with this function and not having to
         #  override it. Very handy for objects of ClassItem.
 
-        Here_Description = u"There’s %s here." % self.ADesc()
+        Here_Description = "There’s %s here." % self.ADesc()
 
-        if hasattr(self, u"Descriptions"):
-            if self.Descriptions.has_key(u"HereDesc"):
-                Here_Description = self.Descriptions[u"HereDesc"]
+        if hasattr(self, "Descriptions"):
+            if "HereDesc" in self.Descriptions:
+                Here_Description = self.Descriptions["HereDesc"]
 
-        No_Description = u""
+        No_Description = ""
 
         #------------
         # Is Scenery?
@@ -3839,13 +3841,13 @@ class ClassBasicThing(ClassBaseObject):
         # it says "You put the rock inside the bag."
 
         if not Spontaneous:
-            Sentence = u"%s %s %s %s." % (self.TheDesc(),
-                                          Agree(u"go", Object),
+            Sentence = "%s %s %s %s." % (self.TheDesc(),
+                                          Agree("go", Object),
                                           Preposition,
                                           Object.TheDesc())
         else:
-            Sentence = u"%s %s %s %s %s." % (You(),
-                                            Agree(u"put"),
+            Sentence = "%s %s %s %s %s." % (You(),
+                                            Agree("put"),
                                             self.TheDesc(),
                                             Preposition,
                                             Object.TheDesc())
@@ -3877,10 +3879,10 @@ class ClassBasicThing(ClassBaseObject):
         NamePhrase instead of SDesc.
         """
 
-        BrokenDescription = u""
-        if self.IsBroken: BrokenDescription = u"(but broken) "
+        BrokenDescription = ""
+        if self.IsBroken: BrokenDescription = "(but broken) "
 
-        RV = u"%s looks like an ordinary %s%s to %s."
+        RV = "%s looks like an ordinary %s%s to %s."
 
         RV = RV % (self.PronounDesc(), BrokenDescription, self.NamePhrase, Me())
         return SCase(RV)
@@ -3891,10 +3893,10 @@ class ClassBasicThing(ClassBaseObject):
         object. It is only called when there are actually objects to be
         described.
         """
-        return u"%s %s %s %s %s. " % (SCase(self.ContainerPrepositionStatic),
+        return "%s %s %s %s %s. " % (SCase(self.ContainerPrepositionStatic),
                                      self.TheDesc(),
                                      You(),
-                                     Agree(u"see"),
+                                     Agree("see"),
                                      self.ContentsShallowDesc())
 
     def MultiSDesc(self):
@@ -3904,7 +3906,7 @@ class ClassBasicThing(ClassBaseObject):
         change the description of an object when it's part of a list.
         """
 
-        return self.SDesc() + u": "
+        return self.SDesc() + ": "
 
     def NoDesc(self):
         """
@@ -3913,7 +3915,7 @@ class ClassBasicThing(ClassBaseObject):
 
         """
 
-        return u""
+        return ""
 
     def NotWithVerbDesc(self):
         """
@@ -3926,7 +3928,7 @@ class ClassBasicThing(ClassBaseObject):
     def OdorDesc(self):
         """Returns 'It smells like an ordinary small grey rock to me.'"""
 
-        Phrase = u"%s smells like an ordinary %s to %s." % \
+        Phrase = "%s smells like an ordinary %s to %s." % \
                  (self.PronounDesc(), self.NamePhrase, Me())
 
         return SCase(Phrase)
@@ -3938,9 +3940,9 @@ class ClassBasicThing(ClassBaseObject):
         respectively.
         """
 
-        if self.IsHim: return u"him"
-        if self.IsHer: return u"her"
-        return u"it"
+        if self.IsHim: return "him"
+        if self.IsHer: return "her"
+        return "it"
 
     def PluralDesc(self):
         """
@@ -3950,7 +3952,7 @@ class ClassBasicThing(ClassBaseObject):
         shift (Hippotomous to Hippottomi), etc.
         """
 
-        return self.SDesc() + u"s"
+        return self.SDesc() + "s"
 
     def ReadDesc(self):
         """
@@ -3958,7 +3960,7 @@ class ClassBasicThing(ClassBaseObject):
         can't read the self.ADesc. ("You can't read a small gray rock.")
         """
 
-        Phrase = u"%s can’t read %s." % (You(), self.ADesc())
+        Phrase = "%s can’t read %s." % (You(), self.ADesc())
 
         return  SCase(Phrase)
 
@@ -3971,11 +3973,11 @@ class ClassBasicThing(ClassBaseObject):
         front of the NamePhrase.
         """
 
-        RV = u""
-        if len(self.AdjectivePhrase) > 0: RV = self.AdjectivePhrase + u" "
+        RV = ""
+        if len(self.AdjectivePhrase) > 0: RV = self.AdjectivePhrase + " "
         # Need a try because ClassDirection doesn't have "IsBroken" attribute
         try:
-            if self.IsBroken: RV += u"broken "
+            if self.IsBroken: RV += "broken "
         except AttributeError:
             pass
         RV += self.NamePhrase
@@ -3986,7 +3988,7 @@ class ClassBasicThing(ClassBaseObject):
         Returns 'The sky looks ordinary to me.'
         """
 
-        Phrase = u"The sky looks ordinary to %s." % Me()
+        Phrase = "The sky looks ordinary to %s." % Me()
         return SCase(Phrase)
 
     def SoundDesc(self):
@@ -3996,14 +3998,14 @@ class ClassBasicThing(ClassBaseObject):
         noise."
         """
 
-        return SCase(self.TheDesc() + u" isn’t making any noise.")
+        return SCase(self.TheDesc() + " isn’t making any noise.")
 
     def TasteDesc(self):
         """
         Returns 'It tastes like an ordinary rock to me.'
         """
 
-        Phrase = u"%s tastes like an ordinary %s to %s." % \
+        Phrase = "%s tastes like an ordinary %s to %s." % \
                  (self.PronounDesc(), self.NamePhrase, uMe())
 
         return SCase(Phrase)
@@ -4015,14 +4017,14 @@ class ClassBasicThing(ClassBaseObject):
         object's short description.
         """
 
-        return u"the " + self.SDesc()
+        return "the " + self.SDesc()
 
     def WallDesc(self):
         """
         Returns "The wall looks normal to me."
         """
 
-        Phrase = u"The wall looks normal to %s." % Me()
+        Phrase = "The wall looks normal to %s." % Me()
         return SCase(Phrase)
 
     def WrongPrepositionDesc(self, Object, Spontaneous=FALSE):
@@ -4048,11 +4050,11 @@ class ClassBasicThing(ClassBaseObject):
         # "You can't put the rock inside the table.".
 
         if not Spontaneous:
-            Sentence = u"%s can’t go %s %s. " % (self.TheDesc(),
+            Sentence = "%s can’t go %s %s. " % (self.TheDesc(),
                                                 Preposition,
                                                 Object.TheDesc())
         else:
-            Sentence = u"%s can’t put %s %s %s. " % (You(),
+            Sentence = "%s can’t put %s %s %s. " % (You(),
                                                     self.TheDesc(),
                                                     Preposition,
                                                     Object.TheDesc())
@@ -4107,17 +4109,17 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         # These are the parts of speech that are part of subject/verb
         # agreement.
 
-        self.FormatMe      = u"me"
-        self.FormatYou     = u"you"
-        self.FormatYoum    = u"you"
-        self.FormatYour    = u"your"
+        self.FormatMe      = "me"
+        self.FormatYou     = "you"
+        self.FormatYoum    = "you"
+        self.FormatYour    = "your"
 
     def ADesc(self):
         """
         Actor's equivalent of "a rock", in other words "yourself".
         """
 
-        return u"yourself"
+        return "yourself"
 
     def IsDead(self):
         return self.Health <= 0
@@ -4142,34 +4144,34 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
             Damage = Weapon.Damage
 
         # You find him unimpressed, stating »You can’t attack me with a rock.«
-        Complaint = u"You find %s unimpressed, stating ~i »%s can’t attack %s with %s" % \
+        Complaint = "You find %s unimpressed, stating ~i »%s can’t attack %s with %s" % \
             (self.TheDesc(), SCase(self.FormatYou), self.FormatMe, ADesc)
 
         # append "... mortal!" only if the player attacks someone else.
         # If the player gets attacked, he wont call the other one "mortal" :-)
         if id(P.CA()) == id(Global.Player):
-            Complaint += u", mere mortal!« ~l"
+            Complaint += ", mere mortal!« ~l"
         else:
-            Complaint += u"!« ~l"
+            Complaint += "!« ~l"
 
         # Here would be the health & damage logic
         self.IncrementHealth(-Damage)
         if not self.IsDead():
-            State = u""
+            State = ""
             Percent = self.HealthPercent()
             if Percent < 25:
-                State = u"almost killed"
+                State = "almost killed"
             elif Percent < 50:
-                State = u"severely wounded"
+                State = "severely wounded"
             elif Percent < 75:
-                State = u"wounded"
+                State = "wounded"
             if State:
-                Complaint = u"{SCase(You())} {Agree(u'have')} %s {Self().TheDesc()}." % State
+                Complaint = "{SCase(You())} {Agree(u'have')} %s {Self().TheDesc()}." % State
             Say(Complaint)
         else:
-            Say(u"{SCase(You())} {Agree(u'have')} killed {Self().TheDesc()}!")
+            Say("{SCase(You())} {Agree(u'have')} killed {Self().TheDesc()}!")
             # If the actor was following the player, stop that on death
-            if hasattr(self, u"Follow"):
+            if hasattr(self, "Follow"):
                 self.Follow = FALSE
         return TURN_ENDS
 
@@ -4181,14 +4183,14 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
 
     def ShowHealth(self, colored=TRUE):
         Percent = self.HealthPercent()
-        Text = u"%d%%" % Percent
+        Text = "%d%%" % Percent
         if colored:
             # show with red background if < 25%
             if Percent < 25:
-                Text = u" ~blrd " + Text + u" ~l "
+                Text = " ~blrd " + Text + " ~l "
             # show with yellow background if < 50%
             elif Percent < 50:
-                Text = u" ~blbr " + Text + u" ~l "
+                Text = " ~blbr " + Text + " ~l "
         return Text
 
     def IncrementHealth(self, Amount, Silent=FALSE):
@@ -4232,15 +4234,15 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         # We want to say decreased for a negative amount, increased for a positive
         # one, and nothing at all for a 0 amount.
 
-        ChangeWord = u"not changed"
-        if Amount < 0: ChangeWord = u"decreased"
-        if Amount > 0: ChangeWord = u"increased"
+        ChangeWord = "not changed"
+        if Amount < 0: ChangeWord = "decreased"
+        if Amount > 0: ChangeWord = "increased"
 
         #--------------
         # Build Comment
         #--------------
 
-        Comment = u"[Your health just %s by %d points. It is now at %s.] ~n" % \
+        Comment = "[Your health just %s by %d points. It is now at %s.] ~n" % \
                   (ChangeWord, abs(Amount), self.ShowHealth())
 
         #------------------------
@@ -4277,7 +4279,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         # because of his inventory.
 
         if not self.IsOpenable:
-            Complaint = u"%s can’t carry %s!" % (You(), Object.TheDesc())
+            Complaint = "%s can’t carry %s!" % (You(), Object.TheDesc())
             return Complain(SCase(Complaint))
 
         #--------------------------
@@ -4285,7 +4287,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         #--------------------------
 
         if Object.Bulk + self.ContentBulk() > self.MaxBulk:
-            Complaint = u"%s can’t manage to carry anything else." % You()
+            Complaint = "%s can’t manage to carry anything else." % You()
             return Complain(SCase(Complaint))
 
         #---------------------
@@ -4293,7 +4295,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         #---------------------
 
         if Object.Weight > self.MaxWeight:
-            Complaint = u"%s can’t even lift it, much less carry it!" % You()
+            Complaint = "%s can’t even lift it, much less carry it!" % You()
             return Complain(SCase(Complaint))
 
 
@@ -4302,7 +4304,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         #-------------------
 
         if Object.Weight + self.ContentWeight() > self.MaxWeight:
-            return Complain(SCase(u"%s load is too heavy." % Your()))
+            return Complain(SCase("%s load is too heavy." % Your()))
 
 
         #------------
@@ -4314,7 +4316,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         return TURN_ENDS
 
     def LDesc(self):
-        Message = u"%s %s about the same as always." % (SCase(You()), Agree(u'look'))
+        Message = "%s %s about the same as always." % (SCase(You()), Agree('look'))
         return Message
 
 
@@ -4323,7 +4325,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         The actor's equivalent of "the rock", in other words "yourself".
         """
 
-        return u"yourself"
+        return "yourself"
 
     def Travel(self,Vector):
         """
@@ -4345,7 +4347,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         # desired Vector is in the map. Vector might be the object North, for
         # example.
 
-        if self.Where().Map.has_key(Vector):
+        if Vector in self.Where().Map:
 
             #----------------------------------
             # Direction IS in map, get New Room
@@ -4360,7 +4362,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
             # If New Room is actually a string, it MUST be a complaint, so
             # return the complaint, which has the effect of continuing the turn.
 
-            if type(NewRoom) == type(u""): return Complain(NewRoom)
+            if type(NewRoom) == type(""): return Complain(NewRoom)
 
             #---------------------
             # Can self Leave Here?
@@ -4389,7 +4391,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         # Ok, it wasn't in the room's normal map. Next we check the room's
         # default map, using the same logic.
 
-        if self.Where().DefaultMap.has_key(Vector):
+        if Vector in self.Where().DefaultMap:
 
             #----------------------------------
             # Direction IS In Map, Get New Room
@@ -4404,7 +4406,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
             # If New Room is actually a string, it MUST be a complaint, so
             # return the complaint, which has the effect of continuing the turn.
 
-            if type(NewRoom) == type(u""): return Complain(NewRoom)
+            if type(NewRoom) == type(""): return Complain(NewRoom)
 
             #---------------------
             # Can self Leave Here?
@@ -4432,7 +4434,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
 
         # If the direction isn't in the default map either, complain.
 
-        if not Global.DefaultMap.has_key(Vector):
+        if Vector not in Global.DefaultMap:
             return Complain(P.AP().NotADirection)
 
         #-----------------------------------------
@@ -4448,7 +4450,7 @@ class ClassActor(ServiceFixedItem,ClassBasicThing):
         # If New Room is actually a string, it MUST be a complaint, so return the
         # complaint, which has the effect of continuing the turn.
 
-        if type(NewRoom) == type(u""): return Complain(NewRoom)
+        if type(NewRoom) == type(""): return Complain(NewRoom)
 
         #---------------------
         # Can self Leave Here?
@@ -4494,14 +4496,14 @@ class ClassPlayer(ClassMonster):
         self.Location = None    # Starting Location is set differently
         self.IsOpenable = TRUE  # Stuff can be put inside player (inventory)
 
-    def ContentsPrefixDesc(self): return u"You are carrying:"
-    def EmptyDesc(self): return u"You are empty handed."
-    def HereDesc(self): return u""
+    def ContentsPrefixDesc(self): return "You are carrying:"
+    def EmptyDesc(self): return "You are empty handed."
+    def HereDesc(self): return ""
     def OdorDesc(self):
-        return u"You’re a bit ripe, about two months overdue for your yearly bath …"
+        return "You’re a bit ripe, about two months overdue for your yearly bath …"
     def SmartDescribeSelf(self): pass
-    def SoundDesc(self): return u"You aren’t making any noise."
-    def TasteDesc(self): return u"You decide against trying to taste yourself."
+    def SoundDesc(self): return "You aren’t making any noise."
+    def TasteDesc(self): return "You decide against trying to taste yourself."
 
 class ClassDirection(ClassBasicThing):
     """
@@ -4513,7 +4515,7 @@ class ClassDirection(ClassBasicThing):
 
     def SetMyProperties(self):
         """Sets default instance properties"""
-        self.AdjectivePhrase = u""
+        self.AdjectivePhrase = ""
         self.Location = None
 
     def LDesc(self):
@@ -4551,20 +4553,20 @@ C="""
   Unfortunately, we have no choice, even though it makes the code slightly
   harder to follow.
   """
-North = ClassDirection(u"north,n")
-Northeast = ClassDirection(u"northeast,ne")
-East = ClassDirection(u"east,e")
-Southeast = ClassDirection(u"southeast,se")
-South = ClassDirection(u"south,s")
-Southwest = ClassDirection(u"southwest,sw")
-West = ClassDirection(u"west,w")
-Northwest = ClassDirection(u"northwest,nw")
-Up = ClassDirection(u"up,u")
-Down = ClassDirection(u"down,d")
-Upstream = ClassDirection(u"upstream,us")
-Downstream = ClassDirection(u"downstream,ds")
-In = ClassDirection(u"in,inside")
-Out = ClassDirection(u"out,outside")
+North = ClassDirection("north,n")
+Northeast = ClassDirection("northeast,ne")
+East = ClassDirection("east,e")
+Southeast = ClassDirection("southeast,se")
+South = ClassDirection("south,s")
+Southwest = ClassDirection("southwest,sw")
+West = ClassDirection("west,w")
+Northwest = ClassDirection("northwest,nw")
+Up = ClassDirection("up,u")
+Down = ClassDirection("down,d")
+Upstream = ClassDirection("upstream,us")
+Downstream = ClassDirection("downstream,ds")
+In = ClassDirection("in,inside")
+Out = ClassDirection("out,outside")
 
 #********************************************************************************
 #                    U N I V E R S E   D E R I V E D   C L A S S E S
@@ -4599,20 +4601,20 @@ class ClassRoom(ClassBasicThing):
     # "self" isn't in front of DefaultMap. This saves enormous amounts of memory,
     # always a Good Thing(tm).
 
-    DefaultMap = {North:      u"You can’t go that way.",
-                  Northeast:  u"You can’t go that way.",
-                  East:       u"You can’t go that way.",
-                  Southeast:  u"You can’t go that way.",
-                  South:      u"You can’t go that way.",
-                  Southwest:  u"You can’t go that way.",
-                  West:       u"You can’t go that way.",
-                  Northwest:  u"You can’t go that way.",
-                  Up:         u"There’s no way up from here.",
-                  Down:       u"There’s no way down from here.",
-                  Upstream:   u"There’s no stream here.",
-                  Downstream: u"There’s no stream here.",
-                  In:         u"There’s nothing here to enter.",
-                  Out:        u"You’re not in anything at the moment."}
+    DefaultMap = {North:      "You can’t go that way.",
+                  Northeast:  "You can’t go that way.",
+                  East:       "You can’t go that way.",
+                  Southeast:  "You can’t go that way.",
+                  South:      "You can’t go that way.",
+                  Southwest:  "You can’t go that way.",
+                  West:       "You can’t go that way.",
+                  Northwest:  "You can’t go that way.",
+                  Up:         "There’s no way up from here.",
+                  Down:       "There’s no way down from here.",
+                  Upstream:   "There’s no stream here.",
+                  Downstream: "There’s no stream here.",
+                  In:         "There’s nothing here to enter.",
+                  Out:        "You’re not in anything at the moment."}
 
     def SetMyProperties(self):
         """Sets default instance properties"""
@@ -4701,7 +4703,7 @@ class ClassRoom(ClassBasicThing):
     def FeelDesc(self):
         """Feeling Description"""
 
-        Complaint = u"Scrabbling around with %s hands uncovers nothing useful."
+        Complaint = "Scrabbling around with %s hands uncovers nothing useful."
         return Complaint % Your()
 
 
@@ -4714,7 +4716,7 @@ class ClassRoom(ClassBasicThing):
 
         IncrementScore(self.Value)
         self.Visited = TRUE
-        return u""
+        return ""
 
     def OdorDesc(self):
         """
@@ -4741,7 +4743,7 @@ class ClassRoom(ClassBasicThing):
         Making it: "HE DOESn’t smell anything."
         """
 
-        Complaint = u"%s %sn’t smell anything." % (You(), Do())
+        Complaint = "%s %sn’t smell anything." % (You(), Do())
         return SCase(Complaint)
 
     def SmartDescribeSelf(self):
@@ -4773,12 +4775,12 @@ class ClassRoom(ClassBasicThing):
         # that’s that. Notice we do check for blatant noise or odor
 
         if self.CurrentlyIlluminated() == FALSE:
-            Say(u"It’s too dark to see anything.")
+            Say("It’s too dark to see anything.")
 
             if self.IsBlatantSound or self.IsBlatantOdor:
-                Say(u"But darkness doesn’t stop your other senses …")
-                if self.IsBlatantSound == TRUE: self.DescribeSelf(u"SOUND")
-                if self.IsBlatantOdor == TRUE:  self.DescribeSelf(u"ODOR")
+                Say("But darkness doesn’t stop your other senses …")
+                if self.IsBlatantSound == TRUE: self.DescribeSelf("SOUND")
+                if self.IsBlatantOdor == TRUE:  self.DescribeSelf("ODOR")
 
             return TURN_CONTINUES
 
@@ -4819,9 +4821,9 @@ class ClassRoom(ClassBasicThing):
         # OR if the player hasn't been in this room before. Either way they get
         # long description.
 
-        if Verbosity: self.DescribeSelf(u"LONG")
-        if self.IsBlatantSound: self.DescribeSelf(u"SOUND")
-        if self.IsBlatantOdor:  self.DescribeSelf(u"ODOR")
+        if Verbosity: self.DescribeSelf("LONG")
+        if self.IsBlatantSound: self.DescribeSelf("SOUND")
+        if self.IsBlatantOdor:  self.DescribeSelf("ODOR")
 
         #-----------------
         # Set THEM Pronoun
@@ -4848,8 +4850,8 @@ class ClassRoom(ClassBasicThing):
             Object.MakeCurrent()
             Object.MarkPronoun()
             Object.SmartDescribeSelf()
-            if Object.IsBlatantSound: Object.DescribeSelf(u"SOUND")
-            if Object.IsBlatantOdor:  Object.DescribeSelf(u"ODOR")
+            if Object.IsBlatantSound: Object.DescribeSelf("SOUND")
+            if Object.IsBlatantOdor:  Object.DescribeSelf("ODOR")
 
     def SoundDesc(self):
         """
@@ -4870,7 +4872,7 @@ class ClassRoom(ClassBasicThing):
         # "You"+" "+"do"+"n't hear anything."
 
         Who = P.CA();
-        Complaint = SCase(u"%s %sn’t hear anything." % (You(), Do()))
+        Complaint = SCase("%s %sn’t hear anything." % (You(), Do()))
         return SCase(Complaint)
 
 
@@ -4882,8 +4884,8 @@ class ClassSmartRoom(ServiceDictDescription,ClassRoom):
     """
 
     def SetMyProperties(self):
-        self.SD(u"Sound", u"The room is silent")
-        self.SD(u"Odor", u"The air is odorless.")
+        self.SD("Sound", "The room is silent")
+        self.SD("Odor", "The air is odorless.")
 
     def FeelDesc(self):
         """
@@ -4933,10 +4935,10 @@ class ClassLandmark(ClassScenery):
     def SetMyProperties(self):
         """Sets default instance properties"""
         self.HasFloatingLocation = TRUE
-        self.Landmark = u""
+        self.Landmark = ""
 
     def Where(self):
-        if P.CA().Where().Get(u"Has" + self.Landmark):
+        if P.CA().Where().Get("Has" + self.Landmark):
             Global.Player.Memorize(self)
             return P.CA().Where()
         else:
@@ -4959,7 +4961,7 @@ class ClassLandmarkMissing(ClassLandmark):
     """
 
     def Where(self):
-        if not P.CA().Where().Get(u"Has" + self.Landmark):
+        if not P.CA().Where().Get("Has" + self.Landmark):
             return P.CA().Where()
         else:
             return None
@@ -4972,7 +4974,7 @@ class ClassItem(ServiceTakeableItem,ServiceDictDescription,ClassBasicThing):
 
     def SetMyProperties(self):
         """Sets default instance properties"""
-        self.SD(u"Take", u"Taken.")
+        self.SD("Take", "Taken.")
 
 class ClassDoor(ServiceOpenable, ClassScenery):
     """
@@ -5010,7 +5012,7 @@ class ClassDoor(ServiceOpenable, ClassScenery):
         self.Location = None
         self.MaxBulk = 32000
         self.MaxWeight = 32000
-        self.NamePhrase = u"door"
+        self.NamePhrase = "door"
 
         #-----------
         # Other Side
@@ -5092,7 +5094,7 @@ class ClassDoor(ServiceOpenable, ClassScenery):
         # You can't go through if the door is closed.
 
         if not self.IsOpen:
-            if not self.AutomaticOpen: return Complain(u"The door isn’t open.")
+            if not self.AutomaticOpen: return Complain("The door isn’t open.")
             self.Open()
 
         #----------------
@@ -5102,7 +5104,7 @@ class ClassDoor(ServiceOpenable, ClassScenery):
         # You can't go through if the Destination property isn't set.
 
         if not self.Destination:
-            return Complain(u"The door doesn’t lead anywhere.")
+            return Complain("The door doesn’t lead anywhere.")
 
         #-----------------------
         # Too big to go through?
@@ -5111,7 +5113,7 @@ class ClassDoor(ServiceOpenable, ClassScenery):
         # You can't go through if you're too fat :-).
 
         if Visitor.Bulk > self.MaxBulk:
-            Complaint = Visitor.TheDesc() + u" won’t fit through " + self.TheDesc() + u"."
+            Complaint = Visitor.TheDesc() + " won’t fit through " + self.TheDesc() + "."
             return Complain(Complaint)
 
         #-----------------------------------------
@@ -5145,7 +5147,7 @@ class ClassDoor(ServiceOpenable, ClassScenery):
         The response to "Look thru door" when the door is open.
         """
 
-        return u""
+        return ""
 
 
 class ClassLockableDoor(ServiceLockable, ClassDoor):
@@ -5205,7 +5207,7 @@ class ClassLockableDoor(ServiceLockable, ClassDoor):
         return TURN_ENDS
 
     def DoorIsLockedDesc(self):
-        return self.TheDesc() + u" is locked."
+        return self.TheDesc() + " is locked."
     def Lock(self, key=None, IsSecondTime=FALSE):
         # Try to lock this side of the door
         if ServiceLockable.Lock(self, key, Silent=IsSecondTime):
@@ -5260,8 +5262,8 @@ class ClassUnderHiderItem (ServiceRevealWhenTaken, ClassItem):
 
     def SetMyProperties(self):
         """Sets default instance properties"""
-        self.ContainerPrepositionStatic = u"under"
-        self.ContainerPrepositionDynamic = u"under"
+        self.ContainerPrepositionStatic = "under"
+        self.ContainerPrepositionDynamic = "under"
 
 class ClassBehindHiderItem(ServiceRevealWhenTaken,ClassItem):
     """
@@ -5274,8 +5276,8 @@ class ClassBehindHiderItem(ServiceRevealWhenTaken,ClassItem):
 
     def SetMyProperties(self):
         """Sets default instance properties"""
-        self.ContainerPrepositionStatic = u"behind"
-        self.ContainerPrepositionDynamic = u"behind"
+        self.ContainerPrepositionStatic = "behind"
+        self.ContainerPrepositionDynamic = "behind"
 
 
 class ClassActivatableItem(ServiceActivation, ClassItem):
@@ -5377,7 +5379,7 @@ class ClassBasicVerb(ClassBaseVerbObject):
 
     def SetMyProperties(self):
         """Sets default instance properties"""
-        self.ExpectedPreposition = u"inside"
+        self.ExpectedPreposition = "inside"
 
     def SanityCheck(self):
         """
@@ -5466,7 +5468,7 @@ class ClassBasicVerb(ClassBaseVerbObject):
         # tuple. (A tuple is any group of comma seperated things between
         # parentheses).
 
-        DebugTrace(u"Testing Allowed Objects")
+        DebugTrace("Testing Allowed Objects")
 
         if not DisambiguateListOfLists(P.DOL(),
                                        ClassBasicThing.AllowedByVerbAsDObj,
@@ -5483,7 +5485,7 @@ class ClassBasicVerb(ClassBaseVerbObject):
         # Remove Invisible Direct/Indirect Objects
         #-----------------------------------------
 
-        DebugTrace(u"Testing Visible Objects")
+        DebugTrace("Testing Visible Objects")
 
         if not DisambiguateListOfLists(P.DOL(),
                                        ClassBasicThing.IsVisible,
@@ -5501,7 +5503,7 @@ class ClassBasicVerb(ClassBaseVerbObject):
         # Remove Unreachable Direct/Indirect Objects
         #-------------------------------------------
 
-        DebugTrace(u"Testing Reachable Objects")
+        DebugTrace("Testing Reachable Objects")
 
         if not DisambiguateListOfLists(P.DOL(),
                                        ClassBasicThing.IsReachable,
@@ -5520,7 +5522,7 @@ class ClassBasicVerb(ClassBaseVerbObject):
         # Remove Unknown Direct/Indirect Objects
         #---------------------------------------
 
-        DebugTrace(u"Testing Known Objects")
+        DebugTrace("Testing Known Objects")
 
         if not DisambiguateListOfLists(P.DOL(),
                                        ClassBasicThing.Remembers,
@@ -5539,7 +5541,7 @@ class ClassBasicVerb(ClassBaseVerbObject):
         # Gather Parser Favored Objects If Any
         #-------------------------------------
 
-        DebugTrace(u"Testing Favored Objects")
+        DebugTrace("Testing Favored Objects")
         List = P.DOL()[:]
 
         if DisambiguateListOfLists(List,
@@ -5624,10 +5626,10 @@ class ClassBasicVerb(ClassBaseVerbObject):
            (self.ObjectAllowance & ALLOW_OPTIONAL_DOBJS):
             if not (self.ObjectAllowance & ALLOW_NO_DOBJS):
                 if len(P.AP().CurrentPrepList) == 0:
-                    return Complain(SCase(u"what would you like to " + P.CVN() + u"?"))
+                    return Complain(SCase("what would you like to " + P.CVN() + "?"))
                 else:
-                    return Complain(SCase(u"what would you like to " +P.CVN() + u" " + \
-                                          string.join(P.AP().CurrentPrepList) + u"?"))
+                    return Complain(SCase("what would you like to " +P.CVN() + " " + \
+                                          string.join(P.AP().CurrentPrepList) + "?"))
 
 
         #-----------------------------
@@ -5639,10 +5641,10 @@ class ClassBasicVerb(ClassBaseVerbObject):
 
         if len(P.IOL()) == 0:
             if not (self.ObjectAllowance & ALLOW_NO_IOBJS):
-                return Complain(SCase(P.CVN() + u" " + \
-                                      P.DOL()[0].NamePhrase + u" " + \
+                return Complain(SCase(P.CVN() + " " + \
+                                      P.DOL()[0].NamePhrase + " " + \
                                       string.join(P.AP().CurrentPrepList) + \
-                                      u" what?"))
+                                      " what?"))
 
 
         #-----------------
@@ -5725,13 +5727,13 @@ class ClassAttackVerb(ClassBasicVerb):
         SelectedWeapon = None
         SelectedDamage = 0
         for Object in P.CA().Contents:
-            if hasattr(Object, u"IsWeapon") and Object.IsWeapon == TRUE:
+            if hasattr(Object, "IsWeapon") and Object.IsWeapon == TRUE:
                 HasWeapon = TRUE
                 if Object.Damage >= SelectedDamage:
                     SelectedWeapon = Object
                     SelectedDamage = Object.Damage
         if not HasWeapon:
-            return Complain(u"{SCase(You())} {Agree('do')} not have any weapons!")
+            return Complain("{SCase(You())} {Agree('do')} not have any weapons!")
 
         DirectObject = P.DOL()[0]
         DirectObject.MakeCurrent()
@@ -5739,18 +5741,18 @@ class ClassAttackVerb(ClassBasicVerb):
 
         # don't let anyone attack themselves
         if DirectObject == P.CA():
-            return Complain(u"Huh? Attacking yourself?")
+            return Complain("Huh? Attacking yourself?")
 
-        if not hasattr(DirectObject, u"Attack"):
-            return Complain(u"I don’t know how to attack %s." % DirectObject.ADesc())
+        if not hasattr(DirectObject, "Attack"):
+            return Complain("I don’t know how to attack %s." % DirectObject.ADesc())
 
         # Target already dead?
         if DirectObject.IsDead():
-            return Complain(u"Huh? Attacking the dead corpse of %s? You’re a sick person!"
+            return Complain("Huh? Attacking the dead corpse of %s? You’re a sick person!"
                 % DirectObject.TheDesc())
 
         # Say what's happening
-        Say(u"%s try to attack %s with %s. ~n" % \
+        Say("%s try to attack %s with %s. ~n" % \
             (SCase(You()), DirectObject.TheDesc(), SelectedWeapon.TheDesc()))
 
         # Let Attack know who's attacking -- P.CA() in this case
@@ -5771,13 +5773,13 @@ class ClassAttackWithVerb(ClassBasicVerb):
         DirectObject.MarkPronoun()
 
         Complaint = SCase(IndirectObject.TheDesc()) + " is not a weapon!"
-        if not hasattr(IndirectObject, u"IsWeapon"):
+        if not hasattr(IndirectObject, "IsWeapon"):
             return Complain(Complaint)
         elif IndirectObject.IsWeapon == FALSE:
             return Complain(Complaint)
 
-        if not hasattr(DirectObject, u"Attack"):
-            return Complain(u"I can’t attack %s using %s." %(DirectObject.ADesc(), IndirectObject.ADesc()))
+        if not hasattr(DirectObject, "Attack"):
+            return Complain("I can’t attack %s using %s." %(DirectObject.ADesc(), IndirectObject.ADesc()))
 
         return DirectObject.Attack(IndirectObject)
 
@@ -5797,8 +5799,8 @@ class ClassCloseVerb (ClassBasicVerb):
             Object.MakeCurrent()
             Object.MarkPronoun()
 
-            if not hasattr(Object, u"Close"):
-                return Complain(u"I don’t know how to close %s." % Object.ADesc())
+            if not hasattr(Object, "Close"):
+                return Complain("I don’t know how to close %s." % Object.ADesc())
 
             Object.Close(Multiple)
 
@@ -5828,7 +5830,7 @@ class ClassDanceWithVerb(ClassBasicVerb):
 
     def Action(self):
         if len(P.DOL()) < 1:
-            Say(u"""
+            Say("""
                 ~i »They dance alone …« ~l Some sadness in your eyes and
                 maybe even tears, you dance for a while … until all this
                 completely overwhelms you and you simply MUST stop.
@@ -5836,7 +5838,7 @@ class ClassDanceWithVerb(ClassBasicVerb):
             return TURN_ENDS
 
         if len(P.DOL()) > 1:
-            return Complain(u"Decide! You can only have one partner for a dance.")
+            return Complain("Decide! You can only have one partner for a dance.")
 
         DirectObject = P.DOL()[0]
 
@@ -5846,7 +5848,7 @@ class ClassDanceWithVerb(ClassBasicVerb):
         if DirectObject.IsActor and DirectObject != P.CA():
             if Random(25):
                 # Let us have a 25% chance for a dance :-)
-                Say(u"""
+                Say("""
                     A soothing and somehow magical tune can suddenly be heard.
                     Enchanted, both you and %s move closer together, gently
                     lock hands and slowly start dancing. Both of you don’t
@@ -5865,12 +5867,12 @@ class ClassDanceWithVerb(ClassBasicVerb):
                 return TURN_ENDS
             else:
                 # No luck another 75% of the time :-(
-                return Complain(u"""
+                return Complain("""
                     Dancing with %s might be appealing
                     but you can’t persuade %s.
                     """ % (DirectObject.TheDesc(), DirectObject.PronounDesc()))
         else:
-            return Complain(u"""
+            return Complain("""
                 Dance with %s? You have strange fantasies!
                 """ % DirectObject.ADesc())
 
@@ -5907,16 +5909,16 @@ class ClassDebugVerb(ClassSystemVerb):
         """Debug action"""
 
         if Global.Production:
-            return Complain(u"Debug is only active in TEST versions of this game.")
+            return Complain("Debug is only active in TEST versions of this game.")
         else:
-            Say(u"Debug verb is active")
+            Say("Debug verb is active")
 
         Global.Debug = not Global.Debug
 
         if Global.Debug:
-            Say(u"Debug is ON")
+            Say("Debug is ON")
         else:
-            Say(u"Debug is OFF")
+            Say("Debug is OFF")
 
         return TURN_CONTINUES
 
@@ -5966,7 +5968,7 @@ class ClassDropVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            if hasattr(Object, u"Drop"): Object.Drop(Multiple)
+            if hasattr(Object, "Drop"): Object.Drop(Multiple)
 
         return TURN_CONTINUES
 
@@ -6011,7 +6013,7 @@ class ClassFeelVerb(ClassBasicVerb):
         #------------
 
         if len(P.DOL()) == 0:
-            P.CA().Where().DescribeSelf(u"FEEL")
+            P.CA().Where().DescribeSelf("FEEL")
             return TURN_ENDS
 
         #----------------------------
@@ -6021,7 +6023,7 @@ class ClassFeelVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"FEEL")
+            Object.DescribeSelf("FEEL")
 
         return TURN_CONTINUES
 
@@ -6049,8 +6051,8 @@ class ClassGoVerb(ClassBasicVerb):
         # No direction/multiple directions?
         #----------------------------------
 
-        if len(P.DOL()) == 0: return Complain(u"Which way?")
-        if len(P.DOL()) > 1:  return Complain(u"Make up your mind!")
+        if len(P.DOL()) == 0: return Complain("Which way?")
+        if len(P.DOL()) > 1:  return Complain("Make up your mind!")
 
         #--------------------
         # Travel in direction
@@ -6074,7 +6076,7 @@ class ClassJumpVerb(ClassBasicVerb):
         west" or "go east" (complaining in the first two instances).
         """
 
-        Complain(u"You jump up and down angrily but nothing special happens.")
+        Complain("You jump up and down angrily but nothing special happens.")
         return TURN_ENDS
 
 
@@ -6095,7 +6097,7 @@ class ClassHelloVerb(ClassBasicVerb):
 
         if len(P.DOL()) == 0:
             if P.CA() == Global.Player:
-                return Complain(u"Talking to yourself?")
+                return Complain("Talking to yourself?")
             else:
                 Say(P.CA().HelloDesc())
                 return TURN_ENDS
@@ -6107,7 +6109,7 @@ class ClassHelloVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"HELLO")
+            Object.DescribeSelf("HELLO")
 
         return TURN_ENDS
 
@@ -6127,7 +6129,7 @@ class ClassInsertVerb (ClassBasicVerb):
         """Sets default instance properties"""
         self.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_ONE_IOBJ
         self.OkInDark = TRUE
-        self.ExpectedPreposition = u"inside"
+        self.ExpectedPreposition = "inside"
 
     def Action(self):
         Multiple = len(P.DOL()) > 1
@@ -6140,11 +6142,11 @@ class ClassInsertVerb (ClassBasicVerb):
             if Multiple:
                 for i in range (0, len(P.DOL())):
                     TempList.append(P.DOL()[i].ADesc())
-                    print TempList
-                Result = string.join(TempList[:-1], u", ") + \
-                    u" and " + TempList[-1]
-                print Result
-            return Complain(u"""
+                    print(TempList)
+                Result = string.join(TempList[:-1], ", ") + \
+                    " and " + TempList[-1]
+                print(Result)
+            return Complain("""
                 Stuffing things like %s into living beings
                 is considered very rude, even here!
                 """ % Result)
@@ -6168,7 +6170,7 @@ class ClassInventoryVerb(ClassSystemVerb):
 
     def Action(self):
         """Take inventory"""
-        P.CA().DescribeSelf(u"CONTENT")
+        P.CA().DescribeSelf("CONTENT")
         return TURN_CONTINUES
 
 class ClassListenVerb(ClassBasicVerb):
@@ -6185,7 +6187,7 @@ class ClassListenVerb(ClassBasicVerb):
     def Action(self):
         """Listen (to location) action"""
 
-        P.CA().Where().DescribeSelf(u"SOUND")
+        P.CA().Where().DescribeSelf("SOUND")
         return TURN_ENDS
 
 class ClassListenToVerb(ClassBasicVerb):
@@ -6206,7 +6208,7 @@ class ClassListenToVerb(ClassBasicVerb):
         # No Objects?
         #------------
 
-        if len(P.DOL()) == 0: return Complain(u"Listen to what?")
+        if len(P.DOL()) == 0: return Complain("Listen to what?")
 
         #-------------------------
         # Multiple Direct Objects?
@@ -6215,7 +6217,7 @@ class ClassListenToVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"SOUND")
+            Object.DescribeSelf("SOUND")
 
         return TURN_ENDS
 
@@ -6232,8 +6234,8 @@ class ClassLockVerb(ClassBasicVerb):
         DirectObject.MakeCurrent()
         DirectObject.MarkPronoun()
 
-        if not hasattr(DirectObject, u"Lock"):
-            return Complain(u"I don’t know how to lock " + DirectObject.ADesc())
+        if not hasattr(DirectObject, "Lock"):
+            return Complain("I don’t know how to lock " + DirectObject.ADesc())
 
         return DirectObject.Lock(None)
 
@@ -6253,8 +6255,8 @@ class ClassLockWithVerb(ClassBasicVerb):
         DirectObject.MakeCurrent()
         DirectObject.MarkPronoun()
 
-        if not hasattr(DirectObject, u"Lock"):
-            return Complain(u"I don’t know how to lock " + DirectObject.ADesc())
+        if not hasattr(DirectObject, "Lock"):
+            return Complain("I don’t know how to lock " + DirectObject.ADesc())
 
         return DirectObject.Lock(IndirectObject)
 
@@ -6324,7 +6326,7 @@ class ClassLookAtVerb(ClassBasicVerb):
         # No Objects?
         #------------
 
-        if len(P.DOL()) == 0: return Complain(u"Look at what?")
+        if len(P.DOL()) == 0: return Complain("Look at what?")
 
         #-------------------------
         # Multiple Direct Objects?
@@ -6333,7 +6335,7 @@ class ClassLookAtVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"LONG")
+            Object.DescribeSelf("LONG")
 
         return TURN_ENDS
 
@@ -6346,7 +6348,7 @@ class ClassLookDeepVerb(ClassBasicVerb):
         """Sets default instance properties"""
         self.ObjectAllowance = ALLOW_ONE_DOBJ + ALLOW_NO_IOBJS
         self.OkInDark = FALSE
-        self.ExpectedPreposition = u"inside"
+        self.ExpectedPreposition = "inside"
 
 
     def Action(self):
@@ -6411,8 +6413,8 @@ class ClassOpenVerb (ClassBasicVerb):
             Object.MakeCurrent()
             Object.MarkPronoun()
 
-            if not hasattr(Object, u"Open"):
-                return Complain(u"I don’t know how to open " + Object.ADesc())
+            if not hasattr(Object, "Open"):
+                return Complain("I don’t know how to open " + Object.ADesc())
 
             Object.Open(Multiple)
 
@@ -6432,7 +6434,7 @@ class ClassReadVerb(ClassBasicVerb):
         # No Objects?
         #------------
 
-        if len(P.DOL()) == 0: return Complain(u"Read what?")
+        if len(P.DOL()) == 0: return Complain("Read what?")
 
         #-------------------------
         # Multiple Direct Objects?
@@ -6441,7 +6443,7 @@ class ClassReadVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"READ")
+            Object.DescribeSelf("READ")
 
         return TURN_ENDS
 
@@ -6466,7 +6468,7 @@ class ClassRestoreVerb(ClassSystemVerb):
         if Engine.RestoreFunction(Global.GameModule):
             Global.Transcribe = not Global.Transcribe
             TranscribeVerb.Action()
-            Say(u"Restored")
+            Say("Restored")
 
         #----------------------
         # Return TURN_CONTINUES
@@ -6481,7 +6483,7 @@ class ClassSaveVerb(ClassSystemVerb):
         """Action performed for Save"""
 
         if Engine.SaveFunction(Global.GameModule):
-            Say(u"Saved")
+            Say("Saved")
 
         #----------------------
         # Return TURN_CONTINUES
@@ -6503,13 +6505,13 @@ class ClassSayVerb(ClassBasicVerb):
     def Action(self):
         """Say action"""
         if not Global.Debug:
-            P.AP().SaidText = string.replace(P.AP().SaidText, u"{", u"[")
-            P.AP().SaidText = string.replace(P.AP().SaidText, u"}", u"]")
+            P.AP().SaidText = string.replace(P.AP().SaidText, "{", "[")
+            P.AP().SaidText = string.replace(P.AP().SaidText, "}", "]")
             text = P.AP().SaidText[len(self.NamePhrase)+1:]
             if text:
-                Say(u'Okay … "%s"' % text)
+                Say('Okay … "%s"' % text)
             else:
-                Say(u"So what’s to say?")
+                Say("So what’s to say?")
         else:
             Say(P.AP().SaidText[len(self.NamePhrase)+1:])
         return TURN_CONTINUES
@@ -6527,7 +6529,7 @@ class ClassScoreVerb(ClassSystemVerb):
         # Notice we use the str() function to convert the numeric score into a
         # string that the % function can handle properly.
 
-        Say(u"Your score is %s points out of a possible %s." % \
+        Say("Your score is %s points out of a possible %s." % \
            (str(Global.CurrentScore), str(Global.MaxScore)))
 
         #----------------------
@@ -6549,7 +6551,7 @@ class ClassHealthVerb(ClassSystemVerb):
         # Notice we use the str() function to convert the numeric score into a
         # string that the % function can handle properly.
 
-        Say(u"Your health is currently at %s (%s of %s points)." % \
+        Say("Your health is currently at %s (%s of %s points)." % \
             (Global.Player.ShowHealth(),
             str(Global.Player.Health), str(Global.Player.MaxHealth)))
 
@@ -6572,12 +6574,12 @@ class ClassSecretVerb(ClassBasicVerb):
 
     def Action(self):
         if Random(50):
-            Complain(u"""
+            Complain("""
                 Do you really think I tell you everything? Which part
                 of the sentence ›It’s a SECRET!‹ did you not understand?
                 """)
         else:
-            Complain(u"""
+            Complain("""
                 It’s a secret, man, a SECRET! Use your brains, try the help
                 or jump from a ledge … what do I care?
                 """)
@@ -6599,14 +6601,14 @@ class ClassSmellVerb(ClassBasicVerb):
         """Smell/Sniff action"""
 
         if len(P.DOL()) == 0:
-            P.CA().Where().DescribeSelf(u"ODOR")
+            P.CA().Where().DescribeSelf("ODOR")
             return TURN_ENDS
 
 
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"ODOR")
+            Object.DescribeSelf("ODOR")
 
         return TURN_CONTINUES
 
@@ -6620,7 +6622,7 @@ class ClassTakeVerb(ClassDropVerb):
         # No Direct Objects?
         #--------------------
 
-        if len(P.DOL()) == 0: return Complain(u"Take what?")
+        if len(P.DOL()) == 0: return Complain("Take what?")
 
         #-------------------------
         # Multiple Direct Objects?
@@ -6645,7 +6647,7 @@ class ClassTakeVerb(ClassDropVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            if hasattr(Object, u"Take"): Object.Take(Multiple)
+            if hasattr(Object, "Take"): Object.Take(Multiple)
 
         return TURN_CONTINUES
 
@@ -6665,7 +6667,7 @@ class ClassTasteVerb(ClassBasicVerb):
         # No Objects?
         #------------
 
-        if len(P.DOL()) == 0: return Complain(u"Taste what?")
+        if len(P.DOL()) == 0: return Complain("Taste what?")
 
         #-------------------------
         # Multiple Direct Objects?
@@ -6674,7 +6676,7 @@ class ClassTasteVerb(ClassBasicVerb):
         for Object in P.DOL():
             Object.MakeCurrent()
             Object.MarkPronoun()
-            Object.DescribeSelf(u"TASTE")
+            Object.DescribeSelf("TASTE")
 
         return TURN_CONTINUES
 
@@ -6683,7 +6685,7 @@ class ClassTerseVerb(ClassSystemVerb):
 
     def Action(self):
         Global.Verbose = FALSE
-        Say(u"Show Brief descriptions on return visits.")
+        Say("Show Brief descriptions on return visits.")
         return TURN_CONTINUES
 
 class ClassTranscribeVerb(ClassSystemVerb):
@@ -6697,7 +6699,7 @@ class ClassTranscribeVerb(ClassSystemVerb):
         if Global.Transcribe:
             Global.LogFile = open(Global.GameModule+".log", "a")
             Global.DebugFile = open(Global.GameModule+".dbg", "a")
-            Say(u"""
+            Say("""
                 Logging turned ON. Transcripts appear in %s.log and debugging
                 information appears in %s.dbg.
                 """ % (Global.GameModule.encode(), Global.GameModule.encode()))
@@ -6707,7 +6709,7 @@ class ClassTranscribeVerb(ClassSystemVerb):
                 Global.LogFile.close()
             except:
                 pass
-            Say(u"Logging turned OFF")
+            Say("Logging turned OFF")
 
         return TURN_CONTINUES
 
@@ -6725,8 +6727,8 @@ class ClassUnlockVerb(ClassBasicVerb):
         DirectObject.MakeCurrent()
         DirectObject.MarkPronoun()
 
-        if not hasattr(DirectObject, u"Unlock"):
-            return Complain(u"I don’t know how to unlock " + DirectObject.ADesc())
+        if not hasattr(DirectObject, "Unlock"):
+            return Complain("I don’t know how to unlock " + DirectObject.ADesc())
 
         return DirectObject.Unlock(None)
 
@@ -6745,8 +6747,8 @@ class ClassUnlockWithVerb(ClassBasicVerb):
         DirectObject.MakeCurrent()
         DirectObject.MarkPronoun()
 
-        if not hasattr(DirectObject, u"Unlock"):
-            return Complain(u"I don’t know how to unlock " + DirectObject.ADesc())
+        if not hasattr(DirectObject, "Unlock"):
+            return Complain("I don’t know how to unlock " + DirectObject.ADesc())
 
         return DirectObject.Unlock(IndirectObject)
 
@@ -6755,7 +6757,7 @@ class ClassVerboseVerb(ClassSystemVerb):
 
     def Action(self):
         Global.Verbose = TRUE
-        Say(u"Show full descriptions on return visits. ~n")
+        Say("Show full descriptions on return visits. ~n")
         P.CA().Where().SmartDescribeSelf()
         return TURN_CONTINUES
 
@@ -6764,7 +6766,7 @@ class ClassWaitVerb(ClassSystemVerb):
 
     def Action(self):
         """Wait but let other actions happen meanwhile"""
-        Say(u"Time passes.")
+        Say("Time passes.")
         return TURN_ENDS
 
 class ClassWishForVerb(ClassBasicVerb):
@@ -6778,7 +6780,7 @@ class ClassWishForVerb(ClassBasicVerb):
     def Action(self):
 
         if len(P.DOL()) < 1:
-            return Complain(u"What are you wishing for?")
+            return Complain("What are you wishing for?")
 
         ObjectsWished = []
         ObjectsCarried = []
@@ -6788,41 +6790,41 @@ class ClassWishForVerb(ClassBasicVerb):
             else:
                 ObjectsWished.append(Object.ADesc())
 
-        StringCarried = u""
+        StringCarried = ""
         if ObjectsCarried:
             if len(ObjectsCarried) > 1:
-                StringCarried = string.join(ObjectsCarried[:-1], u", ") + \
-                    u" and " + ObjectsCarried[-1]
-                Article = u"are"
+                StringCarried = string.join(ObjectsCarried[:-1], ", ") + \
+                    " and " + ObjectsCarried[-1]
+                Article = "are"
             else:
                 StringCarried = ObjectsCarried[0]
                 Article = "is"
 
         if StringCarried:
-            Text1 = u"%s %s already here." % (SCase(StringCarried), Article)
+            Text1 = "%s %s already here." % (SCase(StringCarried), Article)
         else:
-            Text1 = u"Well, well …"
+            Text1 = "Well, well …"
 
-        StringWished = u""
+        StringWished = ""
         if ObjectsWished:
             if len(ObjectsWished) > 1:
-                StringWished = string.join(ObjectsWished[:-1], u", ") + \
-                    u" and " + ObjectsWished[-1]
-                Article = u"are"
+                StringWished = string.join(ObjectsWished[:-1], ", ") + \
+                    " and " + ObjectsWished[-1]
+                Article = "are"
             else:
                 StringCarried = ObjectsWished[0]
-                Article = u"is"
+                Article = "is"
 
         if StringWished:
-            Text2 = u"""
+            Text2 = """
                 You’re wishing for %s …
                 But wishes are only granted in fairy tales!
                 """ % StringCarried
         else:
-            Text2 = u"Open your eyes—all you wish for is already here!"
+            Text2 = "Open your eyes—all you wish for is already here!"
 
 
-        Complain(Text1 + u" ~n " + Text2)
+        Complain(Text1 + " ~n " + Text2)
         return TURN_CONTINUES
 
 class ClassXyzzyVerb(ClassBasicVerb):
@@ -6839,12 +6841,12 @@ class ClassXyzzyVerb(ClassBasicVerb):
     def Action(self):
         if P.CV() == BeamVerb or P.CV() == BeamToVerb:
             if Random(50):
-                Text = u"""
+                Text = """
                     Contrary to all Trekkies’ beliefs, beaming isn’t
                     yet functional!
                     """
             else:
-                Text = u"""
+                Text = """
                     ~i »Scotch me up, Beamie!« ~l … Alcoholic beverages we might
                     have, but the transporter beam is broken. Sorry, Capt’n!
                     """
@@ -6861,7 +6863,7 @@ class ClassXyzzyVerb(ClassBasicVerb):
             # Choose a random room from the list we built.
             NewRoom = random.choice(RoomList)
             # Tell about the journey …
-            Complain(u"""
+            Complain("""
                 ~b Now you’ve done it! ~l A swirling fog of octarine light
                 builds before you … and with a whooshing sound, you’re sucked
                 away from this place. ~p
@@ -6874,7 +6876,7 @@ class ClassXyzzyVerb(ClassBasicVerb):
             NewRoom.Enter(P.CA())
             return TURN_ENDS
         else:
-            return Complain(u"""
+            return Complain("""
                 A faint possibility here that you think of another adventure? ~n
                 Anyway, nothing happens.
                 """)
@@ -6891,7 +6893,7 @@ C="""
 
 #--- Universe Copyright - Don't change this!
 
-UniverseCopyright = u"""
+UniverseCopyright = """
                     Copyright © 1998–2016 by Roger Plowman, Kevin Russell
                     and Matthias C. Hormann
                     """
@@ -6899,7 +6901,7 @@ UniverseCopyright = u"""
 
 #--- Universe Version - Don't change this!
 
-UniverseVersion = u"2.1.0"
+UniverseVersion = "2.1.0"
 
 #--- Replace Build Status Line And Set Up Game Methods
 
@@ -6922,13 +6924,13 @@ C="""
   construction, although this is a job for professionals!
   """
 
-P.AP().Nonsense = u"That doesn’t make sense."
-P.AP().NotADirection = u"{SCase(You())} can’t go that way!"
-P.AP().NotAnActor = u"You have lost your mind."
-P.AP().ObjectNotHere = u"There’s no %s here."
-P.AP().OnlyOneDObj = u"You can only use one direct object with this verb."
-P.AP().OnlyOneIObj = u"You can only use one indirect object with this verb."
-P.AP().TooDark = u"It’s too dark to see how."
+P.AP().Nonsense = "That doesn’t make sense."
+P.AP().NotADirection = "{SCase(You())} can’t go that way!"
+P.AP().NotAnActor = "You have lost your mind."
+P.AP().ObjectNotHere = "There’s no %s here."
+P.AP().OnlyOneDObj = "You can only use one direct object with this verb."
+P.AP().OnlyOneIObj = "You can only use one indirect object with this verb."
+P.AP().TooDark = "It’s too dark to see how."
 
 #********************************************************************************
 #                G L O B A L   O B J E C T   E X T E N S I O N S
@@ -7057,13 +7059,13 @@ C="""
   VerbAgreementTable and will only apply the regular rule if it's not.
   """
 
-Global.VerbAgreementDict = {u"be":             [u"are", u"is"],
-                            u"do":             [u"do", u"does"],
-                            u"go":             [u"go", u"goes"],
-                            u"have":           [u"have", u"has"],
-                            u"try":            [u"try", u"tries"],
-                            u"contractedbe":   [u"’re", u"’s"],
-                            u"contractedhave": [u"’ve", u"’s"]}
+Global.VerbAgreementDict = {"be":             ["are", "is"],
+                            "do":             ["do", "does"],
+                            "go":             ["go", "goes"],
+                            "have":           ["have", "has"],
+                            "try":            ["try", "tries"],
+                            "contractedbe":   ["’re", "’s"],
+                            "contractedhave": ["’ve", "’s"]}
 
 #--- Compass Direction List
 
@@ -7107,20 +7109,20 @@ C="""
 
   Notice we add this property to the global object.
    """
-Global.DefaultMap = {North:      u"You can’t go that way.",
-                     Northeast:  u"You can’t go that way.",
-                     East:       u"You can’t go that way.",
-                     Southeast:  u"You can’t go that way.",
-                     South:      u"You can’t go that way.",
-                     Southwest:  u"You can’t go that way.",
-                     West:       u"You can’t go that way.",
-                     Northwest:  u"You can’t go that way.",
-                     Up:         u"There’s nothing climbable here.",
-                     Down:       u"There’s no way down.",
-                     Upstream:   u"There’s no stream here.",
-                     Downstream: u"There’s no stream here.",
-                     In:         u"There’s nothing here to enter.",
-                     Out:        u"There’s nothing here to exit."}
+Global.DefaultMap = {North:      "You can’t go that way.",
+                     Northeast:  "You can’t go that way.",
+                     East:       "You can’t go that way.",
+                     Southeast:  "You can’t go that way.",
+                     South:      "You can’t go that way.",
+                     Southwest:  "You can’t go that way.",
+                     West:       "You can’t go that way.",
+                     Northwest:  "You can’t go that way.",
+                     Up:         "There’s nothing climbable here.",
+                     Down:       "There’s no way down.",
+                     Upstream:   "There’s no stream here.",
+                     Downstream: "There’s no stream here.",
+                     In:         "There’s nothing here to enter.",
+                     Out:        "There’s nothing here to exit."}
 
 #********************************************************************************
 #                           V E R B   V O C A B U L A R Y
@@ -7137,127 +7139,127 @@ C="""
   are listed alphabetically so you can find them easily.
   """
 
-AgainVerb = ClassSystemVerb(u"g,again")
+AgainVerb = ClassSystemVerb("g,again")
 P.AP().Again = AgainVerb
-AttackVerb = ClassAttackVerb(u"attack,kill,assault,combat,fight")
-AttackWithVerb = ClassAttackWithVerb(u"attack,kill,assault,combat,fight", u"with,using")
-BeamVerb = ClassXyzzyVerb(u"beam") # Star Trek: BEAM (not supported)
+AttackVerb = ClassAttackVerb("attack,kill,assault,combat,fight")
+AttackWithVerb = ClassAttackWithVerb("attack,kill,assault,combat,fight", "with,using")
+BeamVerb = ClassXyzzyVerb("beam") # Star Trek: BEAM (not supported)
 BeamVerb.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
-BeamToVerb = ClassXyzzyVerb(u"beam", u"to") # Star Trek: BEAM (not supported)
+BeamToVerb = ClassXyzzyVerb("beam", "to") # Star Trek: BEAM (not supported)
 BeamToVerb.ObjectAllowance = ALLOW_ONE_DOBJ + ALLOW_NO_IOBJS
-ClimbVerb = ClassGoVerb(u"climb")
-CloseVerb = ClassCloseVerb(u"close,shut")
-CommunicateWithVerb = ClassHelloVerb(u"communicate,speak,talk", u"with")
-ConfigureTerminalVerb = ClassConfigureTerminalVerb(u"configure", u"terminal")
-DanceVerb = ClassDanceWithVerb(u"dance")
-DanceWithVerb = ClassDanceWithVerb(u"dance", u"with,alone")
-DebugVerb = ClassDebugVerb(u"debug")
-DownVerb = ClassTravelVerb(u"down,d,descend")
+ClimbVerb = ClassGoVerb("climb")
+CloseVerb = ClassCloseVerb("close,shut")
+CommunicateWithVerb = ClassHelloVerb("communicate,speak,talk", "with")
+ConfigureTerminalVerb = ClassConfigureTerminalVerb("configure", "terminal")
+DanceVerb = ClassDanceWithVerb("dance")
+DanceWithVerb = ClassDanceWithVerb("dance", "with,alone")
+DebugVerb = ClassDebugVerb("debug")
+DownVerb = ClassTravelVerb("down,d,descend")
 DownVerb.TravelDirection = Down
-DownstreamVerb = ClassTravelVerb(u"downstream,ds")
+DownstreamVerb = ClassTravelVerb("downstream,ds")
 DownstreamVerb.TravelDirection = Downstream
-DropVerb = ClassDropVerb(u"drop,release")
-DropDownVerb = ClassDropVerb(u"put,set,throw", u"down")
-EastVerb = ClassTravelVerb(u"east,e")
+DropVerb = ClassDropVerb("drop,release")
+DropDownVerb = ClassDropVerb("put,set,throw", "down")
+EastVerb = ClassTravelVerb("east,e")
 EastVerb.TravelDirection = East
-EndGameVerb = ClassQuitVerb(u"end,stop", u"game,run")
-ExamineVerb = ClassLookAtVerb(u"examine,inspect,x")
-ExtinguishVerb = ClassDeactivateVerb(u"deactivate,extinguish,douse")
-ExtinguishWithVerb = ClassDeactivateVerb(u"extinguish,douse", u"with,using")
+EndGameVerb = ClassQuitVerb("end,stop", "game,run")
+ExamineVerb = ClassLookAtVerb("examine,inspect,x")
+ExtinguishVerb = ClassDeactivateVerb("deactivate,extinguish,douse")
+ExtinguishWithVerb = ClassDeactivateVerb("extinguish,douse", "with,using")
 ExtinguishWithVerb.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_ONE_IOBJ
-FeelVerb = ClassFeelVerb(u"feel,touch,stroke")
-FeelAroundVerb = ClassFeelVerb(u"feel", u"around")
-GoVerb = ClassGoVerb(u"go,walk,run,move")
-GoToVerb = ClassGoVerb(u"go,walk,run,move", u"to")
-GoTowardVerb = ClassGoVerb(u"go,walk,run,move", u"toward")
-GreetVerb = ClassHelloVerb(u"greet,salute")
-HangOnVerb = ClassInsertVerb(u"hang", u"on")
-HangOnVerb.ExpectedPreposition = u"on"
-HealthVerb = ClassHealthVerb(u"health")
-HelloVerb = ClassHelloVerb(u"hello,hi")
-HelloThereVerb = ClassHelloVerb(u"hello,hi", u"there")
-HelpVerb = ClassHelpVerb(u"help,assist,hint,hints,about,think")
-InventoryVerb = ClassInventoryVerb(u"inventory,inven,i")
-InVerb = ClassTravelVerb(u"in,enter,ingress")
+FeelVerb = ClassFeelVerb("feel,touch,stroke")
+FeelAroundVerb = ClassFeelVerb("feel", "around")
+GoVerb = ClassGoVerb("go,walk,run,move")
+GoToVerb = ClassGoVerb("go,walk,run,move", "to")
+GoTowardVerb = ClassGoVerb("go,walk,run,move", "toward")
+GreetVerb = ClassHelloVerb("greet,salute")
+HangOnVerb = ClassInsertVerb("hang", "on")
+HangOnVerb.ExpectedPreposition = "on"
+HealthVerb = ClassHealthVerb("health")
+HelloVerb = ClassHelloVerb("hello,hi")
+HelloThereVerb = ClassHelloVerb("hello,hi", "there")
+HelpVerb = ClassHelpVerb("help,assist,hint,hints,about,think")
+InventoryVerb = ClassInventoryVerb("inventory,inven,i")
+InVerb = ClassTravelVerb("in,enter,ingress")
 InVerb.TravelDirection = In
-JumpVerb = ClassJumpVerb(u"jump")
-JumpUpDownVerb = ClassJumpVerb(u"jump", u"up,down")
-LightVerb = ClassActivateVerb(u"light,activate")
-LightVerb.ActivationProperty = u"IsLit"
-LightWithVerb = ClassActivateVerb(u"light", u"with,using")
+JumpVerb = ClassJumpVerb("jump")
+JumpUpDownVerb = ClassJumpVerb("jump", "up,down")
+LightVerb = ClassActivateVerb("light,activate")
+LightVerb.ActivationProperty = "IsLit"
+LightWithVerb = ClassActivateVerb("light", "with,using")
 LightWithVerb.ObjectAllowance = ALLOW_MULTIPLE_DOBJS + ALLOW_ONE_IOBJ
-LightWithVerb.ActivationProperty = u"IsLit"
-ListenVerb = ClassListenVerb(u"listen")
-ListenToVerb = ClassListenToVerb(u"listen", u"to")
-LockVerb = ClassLockVerb(u"lock,latch,hook")
-LockWithVerb = ClassLockWithVerb(u"lock", u"with,using")
-LookVerb = ClassLookVerb(u"look,gaze,l")
-LookAroundVerb = ClassLookVerb(u"look,l", u"around")
-LookAtVerb = ClassLookAtVerb(u"look,gaze,l", u"at")
-LookBehindVerb = ClassLookDeepVerb(u"look,search", u"behind")
-LookBehindVerb.ExpectedPreposition = u"behind"
-LookInsideVerb = ClassLookDeepVerb(u"look,search", u"in,inside,into")
-LookOnVerb = ClassLookDeepVerb(u"look,search", u"on")
-LookOnVerb.ExpectedPreposition = u"on"
-LookUnderVerb = ClassLookDeepVerb(u"look,search", u"under,underneath,beneath")
-LookUnderVerb.ExpectedPreposition = u"under"
-NorthVerb = ClassTravelVerb(u"north,n")
+LightWithVerb.ActivationProperty = "IsLit"
+ListenVerb = ClassListenVerb("listen")
+ListenToVerb = ClassListenToVerb("listen", "to")
+LockVerb = ClassLockVerb("lock,latch,hook")
+LockWithVerb = ClassLockWithVerb("lock", "with,using")
+LookVerb = ClassLookVerb("look,gaze,l")
+LookAroundVerb = ClassLookVerb("look,l", "around")
+LookAtVerb = ClassLookAtVerb("look,gaze,l", "at")
+LookBehindVerb = ClassLookDeepVerb("look,search", "behind")
+LookBehindVerb.ExpectedPreposition = "behind"
+LookInsideVerb = ClassLookDeepVerb("look,search", "in,inside,into")
+LookOnVerb = ClassLookDeepVerb("look,search", "on")
+LookOnVerb.ExpectedPreposition = "on"
+LookUnderVerb = ClassLookDeepVerb("look,search", "under,underneath,beneath")
+LookUnderVerb.ExpectedPreposition = "under"
+NorthVerb = ClassTravelVerb("north,n")
 NorthVerb.TravelDirection = North
-NortheastVerb = ClassTravelVerb(u"northeast,ne")
+NortheastVerb = ClassTravelVerb("northeast,ne")
 NortheastVerb.TravelDirection = Northeast
-NorthwestVerb = ClassTravelVerb(u"northwest,nw")
+NorthwestVerb = ClassTravelVerb("northwest,nw")
 NorthwestVerb.TravelDirection = Northwest
-OpenVerb = ClassOpenVerb(u"open")
-OutVerb = ClassTravelVerb(u"out,outside,exit")
+OpenVerb = ClassOpenVerb("open")
+OutVerb = ClassTravelVerb("out,outside,exit")
 OutVerb.TravelDirection = Out
-PickUpVerb = ClassTakeVerb(u"pick", u"up")
-PutBehindVerb = ClassInsertVerb(u"put,place,hide,set,stuff", u"behind")
-PutBehindVerb.ExpectedPreposition = u"behind"
-PutInVerb = ClassInsertVerb(u"put,place,insert,set,stuff", u"in,into,inside")
-PutOntoVerb = ClassInsertVerb(u"put,place,pile,stack,set,use", u"on,onto,with")
-PutOntoVerb.ExpectedPreposition = u"on"
-PutOutVerb = ClassDeactivateVerb(u"put", u"out")
-PutUnderVerb = ClassInsertVerb(u"put,place,hide,set,stuff", u"under,underneath,beneath")
-PutUnderVerb.ExpectedPreposition = u"under"
-QuitVerb = ClassQuitVerb(u"quit")
-ReadVerb = ClassReadVerb(u"read")
-RestoreVerb = ClassRestoreVerb(u"restore")
-SaveVerb = ClassSaveVerb(u"save")
-SayVerb = ClassSayVerb(u"say")
+PickUpVerb = ClassTakeVerb("pick", "up")
+PutBehindVerb = ClassInsertVerb("put,place,hide,set,stuff", "behind")
+PutBehindVerb.ExpectedPreposition = "behind"
+PutInVerb = ClassInsertVerb("put,place,insert,set,stuff", "in,into,inside")
+PutOntoVerb = ClassInsertVerb("put,place,pile,stack,set,use", "on,onto,with")
+PutOntoVerb.ExpectedPreposition = "on"
+PutOutVerb = ClassDeactivateVerb("put", "out")
+PutUnderVerb = ClassInsertVerb("put,place,hide,set,stuff", "under,underneath,beneath")
+PutUnderVerb.ExpectedPreposition = "under"
+QuitVerb = ClassQuitVerb("quit")
+ReadVerb = ClassReadVerb("read")
+RestoreVerb = ClassRestoreVerb("restore")
+SaveVerb = ClassSaveVerb("save")
+SayVerb = ClassSayVerb("say")
 P.AP().SayVerb = SayVerb
-ScoreVerb = ClassScoreVerb(u"score")
-SecretVerb = ClassSecretVerb(u"secret,rdbqds") # a joke, really
-SmellVerb = ClassSmellVerb(u"smell,sniff")
-SouthVerb = ClassTravelVerb(u"south,s")
+ScoreVerb = ClassScoreVerb("score")
+SecretVerb = ClassSecretVerb("secret,rdbqds") # a joke, really
+SmellVerb = ClassSmellVerb("smell,sniff")
+SouthVerb = ClassTravelVerb("south,s")
 SouthVerb.TravelDirection = South
-SoutheastVerb = ClassTravelVerb(u"southeast,se")
+SoutheastVerb = ClassTravelVerb("southeast,se")
 SoutheastVerb.TravelDirection = Southeast
-SouthwestVerb = ClassTravelVerb(u"southwest,sw")
+SouthwestVerb = ClassTravelVerb("southwest,sw")
 SouthwestVerb.TravelDirection = Southwest
-SpeakToVerb = ClassHelloVerb(u"speak,talk,mumble,murmur,sing", u"to")
-TakeVerb = ClassTakeVerb(u"take,get,remove,steal")
-TakeInventoryVerb = ClassInventoryVerb(u"take", u"inventory")
-TakeStockVerb = ClassInventoryVerb(u"take", u"stock")
-TasteVerb = ClassTasteVerb(u"taste,lick")
-TerseVerb = ClassTerseVerb(u"terse,brief")
-TranscribeVerb = ClassTranscribeVerb(u"transcribe")
-TurnOffVerb = ClassDeactivateVerb(u"turn", u"off")
-TurnOnVerb = ClassActivateVerb(u"turn", u"on")
-TurnOnVerb.ActivationProperty = u"IsActivated"
-UnlockVerb = ClassUnlockVerb(u"unlock,unhook,unlatch")
-UnlockWithVerb = ClassUnlockWithVerb(u"unlock", u"with,using")
-UpVerb = ClassTravelVerb(u"up,u,ascend")
+SpeakToVerb = ClassHelloVerb("speak,talk,mumble,murmur,sing", "to")
+TakeVerb = ClassTakeVerb("take,get,remove,steal")
+TakeInventoryVerb = ClassInventoryVerb("take", "inventory")
+TakeStockVerb = ClassInventoryVerb("take", "stock")
+TasteVerb = ClassTasteVerb("taste,lick")
+TerseVerb = ClassTerseVerb("terse,brief")
+TranscribeVerb = ClassTranscribeVerb("transcribe")
+TurnOffVerb = ClassDeactivateVerb("turn", "off")
+TurnOnVerb = ClassActivateVerb("turn", "on")
+TurnOnVerb.ActivationProperty = "IsActivated"
+UnlockVerb = ClassUnlockVerb("unlock,unhook,unlatch")
+UnlockWithVerb = ClassUnlockWithVerb("unlock", "with,using")
+UpVerb = ClassTravelVerb("up,u,ascend")
 UpVerb.TravelDirection = Up
-UpstreamVerb = ClassTravelVerb(u"upstream,us")
+UpstreamVerb = ClassTravelVerb("upstream,us")
 UpstreamVerb.TravelDirection = Upstream
-VerboseVerb = ClassVerboseVerb(u"verbose")
-WaitVerb = ClassWaitVerb(u"wait,z,rest,stay,sleep,idle,procrastinate")
-WasteTimeVerb = ClassWaitVerb(u"waste", u"time")
-WestVerb = ClassTravelVerb(u"west,w")
+VerboseVerb = ClassVerboseVerb("verbose")
+WaitVerb = ClassWaitVerb("wait,z,rest,stay,sleep,idle,procrastinate")
+WasteTimeVerb = ClassWaitVerb("waste", "time")
+WestVerb = ClassTravelVerb("west,w")
 WestVerb.TravelDirection = West
-WishVerb = ClassWishForVerb(u"wish")
-WishForVerb = ClassWishForVerb(u"wish", u"for")
-XyzzyVerb = ClassXyzzyVerb(u"xyzzy,plugh,y2,building") # other advs: BEAM!
+WishVerb = ClassWishForVerb("wish")
+WishForVerb = ClassWishForVerb("wish", "for")
+XyzzyVerb = ClassXyzzyVerb("xyzzy,plugh,y2,building") # other advs: BEAM!
 XyzzyVerb.ObjectAllowance = ALLOW_NO_DOBJS + ALLOW_NO_IOBJS
 
 #********************************************************************************
@@ -7291,7 +7293,7 @@ C="""
   and your game file.
   """
 
-UniverseMe = ClassPlayer(u"me,myself")
+UniverseMe = ClassPlayer("me,myself")
 Global.Player = UniverseMe
 
 #--- The Ground
@@ -7310,13 +7312,13 @@ C="""
   The landmark property is "HasGround".
   """
 
-Ground = ClassLandmark(u"ground,floor")
-Ground.Landmark = u"Ground"
+Ground = ClassLandmark("ground,floor")
+Ground.Landmark = "Ground"
 
-Ground.SetDesc(u"L", u"{P.CA().Where().GroundDesc()}")
-Ground.SetDesc(u"Take", u"You must be joking.")
-Ground.SetDesc(u"Taste", u"No!")
-Ground.SetDesc(u"Feel", u"It feels like ordinary ground to {Me()}.")
+Ground.SetDesc("L", "{P.CA().Where().GroundDesc()}")
+Ground.SetDesc("Take", "You must be joking.")
+Ground.SetDesc("Taste", "No!")
+Ground.SetDesc("Feel", "It feels like ordinary ground to {Me()}.")
 
 #--- No Wall
 
@@ -7324,15 +7326,15 @@ C="""
   Whenever HasWall is FALSE, this object will appear.
   """
 
-NoWall = ClassLandmarkMissing(u"wall")
-NoWall.Landmark = u"Wall"
-NoWall.NamePhrase = u"Non-Existent Wall"
+NoWall = ClassLandmarkMissing("wall")
+NoWall.Landmark = "Wall"
+NoWall.NamePhrase = "Non-Existent Wall"
 
-NoWall.SetDesc(u"L", u"There’s no wall here.")
-NoWall.SetDesc(u"Take", u"You can’t take what doesn’t exist.")
-NoWall.SetDesc(u"Taste", u"How exactly do you taste something that doesn’t exist?")
-NoWall.SetDesc(u"Sound", u"The (non-existent) wall makes no (non-existant) noise.")
-NoWall.SetDesc(u"Odor", u"The (non-existent) wall has no odor. Hardly surprising, really.")
+NoWall.SetDesc("L", "There’s no wall here.")
+NoWall.SetDesc("Take", "You can’t take what doesn’t exist.")
+NoWall.SetDesc("Taste", "How exactly do you taste something that doesn’t exist?")
+NoWall.SetDesc("Sound", "The (non-existent) wall makes no (non-existant) noise.")
+NoWall.SetDesc("Odor", "The (non-existent) wall has no odor. Hardly surprising, really.")
 
 #--- Space Time
 
@@ -7346,7 +7348,7 @@ C="""
   lower case.
   """
 
-SpaceTime = ClassBasicThing(u"SpaceTime")
+SpaceTime = ClassBasicThing("SpaceTime")
 SpaceTime.IsLit = TRUE
 
 #--- The Sky
@@ -7362,18 +7364,18 @@ C="""
   implement all the sensory methods for your MySky object.
   """
 
-Sky = ClassLandmark(u"sky,ceiling,air", u"thin")
-Sky.Landmark = u"Sky"
+Sky = ClassLandmark("sky,ceiling,air", "thin")
+Sky.Landmark = "Sky"
 
-Sky.SetDesc(u"L", u"{P.CA().Where().SkyDesc()}")
-Sky.SetDesc(u"Feel", u"""
+Sky.SetDesc("L", "{P.CA().Where().SkyDesc()}")
+Sky.SetDesc("Feel", """
                    {SCase(You())} wave your hand vaguely in front of {You()}.
                    There. Satisfied?
                    """)
-Sky.SetDesc(u"Take", u"You must be joking.")
-Sky.SetDesc(u"Taste", u"Very poetic, but extremely impractical.")
-Sky.SetDesc(u"Sound", u"{P.CA().Where().SoundDesc()}")
-Sky.SetDesc(u"Odor", u"{P.CA().Where().OdorDesc()}")
+Sky.SetDesc("Take", "You must be joking.")
+Sky.SetDesc("Taste", "Very poetic, but extremely impractical.")
+Sky.SetDesc("Sound", "{P.CA().Where().SoundDesc()}")
+Sky.SetDesc("Odor", "{P.CA().Where().OdorDesc()}")
 
 #--- Wall
 
@@ -7387,14 +7389,14 @@ C="""
   implement all the sensory methods for your MyWall object.
   """
 
-Wall = ClassLandmark(u"wall")
-Wall.Landmark = u"Wall"
+Wall = ClassLandmark("wall")
+Wall.Landmark = "Wall"
 
-Wall.SetDesc(u"L", u"{P.CA().Where().WallDesc()}")
-Wall.SetDesc(u"Take", u"You must be joking.")
-Wall.SetDesc(u"Taste", u"No!")
-Wall.SetDesc(u"Sound", u"The wall is silent.")
-Wall.SetDesc(u"Odor", u"The wall has no particular smell.")
+Wall.SetDesc("L", "{P.CA().Where().WallDesc()}")
+Wall.SetDesc("Take", "You must be joking.")
+Wall.SetDesc("Taste", "No!")
+Wall.SetDesc("Sound", "The wall is silent.")
+Wall.SetDesc("Odor", "The wall has no particular smell.")
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #                                End of Universe Library                        #
